@@ -1,21 +1,21 @@
 package org.ebics.client.ebicsrestapi.bankconnection
 
-import org.ebics.client.api.user.permission.BankConnectionAccessType
-import org.ebics.client.api.user.*
+import org.ebics.client.api.bankconnection.permission.BankConnectionAccessType
+import org.ebics.client.api.bankconnection.*
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("bankconnections")
 @CrossOrigin(origins = ["http://localhost:8081"])
 class EbicsBankConnectionsResource (
-    private val userService: UserServiceImpl)
+    private val userService: BankConnectionServiceImpl)
 {
     @GetMapping("")
-    fun listBankConnections(@RequestParam(required = false) permission: BankConnectionAccessType = BankConnectionAccessType.READ): List<User> =
+    fun listBankConnections(@RequestParam(required = false) permission: BankConnectionAccessType = BankConnectionAccessType.READ): List<BankConnectionEntity> =
         userService.findUsers(permission)
 
     @GetMapping("{userId}")
-    fun getBankConnectionById(@PathVariable userId: Long): User = userService.getUserById(userId)
+    fun getBankConnectionById(@PathVariable userId: Long): BankConnectionEntity = userService.getUserById(userId)
 
     @DeleteMapping("{userId}")
     fun deleteBankConnectionById(@PathVariable userId: Long) = userService.deleteUser(userId)

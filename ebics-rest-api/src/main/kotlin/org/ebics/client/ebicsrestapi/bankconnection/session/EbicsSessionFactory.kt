@@ -1,7 +1,7 @@
 package org.ebics.client.ebicsrestapi.bankconnection.session
 
-import org.ebics.client.api.user.UserService
-import org.ebics.client.api.user.permission.BankConnectionAccessType
+import org.ebics.client.api.bankconnection.BankConnectionService
+import org.ebics.client.api.bankconnection.permission.BankConnectionAccessType
 import org.ebics.client.ebicsrestapi.EbicsProductConfiguration
 import org.ebics.client.ebicsrestapi.bankconnection.UserIdPass
 import org.ebics.client.ebicsrestapi.configuration.EbicsRestConfiguration
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class EbicsSessionFactory(
-    private val userService: UserService,
+    private val userService: BankConnectionService,
     private val configuration: EbicsRestConfiguration,
     private val product: EbicsProductConfiguration,
 ) : IEbicsSessionFactory {

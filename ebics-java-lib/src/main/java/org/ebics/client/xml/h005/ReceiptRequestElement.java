@@ -50,12 +50,10 @@ public class ReceiptRequestElement extends DefaultEbicsRootElement {
    * @param name the element name
    */
   public ReceiptRequestElement(EbicsSession session,
-                               byte[] transactionId,
-                               String name)
+                               byte[] transactionId)
   {
     super(session);
     this.transactionId = transactionId;
-    this.name = name;
   }
 
   @Override
@@ -88,33 +86,10 @@ public class ReceiptRequestElement extends DefaultEbicsRootElement {
     return super.toByteArray();
   }
 
-  @Override
-  public String getName() {
-    return name  + ".xml";
-  }
-
-  /**
-   * Returns the digest value of the authenticated XML portions.
-   * @return  the digest value.
-   * @throws EbicsException Failed to retrieve the digest value.
-   */
-  public byte[] getDigest() throws EbicsException {
-    addNamespaceDecl("ds", "http://www.w3.org/2000/09/xmldsig#");
-
-    try {
-      return MessageDigest.getInstance("SHA-256", "BC").digest(Utils.canonize(toByteArray()));
-    } catch (NoSuchAlgorithmException e) {
-      throw new EbicsException(e.getMessage());
-    } catch (NoSuchProviderException e) {
-      throw new EbicsException(e.getMessage());
-    }
-  }
-
   // --------------------------------------------------------------------
   // DATA MEMBERS
   // --------------------------------------------------------------------
 
   private byte[] 			transactionId;
-  private String			name;
   private static final long 		serialVersionUID = -1969616441705744725L;
 }

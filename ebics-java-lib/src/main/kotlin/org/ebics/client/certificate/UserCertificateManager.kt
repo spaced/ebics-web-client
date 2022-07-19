@@ -18,13 +18,9 @@
  */
 package org.ebics.client.certificate
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider
-
 import java.io.*
-import java.lang.IllegalArgumentException
 import java.security.GeneralSecurityException
 import java.security.KeyPair
-import java.security.KeyStore
 import java.security.PrivateKey
 import java.security.cert.X509Certificate
 import java.util.*
@@ -57,11 +53,10 @@ class UserCertificateManager(
             try {
                 val calendar: Calendar = Calendar.getInstance()
                 calendar.add(Calendar.DAY_OF_YEAR, X509Constants.DEFAULT_DURATION)
-                val generator = X509Generator()
                 val endDate = Date(calendar.timeInMillis)
-                val a005pair = createCertificate(KeyType.A005, generator, userDn, endDate)
-                val x002pair = createCertificate(KeyType.X002, generator, userDn, endDate)
-                val e002pair = createCertificate(KeyType.E002, generator, userDn, endDate)
+                val a005pair = createCertificate(KeyType.A005, userDn, endDate)
+                val x002pair = createCertificate(KeyType.X002, userDn, endDate)
+                val e002pair = createCertificate(KeyType.E002, userDn, endDate)
                 return UserCertificateManager(
                     a005pair.certificate,
                     x002pair.certificate,
@@ -78,15 +73,14 @@ class UserCertificateManager(
         @Throws(GeneralSecurityException::class, IOException::class)
         private fun createCertificate(
             keyType: KeyType,
-            generator: X509Generator,
             userDn: String,
             end: Date
         ): CertKeyPair {
             val keypair: KeyPair = KeyUtil.makeKeyPair(X509Constants.EBICS_KEY_SIZE)
             val cert = when (keyType) {
-                KeyType.A005 -> generator.generateA005Certificate(keypair, userDn, Date(), end)
-                KeyType.X002 -> generator.generateX002Certificate(keypair, userDn, Date(), end)
-                KeyType.E002 -> generator.generateE002Certificate(keypair, userDn, Date(), end)
+                KeyType.A005 -> X509Generator.generateA005Certificate(keypair, userDn, Date(), end)
+                KeyType.X002 -> X509Generator.generateX002Certificate(keypair, userDn, Date(), end)
+                KeyType.E002 -> X509Generator.generateE002Certificate(keypair, userDn, Date(), end)
             }
             return CertKeyPair(cert, keypair.private)
         }
@@ -103,15 +97,15 @@ class UserCertificateManager(
          * @throws IOException
          */
         @Throws(GeneralSecurityException::class, IOException::class)
-        fun load(ins: InputStream, password: String, userId: String): UserCertificateManager {
+        fun load(ins: InputStream, password: String, keyStoreAliasPrefix: String): UserCertificateManager {
             val manager = KeyStoreManager.load(ins, password)
             return UserCertificateManager(
-                a005Certificate = manager.getCertificate("$userId-A005"),
-                x002Certificate = manager.getCertificate("$userId-X002"),
-                e002Certificate = manager.getCertificate("$userId-E002"),
-                a005PrivateKey = manager.getPrivateKey("$userId-A005"),
-                x002PrivateKey = manager.getPrivateKey("$userId-X002"),
-                e002PrivateKey = manager.getPrivateKey("$userId-E002"),
+                a005Certificate = manager.getCertificate("$keyStoreAliasPrefix-A005"),
+                x002Certificate = manager.getCertificate("$keyStoreAliasPrefix-X002"),
+                e002Certificate = manager.getCertificate("$keyStoreAliasPrefix-E002"),
+                a005PrivateKey = manager.getPrivateKey("$keyStoreAliasPrefix-A005"),
+                x002PrivateKey = manager.getPrivateKey("$keyStoreAliasPrefix-X002"),
+                e002PrivateKey = manager.getPrivateKey("$keyStoreAliasPrefix-E002"),
             )
         }
     }
@@ -138,13 +132,12 @@ class UserCertificateManager(
      * @throws IOException
      */
     @Throws(GeneralSecurityException::class, IOException::class)
-    fun save(fos: OutputStream, password: String, userId: String) {
-        with(KeyStore.getInstance("PKCS12", BouncyCastleProvider.PROVIDER_NAME)) {
-            load(null, null)
-            setKeyEntry("$userId-A005", a005PrivateKey, password.toCharArray(), arrayOf(a005Certificate))
-            setKeyEntry("$userId-X002", x002PrivateKey, password.toCharArray(), arrayOf(x002Certificate))
-            setKeyEntry("$userId-E002", e002PrivateKey, password.toCharArray(), arrayOf(e002Certificate))
-            store(fos, password.toCharArray())
+    fun save(fos: OutputStream, password: String, keyStoreAliasPrefix: String) {
+        with(KeyStoreManager.create(password)) {
+            setKeyEntry("$keyStoreAliasPrefix-A005", a005PrivateKey, a005Certificate)
+            setKeyEntry("$keyStoreAliasPrefix-X002", x002PrivateKey, x002Certificate)
+            setKeyEntry("$keyStoreAliasPrefix-E002", e002PrivateKey, e002Certificate)
+            save(fos)
         }
     }
 }

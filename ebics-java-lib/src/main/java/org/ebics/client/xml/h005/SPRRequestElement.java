@@ -23,6 +23,7 @@ import org.ebics.client.api.EbicsSession;
 import org.ebics.client.exception.EbicsException;
 import org.ebics.client.order.EbicsAdminOrderType;
 import org.ebics.client.order.EbicsOrder;
+import org.ebics.client.utils.CryptoUtils;
 import org.ebics.client.utils.Utils;
 import org.ebics.schema.h005.*;
 import org.ebics.schema.h005.DataEncryptionInfoType.EncryptionPubKeyDigest;
@@ -56,7 +57,7 @@ public class SPRRequestElement extends InitializationRequestElement {
    * @param session the current ebics session.
    */
   public SPRRequestElement(EbicsSession session) throws EbicsException {
-    super(session, new EbicsOrder(EbicsAdminOrderType.SPR, Collections.emptyMap()), "SPRRequest.xml");
+    super(session, new EbicsOrder(EbicsAdminOrderType.SPR, Collections.emptyMap()));
     keySpec = new SecretKeySpec(nonce, "EAS");
   }
 
@@ -116,7 +117,7 @@ public class SPRRequestElement extends InitializationRequestElement {
     encryptionPubKeyDigest = EbicsXmlFactory.createEncryptionPubKeyDigest(session.getConfiguration().getEncryptionVersion(),
 								          "http://www.w3.org/2001/04/xmlenc#sha256",
 								          decodeHex(session.getBankCert().getE002Digest()));
-    signatureData = EbicsXmlFactory.createSignatureData(true, Utils.encrypt(Utils.zip(userSignature.prettyPrint()), keySpec));
+    signatureData = EbicsXmlFactory.createSignatureData(true, CryptoUtils.encrypt(Utils.zip(userSignature.prettyPrint()), keySpec));
     dataEncryptionInfo = EbicsXmlFactory.createDataEncryptionInfo(true,
 	                                                          encryptionPubKeyDigest,
 	                                                          generateTransactionKey());

@@ -52,13 +52,11 @@ public abstract class InitializationRequestElement extends DefaultEbicsRootEleme
    * @throws EbicsException
    */
   public InitializationRequestElement(EbicsSession session,
-                                      EbicsOrder ebicsOrder,
-                                      String name)
+                                      EbicsOrder ebicsOrder)
     throws EbicsException
   {
     super(session);
     this.ebicsOrder = ebicsOrder;
-    this.name = name;
     nonce = Utils.generateNonce();
   }
 
@@ -74,32 +72,10 @@ public abstract class InitializationRequestElement extends DefaultEbicsRootEleme
   }
 
   @Override
-  public String getName() {
-    return name + ".xml";
-  }
-
-  @Override
   public byte[] toByteArray() {
     setSaveSuggestedPrefixes("http://www.ebics.org/h005", "");
 
     return super.toByteArray();
-  }
-
-  /**
-   * Returns the digest value of the authenticated XML portions.
-   * @return  the digest value.
-   * @throws EbicsException Failed to retrieve the digest value.
-   */
-  public byte[] getDigest() throws EbicsException {
-    addNamespaceDecl("ds", "http://www.w3.org/2000/09/xmldsig#");
-
-    try {
-      return MessageDigest.getInstance("SHA-256", "BC").digest(Utils.canonize(toByteArray()));
-    } catch (NoSuchAlgorithmException e) {
-      throw new EbicsException(e.getMessage());
-    } catch (NoSuchProviderException e) {
-      throw new EbicsException(e.getMessage());
-    }
   }
 
   /**
@@ -148,7 +124,6 @@ public abstract class InitializationRequestElement extends DefaultEbicsRootEleme
   // DATA MEMBERS
   // --------------------------------------------------------------------
 
-  private String			name;
   protected EbicsOrder ebicsOrder;
   protected byte[]			nonce;
   private static final long 		serialVersionUID = 8983807819242699280L;

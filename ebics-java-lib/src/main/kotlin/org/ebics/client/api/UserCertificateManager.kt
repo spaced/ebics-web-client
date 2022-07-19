@@ -1,16 +1,12 @@
 package org.ebics.client.api
 
-import org.bouncycastle.asn1.DERNull
-import org.bouncycastle.asn1.nist.NISTObjectIdentifiers
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier
-import org.bouncycastle.asn1.x509.DigestInfo
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.ebics.client.exception.EbicsException
+import org.ebics.client.utils.CryptoUtils
 import org.ebics.client.utils.Utils
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.security.GeneralSecurityException
-import java.security.MessageDigest
 import java.security.PrivateKey
 import java.security.Signature
 import java.security.cert.CertificateEncodingException
@@ -168,29 +164,6 @@ interface UserCertificateManager {
     }
 
     /**
-     * Make SHA256 hash out of some input bytes
-     */
-    fun createSHA256hash(digest: ByteArray):ByteArray {
-        val messageDigest: MessageDigest = MessageDigest.getInstance("SHA-256")
-        messageDigest.update(digest)
-        return messageDigest.digest()
-    }
-
-    /**
-     * Sign the SHA256 hash with RSA
-     */
-    fun signSHA256hash(encodedSHA256: ByteArray): ByteArray {
-        val sha256Aid = AlgorithmIdentifier(NISTObjectIdentifiers.id_sha256, DERNull.INSTANCE)
-        val di = DigestInfo(sha256Aid, encodedSHA256)
-        //sign SHA256 with RSA
-        val rsaSignature = Signature.getInstance("RSA")
-        rsaSignature.initSign(a005PrivateKey)
-        val encodedDigestInfo: ByteArray = di.toASN1Primitive().encoded
-        rsaSignature.update(encodedDigestInfo)
-        return rsaSignature.sign()
-    }
-
-    /**
      * EBICS IG CFONB VF 2.1.4 2012 02 24 - 2.1.3.2 Calcul de la signature:
      *
      *
@@ -249,7 +222,7 @@ interface UserCertificateManager {
      */
     @Throws(EbicsException::class)
     private fun decryptData(input: ByteArray, key: ByteArray): ByteArray {
-        return Utils.decrypt(input, SecretKeySpec(key, "EAS"))
+        return CryptoUtils.decrypt(input, SecretKeySpec(key, "EAS"))
     }
 
     /**

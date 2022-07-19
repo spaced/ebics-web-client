@@ -4,9 +4,9 @@ import DbTestContext
 import org.ebics.client.api.bank.BankData
 import org.ebics.client.api.bank.BankService
 import org.ebics.client.api.trace.orderType.OrderTypeDefinition
-import org.ebics.client.api.user.BankConnection
-import org.ebics.client.api.user.User
-import org.ebics.client.api.user.UserServiceImpl
+import org.ebics.client.api.bankconnection.BankConnection
+import org.ebics.client.api.bankconnection.BankConnectionEntity
+import org.ebics.client.api.bankconnection.BankConnectionServiceImpl
 import org.ebics.client.model.EbicsVersion
 import org.ebics.client.order.EbicsAdminOrderType
 import org.junit.jupiter.api.Assertions
@@ -24,10 +24,10 @@ import java.net.URL
 @ContextConfiguration(classes = [DbTestContext::class])
 class FileServiceTest(
     @Autowired private val IFileService: IFileService,
-    @Autowired private val userService: UserServiceImpl,
+    @Autowired private val userService: BankConnectionServiceImpl,
     @Autowired private val bankService: BankService,
 ) {
-    private fun getMockUser(): User {
+    private fun getMockUser(): BankConnectionEntity {
         val bank = BankData(URL("https://ebics.ubs.com/ebicsweb/ebicsweb"), "EBXUBSCH", "UBS-PROD-CH")
         val bankId = bankService.createBank(bank)
         val userInfo = BankConnection(EbicsVersion.H004, "CHT10001", "Jan", "CH100001", bankId, false, false)

@@ -20,6 +20,7 @@ package org.ebics.client.io
 
 import org.ebics.client.exception.EbicsException
 import org.ebics.client.interfaces.ContentFactory
+import org.ebics.client.utils.CryptoUtils
 import org.ebics.client.utils.Utils
 import javax.crypto.spec.SecretKeySpec
 
@@ -78,6 +79,11 @@ class Splitter(
     val segmentNumber: Int
 
     /**
+     * Maximum size of the segment (1MB)
+     */
+    val maxSegmentSize: Int = 1024 * 1024
+
+    /**
      * Slits the input into 1MB portions.
      *
      *
@@ -92,9 +98,9 @@ class Splitter(
     init {
         try {
             val compressedInput = if (isCompressionEnabled) Utils.zip(input) else input
-            content = Utils.encrypt(compressedInput, keySpec)
-            val lastSegmentNotFull = content.size % 1048576 != 0
-            segmentNumber = content.size / 1048576 + if (lastSegmentNotFull) 1 else 0
+            content = CryptoUtils.encrypt(compressedInput, keySpec)
+            val lastSegmentNotFull = content.size % maxSegmentSize != 0
+            segmentNumber = content.size / maxSegmentSize + if (lastSegmentNotFull) 1 else 0
             segmentSize = content.size / segmentNumber
         } catch (e: Exception) {
             throw EbicsException(e.message)
@@ -119,6 +125,4 @@ class Splitter(
         System.arraycopy(content, offset, segment, 0, segment.size)
         return ByteArrayContentFactory(segment)
     }
-
-
 }
