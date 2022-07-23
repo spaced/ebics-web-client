@@ -138,7 +138,7 @@
 import { defineComponent, computed } from 'vue';
 import useBankConnectionAPI from 'components/bankconnection';
 import useBanksDataAPI from 'src/components/banks';
-import {EbicsVersion} from 'src/components/models'
+import {EbicsVersion} from 'src/components/models/ebics-version'
 
 export default defineComponent({
   name: 'User',

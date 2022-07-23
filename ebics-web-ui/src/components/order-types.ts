@@ -1,12 +1,16 @@
 import { ref, watch, Ref } from 'vue';
 import {
-  BankConnection,
+  BankConnection
+} from 'components/models/ebics-bank-connection';
+import {
+  EbicsVersion,
+} from 'components/models/ebics-version';
+import {
   BTFType,
   OrderTypeFilter,
   OrderType,
-  TransferType,
-  EbicsVersion,
-} from 'components/models';
+  TransferType
+} from 'components/models/ebics-order-type';
 import useFileTransferAPI from './filetransfer';
 import { CustomMap } from './utils';
 import usePasswordAPI from './password-api';

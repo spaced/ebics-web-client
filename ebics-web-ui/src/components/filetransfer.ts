@@ -1,4 +1,6 @@
-import { BankConnection, UploadRequest, UploadResponse, DownloadRequest, UserPassword, BTFType, OrderType } from 'components/models';
+import { BankConnection  } from 'components/models/ebics-bank-connection';
+import { UploadRequest, UploadResponse, DownloadRequest, UserPassword } from 'components/models/ebics-request-response';
+import { BTFType, OrderType } from 'components/models/ebics-order-type';
 import { api } from 'boot/axios';
 import usePasswordAPI from './password-api';
 import { AxiosResponse } from 'axios';

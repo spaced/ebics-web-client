@@ -1,5 +1,5 @@
 import { ref, onMounted, computed } from 'vue';
-import { Bank, EbicsVersionSettings } from 'components/models';
+import { Bank, EbicsVersionSettings } from 'components/models/ebics-bank';
 import { api } from 'boot/axios';
 import { AxiosResponse } from 'axios';
 import useBaseAPI from './base-api';

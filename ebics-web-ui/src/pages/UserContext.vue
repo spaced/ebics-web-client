@@ -113,7 +113,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import useUserContextAPI from 'src/components/user-context';
-import { AuthenticationType } from 'components/models';
+import { AuthenticationType } from 'components/models/user-context';
 
 export default defineComponent({
   name: 'UserContext',

@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { describe, expect, it, beforeAll } from '@jest/globals';
 import { installQuasarPlugin } from '@quasar/quasar-app-extension-testing-unit-jest';
-import { OrderType, BTFType, OrderTypeFilter } from 'src/components/models';
+import { OrderType, BTFType, OrderTypeFilter } from 'components/models/ebics-order-type';
 import useOrderTypesAPI from 'src/components/order-types';
 import useOrderTypeLabelAPI from 'src/components/order-type-label';
 import useBankConnectionsAPI from 'src/components/bankconnections';

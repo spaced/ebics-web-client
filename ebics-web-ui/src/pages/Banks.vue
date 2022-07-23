@@ -74,7 +74,7 @@
 </template>
 
 <script lang="ts">
-import { Bank } from 'components/models';
+import { Bank } from 'components/models/ebics-bank';
 import useBanksAPI from 'src/components/banks';
 import { defineComponent } from 'vue';
 

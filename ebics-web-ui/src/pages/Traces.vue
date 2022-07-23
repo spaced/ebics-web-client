@@ -83,13 +83,10 @@
 
 <script lang="ts">
 import { defineComponent, ref, Ref, computed } from 'vue';
-import useTracesAPI, {
-  OrderTypeDefinition,
-  TraceType,
-} from 'components/traces';
-import { TransferType } from 'components/models'
+import useTracesAPI from 'components/traces';
+import { OrderTypeDefinition, TraceType, TraceEntry } from 'components/models/trace'
+import { TransferType } from 'components/models/ebics-order-type'
 import useOrderTypeLabelAPI from 'components/order-type-label';
-import { TraceEntry } from 'components/traces';
 import { VAceEditor } from 'vue3-ace-editor';
 import 'ace-builds/src-noconflict/mode-xml';
 import 'ace-builds/src-noconflict/theme-clouds';

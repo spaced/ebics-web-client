@@ -1,6 +1,6 @@
 import { ref, Ref } from 'vue';
 import { useQuasar } from 'quasar';
-import { BankConnection } from 'components/models'
+import { BankConnection } from 'components/models/ebics-bank-connection'
 import useBaseAPI from './base-api';
 
 /**

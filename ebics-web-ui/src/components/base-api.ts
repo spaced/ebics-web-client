@@ -1,4 +1,4 @@
-import { EbicsApiError } from 'components/models';
+import { EbicsApiError } from 'components/models/ebics-api-error';
 import { useQuasar } from 'quasar';
 import { AxiosError } from 'axios';
 
@@ -37,7 +37,7 @@ export default function useBaseAPI() {
     error: unknown,
     apiErrorCallback: undefined | ((errorMessage: string) => void) = undefined
   ): void => {
-    console.error('Catched exception: ' + JSON.stringify(error));
+    console.error('API Exception: ' + JSON.stringify(error));
     if (isAxiosError<EbicsApiError>(error)) {
       if (error.response) {
         let ebicsApiError = error.response?.data;
@@ -59,7 +59,6 @@ export default function useBaseAPI() {
           icon: 'report_problem',
           timeout: 10000,
         });
-        console.log('API error logged' + JSON.stringify(error.response));
       } else if (error.request) {
         q.notify({
           color: 'negative',

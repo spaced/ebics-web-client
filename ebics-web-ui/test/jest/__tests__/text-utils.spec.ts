@@ -1,6 +1,7 @@
 import { describe, expect, it, beforeAll } from '@jest/globals';
 import { installQuasarPlugin } from '@quasar/quasar-app-extension-testing-unit-jest';
-import { FileFormat, UserSettings, AutoAdjustmentsPain00x, AutoAdjustmentsSwift } from 'src/components/models';
+import { FileFormat } from 'src/components/models/file-format';
+import { UserSettings, AutoAdjustmentsPain00x, AutoAdjustmentsSwift } from 'components/models/user-settings';
 import useTextUtils from 'src/components/text-utils';
 
 // Specify here Quasar config you'll need to test your component

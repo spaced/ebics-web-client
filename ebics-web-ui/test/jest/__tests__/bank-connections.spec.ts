@@ -3,12 +3,10 @@ import { describe, expect, it, jest } from '@jest/globals';
 import { installQuasarPlugin } from '@quasar/quasar-app-extension-testing-unit-jest';
 import useBankConnectionsAPI from 'src/components/bankconnections';
 import axios from 'axios';
-import { BankConnection } from 'src/components/models';
+import { BankConnection } from 'src/components/models/ebics-bank-connection';
 import { mountComposition } from 'vue-composition-test-utils';
 import { Notify } from 'quasar';
-import { nextTick } from 'process';
 import { AxiosInstance } from 'axios'
-import { api } from 'boot/axios'
 
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {

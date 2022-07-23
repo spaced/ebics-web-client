@@ -326,9 +326,9 @@
 import { ref, defineComponent } from 'vue';
 import {
   UserIniWizzStep,
-  AdminOrderType,
-  UserLettersResponse,
-} from 'components/models';
+} from 'components/models/user-init-wizz';
+import { AdminOrderType } from 'components/models/ebics-order-type';
+import { UserLettersResponse } from 'components/models/ebics-request-response';
 import { QStepper } from 'quasar';
 import useBankConnectionAPI from 'components/bankconnection';
 import useBankConnectionInitializationAPI from 'components/bankconnection-init';

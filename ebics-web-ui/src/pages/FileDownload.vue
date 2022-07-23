@@ -170,17 +170,21 @@
 
 <script lang="ts">
 import {
-  BankConnection,
   DownloadRequest,
   DownloadRequestH004,
   DownloadRequestH005,
-  FileFormat,
+} from 'components/models/ebics-request-response';
+import {
+  BankConnection,
+  BankConnectionAccess,
+} from 'components/models/ebics-bank-connection';
+import { EbicsVersion } from 'components/models/ebics-version'
+import { FileFormat } from 'components/models/file-format'
+import {
   BTFType,
   OrderTypeFilter,
   OrderType,
-  BankConnectionAccess,
-  EbicsVersion,
-} from 'components/models';
+} from 'components/models/ebics-order-type'
 import { defineComponent } from 'vue';
 import { ref, toRef } from 'vue';
 import { exportFile } from 'quasar';

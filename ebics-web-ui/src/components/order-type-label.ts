@@ -1,8 +1,8 @@
 import {
   BTFType,
-  OrderType,
-  BtfService,
-} from 'components/models';
+  OrderType
+} from 'components/models/ebics-order-type';
+import { BtfService } from 'components/models/btf-service';
 
 export default function useOrderTypeLabelAPI(
 ) {

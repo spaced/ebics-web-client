@@ -1,5 +1,5 @@
 import { ref, onMounted } from 'vue';
-import { UserSettings } from 'components/models';
+import { UserSettings } from 'components/models/user-settings';
 import { api } from 'boot/axios';
 import useBaseAPI from './base-api';
 

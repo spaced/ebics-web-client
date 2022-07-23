@@ -1,5 +1,6 @@
 import { ref, onMounted } from 'vue';
-import { Bank, EbicsVersion } from 'components/models';
+import { EbicsVersion } from 'components/models/ebics-version';
+import { Bank } from 'components/models/ebics-bank';
 import { api } from 'boot/axios';
 import useBaseAPI from './base-api';
 import useDialogs from './dialogs';

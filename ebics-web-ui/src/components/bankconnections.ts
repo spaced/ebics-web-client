@@ -1,5 +1,5 @@
 import { ref, onMounted, computed, watch } from 'vue';
-import { BankConnection, BankConnectionAccess } from 'components/models';
+import { BankConnection, BankConnectionAccess } from 'src/components/models/ebics-bank-connection';
 import { api } from 'boot/axios';
 import useBaseAPI from './base-api';
 import { useQuasar } from 'quasar';

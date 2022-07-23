@@ -1,9 +1,10 @@
 import {
-  AutoAdjustmentsPain00x,
-  AutoAdjustmentsSwift,
   FileFormat,
-  UserSettings,
-} from './models';
+} from './models/file-format';
+import {
+  AutoAdjustmentsPain00x,
+  AutoAdjustmentsSwift, UserSettings
+} from './models/user-settings';
 import { uuid } from 'vue-uuid';
 
 /**

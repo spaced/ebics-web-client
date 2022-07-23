@@ -1,7 +1,8 @@
 import { describe, expect, it } from '@jest/globals';
 import { installQuasarPlugin } from '@quasar/quasar-app-extension-testing-unit-jest';
 import useBanksAPI from 'src/components/banks'
-import { Bank, EbicsVersion, EbicsVersionSettings } from 'src/components/models';
+import { EbicsVersion } from 'src/components/models/ebics-version';
+import { Bank, EbicsVersionSettings } from 'src/components/models/ebics-bank';
 
 // Specify here Quasar config you'll need to test your component
 installQuasarPlugin();

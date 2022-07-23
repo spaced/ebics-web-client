@@ -1,6 +1,6 @@
 import { ref, onMounted, watch, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import { UserContext, AuthenticationType, UserRole } from 'components/models';
+import { UserContext, AuthenticationType, UserRole } from 'components/models/user-context';
 import { useQuasar } from 'quasar';
 import { api } from 'boot/axios';
 import { AxiosBasicCredentials } from 'axios';

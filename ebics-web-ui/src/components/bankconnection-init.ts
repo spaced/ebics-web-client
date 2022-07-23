@@ -1,12 +1,15 @@
 import { computed, Ref, ref } from 'vue';
 import {
   BankConnection,
-  UserIniWizzStep,
-  UserPassword,
+} from 'components/models/ebics-bank-connection';
+import {
   AdminOrderType,
-  UserLettersResponse,
-  CertRequest,
-} from 'components/models';
+} from 'components/models/ebics-order-type';
+import { UserIniWizzStep } from 'components/models/user-init-wizz';
+import {
+  UserPassword, UserLettersResponse,
+  CertRequest
+} from 'components/models/ebics-request-response';
 import { api } from 'boot/axios';
 import usePasswordAPI from './password-api';
 

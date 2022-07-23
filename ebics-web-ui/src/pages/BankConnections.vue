@@ -82,7 +82,7 @@
 </template>
 
 <script lang="ts">
-import { BankConnection } from 'components/models';
+import { BankConnection } from 'components/models/ebics-bank-connection';
 import { defineComponent } from 'vue';
 import useBankConnectionsAPI from 'components/bankconnections'
 

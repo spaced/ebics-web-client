@@ -279,18 +279,19 @@
 </template>
 
 <script lang="ts">
+import { BankConnection, BankConnectionAccess } from 'components/models/ebics-bank-connection';
+import { EbicsVersion } from 'components/models/ebics-version';
+import { FileFormat } from 'components/models/file-format';
 import {
-  BankConnection,
-  UploadRequest,
-  UploadRequestH004,
-  UploadRequestH005,
-  FileFormat,
   BTFType,
   OrderTypeFilter,
   OrderType,
-  BankConnectionAccess,
-  EbicsVersion,
-} from 'components/models';
+} from 'components/models/ebics-order-type';
+import {
+  UploadRequest,
+  UploadRequestH004,
+  UploadRequestH005,
+} from 'components/models/ebics-request-response';
 import { defineComponent } from 'vue';
 import { ref, computed } from 'vue';
 

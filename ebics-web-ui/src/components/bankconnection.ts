@@ -1,6 +1,8 @@
 import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import { BankConnection, Partner, Bank, UserPartnerBank } from 'components/models';
+import { Bank } from 'components/models/ebics-bank';
+import { Partner } from 'components/models/ebics-partner';
+import { BankConnection, UserPartnerBank } from 'components/models/ebics-bank-connection';
 import { api } from 'boot/axios';
 import useBaseAPI from './base-api';
 
