@@ -20,16 +20,92 @@
             <template v-slot:option="bankConnection">
               <q-item v-bind="bankConnection.itemProps">
                 <q-item-section avatar>
-                  <q-icon v-if="bankConnection.opt.guestAccess" name="lock_open" />
+                  <q-icon
+                    v-if="bankConnection.opt.guestAccess"
+                    name="lock_open"
+                  />
                   <q-icon v-else name="lock" />
                 </q-item-section>
                 <q-item-section>
                   <q-item-label>{{ bankConnection.opt.name }}</q-item-label>
-                  <q-item-label caption>{{ `${bankConnection.opt.userId} | ${bankConnection.opt.partner?.partnerId}` }}</q-item-label>
+                  <q-item-label caption>{{
+                    `${bankConnection.opt.userId} | ${bankConnection.opt.partner?.partnerId}`
+                  }}</q-item-label>
+                </q-item-section>
+                <q-item-section
+                  side
+                  v-if="bankConnection.opt?.status.health != HealthStatusType.Unknown"
+                >
+                  <q-icon
+                    v-if="bankConnection.opt?.status.health == HealthStatusType.Error"
+                    name="error"
+                    color="red"
+                  />
+                  <q-icon
+                    v-if="
+                      bankConnection.opt?.status.health == HealthStatusType.Warning
+                    "
+                    name="warning"
+                    color="warning"
+                  />
+                  <q-icon
+                    v-if="bankConnection.opt?.status.health == HealthStatusType.Ok"
+                    name="verified"
+                    color="green"
+                  />
+                  <q-icon
+                    v-if="
+                      bankConnection.opt?.status.health == HealthStatusType.Unknown
+                    "
+                    name="help_outline"
+                  />
                 </q-item-section>
               </q-item>
             </template>
           </q-select>
+
+          <q-banner
+            v-if="
+              bankConnection &&
+              bankConnection.status &&
+              (bankConnection.status.health == HealthStatusType.Error ||
+                bankConnection.status.health == HealthStatusType.Warning)
+            "
+            inline-actions
+            class="bg-grey-3"
+          >
+            <template v-slot:avatar>
+              <q-icon
+                v-if="bankConnection.status.health == HealthStatusType.Error"
+                name="error"
+                color="red"
+              />
+              <q-icon
+                v-if="bankConnection.status.health == HealthStatusType.Warning"
+                name="warning"
+                color="warning"
+              />
+            </template>
+            <q-item-section>
+              <q-item-label
+                v-if="bankConnection.status.health == HealthStatusType.Warning"
+                >The selected bank connection has some issues</q-item-label
+              >
+              <q-item-label
+                v-if="bankConnection.status.health == HealthStatusType.Error"
+                >The selected bank connection is mostly erroneus</q-item-label
+              >
+              <q-item-label caption>
+                Out of {{ bankConnection.status.totalCount }} request(s) have
+                {{ bankConnection.status.errorCount }} failed, and
+                {{ bankConnection.status.okCount }} was OK. The last error(s) was HTTP
+                500, and EBICS_AUTHENTICATION_ERROR
+              </q-item-label>
+            </q-item-section>
+            <template v-slot:action>
+              <q-btn flat color="primary" label="Health statistics" />
+            </template>
+          </q-banner>
 
           <q-item
             tag="label"
@@ -40,10 +116,10 @@
               <q-checkbox v-model="displaySharedBankConnections" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>Show shared bank connections</q-item-label>
+              <q-item-label>Display shared bank connections</q-item-label>
               <q-item-label caption>
                 If enabled, the shared connection are listed as well, If
-                disabled, only your private connections are listed
+                disabled, only your private connections are listed.
               </q-item-label>
             </q-item-section>
           </q-item>
@@ -192,7 +268,7 @@
             outlined
             multiple
             use-chips
-            label='Drop file(s) here to upload'
+            label="Drop file(s) here to upload"
             hint="Max file size (1GB)"
             max-file-size="1200000000"
             @rejected="onRejectedMessage(true)"
@@ -279,8 +355,12 @@
 </template>
 
 <script lang="ts">
-import { BankConnection, BankConnectionAccess } from 'components/models/ebics-bank-connection';
+import {
+  BankConnection,
+  BankConnectionAccess,
+} from 'components/models/ebics-bank-connection';
 import { EbicsVersion } from 'components/models/ebics-version';
+import { HealthStatusType } from 'components/models/allivenes-health-status';
 import { FileFormat } from 'components/models/file-format';
 import {
   BTFType,
@@ -406,7 +486,11 @@ export default defineComponent({
       }
     };
 
-    const getUploadContent = (fileFormat: FileFormat, file: File | undefined, fileContent: string): Blob => {
+    const getUploadContent = (
+      fileFormat: FileFormat,
+      file: File | undefined,
+      fileContent: string
+    ): Blob => {
       if (fileFormat == FileFormat.BINARY && file) {
         return file;
       } else if (fileFormat != FileFormat.BINARY && fileContent) {
@@ -422,29 +506,35 @@ export default defineComponent({
       return getUploadContent(fileFormat.value, file.value, fileText.value);
     };
 
-    const processOneFileUpload = async(file: File, bankConnection: BankConnection) => {
-      let fileContent = await file.text()
+    const processOneFileUpload = async (
+      file: File,
+      bankConnection: BankConnection
+    ) => {
+      let fileContent = await file.text();
       const detectedFileFormat = detectFileFormat(fileContent);
-      if (userSettings.value.adjustmentOptions.applyAutomatically && detectedFileFormat != FileFormat.BINARY) {
+      if (
+        userSettings.value.adjustmentOptions.applyAutomatically &&
+        detectedFileFormat != FileFormat.BINARY
+      ) {
         fileContent = await applySmartAdjustments(
           fileContent,
           detectedFileFormat,
           userSettings.value
         );
-      } 
+      }
       await ebicsUploadRequest(
         bankConnection,
         getUploadRequest(file.name),
         getUploadContent(detectedFileFormat, file, fileContent)
       );
-    }
+    };
 
     const processUpload = async (): Promise<void> => {
       if (bankConnection.value) {
         if (!props.fileEditor) {
           //Multiple files upload
           for (let file of files.value) {
-            await processOneFileUpload(file, bankConnection.value)
+            await processOneFileUpload(file, bankConnection.value);
           }
         } else {
           //Single file upload
@@ -591,6 +681,7 @@ export default defineComponent({
       signatureOZHNN,
       FileFormat,
       processUpload,
+      HealthStatusType,
     };
   },
 });

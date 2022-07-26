@@ -1,4 +1,5 @@
 import { EbicsVersion } from 'components/models/ebics-version';
+import { ConnectionStatus } from './allivenes-health-status';
 
 export interface EbicsVersionSettings {
     version: EbicsVersion;
@@ -8,7 +9,7 @@ export interface EbicsVersionSettings {
     isPreferredForUse: boolean;
   }
   
-export interface Bank {
+export interface Bank extends ConnectionStatus {
     id: number;
     bankURL: string;
     name: string;
