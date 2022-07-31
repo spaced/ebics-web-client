@@ -5,6 +5,21 @@ import useBaseAPI from './base-api';
 import { useQuasar } from 'quasar';
 
 /**
+ * Display label of the bankConnection
+ */
+export function bankConnectionLabel(bankConnection: BankConnection | undefined): string {
+  if (
+    bankConnection &&
+    bankConnection.userId.trim().length > 0 &&
+    bankConnection.name.trim().length > 0
+  ) {
+    return `${bankConnection.userId} | ${bankConnection.name}`;
+  } else {
+    return '';
+  }
+};
+
+/**
  * Bank Connections composition API for bank connection list operations with backend REST API
  * @returns
  *  bankConnections synchronized list of bank connections
@@ -16,14 +31,17 @@ export default function useBankConnectionsAPI(accessRight: BankConnectionAccess 
   const q = useQuasar();
 
   const bankConnections = ref<BankConnection[]>();
+  const loading = ref<boolean>(false);
 
   const loadBankConnections = async (): Promise<void> => {
     try {
-      //console.info('api: ' + JSON.stringify(api));
+      loading.value = true;
       const response = await api.get<BankConnection[]>(`bankconnections?permission=${accessRight}`);
       bankConnections.value = response.data;
     } catch (error) {
       apiErrorHandler('Loading of bank data failed', error);
+    } finally {
+      loading.value = false;
     }
   };
 
@@ -50,10 +68,10 @@ export default function useBankConnectionsAPI(accessRight: BankConnectionAccess 
           resolve(true);
         })
         .onCancel(() => {
-          reject('Password entry canceled');
+          reject('Deletion canceled');
         })
         .onDismiss(() => {
-          reject('Password entry dismissed');
+          reject('Deletion dismissed');
         });
     });
   };
@@ -76,21 +94,6 @@ export default function useBankConnectionsAPI(accessRight: BankConnectionAccess 
       }
     } catch (error) {
       apiErrorHandler('Deleting of user data failed', error);
-    }
-  };
-
-  /**
-   * Display label of the bankConnection
-   */
-  const bankConnectionLabel = (bankConnection: BankConnection | undefined): string => {
-    if (
-      bankConnection &&
-      bankConnection.userId.trim().length > 0 &&
-      bankConnection.name.trim().length > 0
-    ) {
-      return `${bankConnection.userId} | ${bankConnection.name}`;
-    } else {
-      return '';
     }
   };
 
@@ -127,5 +130,6 @@ export default function useBankConnectionsAPI(accessRight: BankConnectionAccess 
     loadBankConnections,
     deleteBankConnection,
     bankConnectionLabel,
+    loading,
   };
 }

@@ -39,6 +39,8 @@ export default function useOrderTypesAPI(
   //Order types of selectedBankConnection filtered by filterType
   const outputOrderTypes: Ref<OrderType[]> = ref([]);
 
+  const loading = ref<boolean>(false);
+
   const { ebicsOrderTypes } = useFileTransferAPI();
   const { promptCertPassword } = usePasswordAPI();
   const { isEbicsVersionAllowedForUse } = useBanksAPI(true);
@@ -127,12 +129,15 @@ export default function useOrderTypesAPI(
    */
   const updateOrderTypesCacheForBankConnection = async (
     bankConnection: BankConnection,
-    forceCashRefresh = false
+    forceCashRefresh = false,
+    suppressLoadingStateChange = false,
   ) => {
 
     //For pasword protected connection ask first password
     //It prevents parallel poping of UI password dialog
     await promptCertPassword(bankConnection, false);
+
+    if (!suppressLoadingStateChange) loading.value = true;
 
     //Now execute all update promisses
     //the password UI would not pop-up any more because of previous promptCertPassword
@@ -146,20 +151,24 @@ export default function useOrderTypesAPI(
         forceCashRefresh
       ),
     ]);
+
+    if (!suppressLoadingStateChange) loading.value = false;
   };
 
   const updateOrderTypesCacheForAllActiveConnections =
     async (): Promise<void> => {
       if (activeBankConnections.value) {
         console.log('Loading order types')
+        loading.value = true;
         //Collect all update ordertype promisses
         const updateOrderTypesPromisses = activeBankConnections.value.map(
           (bankConnection) =>
-            updateOrderTypesCacheForBankConnection(bankConnection)
+            updateOrderTypesCacheForBankConnection(bankConnection, false, true)
         );
 
         //Execute those promisses parallel
         await Promise.allSettled(updateOrderTypesPromisses);
+        loading.value = false;
         console.log('Order types loaded')
       }
     };
@@ -246,5 +255,6 @@ export default function useOrderTypesAPI(
     refreshOrderTypes,
     refreshBtfTypes,
     updateOrderTypesCacheForBankConnection,
+    loading,
   };
 }

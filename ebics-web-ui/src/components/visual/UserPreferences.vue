@@ -151,9 +151,9 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import BooleanOption from 'src/components/BooleanOption.vue';
-import useTextUtils from './text-utils';
-import useUserSettingsAPI from './user-settings';
+import BooleanOption from 'components/visual/BooleanOption.vue';
+import useTextUtils from 'components/text-utils';
+import useUserSettingsAPI from 'components/user-settings';
 import { uuid } from 'vue-uuid';
 
 export default defineComponent({

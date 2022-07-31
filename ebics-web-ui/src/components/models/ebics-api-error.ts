@@ -1,8 +1,14 @@
-
-export interface EbicsApiError {
+export interface ApiError {
   timestamp: string;
-  status: number;
   error: string;
   message: string;
+}
+
+export interface EbicsApiError extends ApiError {
   description: string;
+
+  /**
+   * HTTP Code
+   */
+  status: number;
 }

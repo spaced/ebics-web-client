@@ -10,13 +10,12 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import UserPreferences from 'components/UserPreferences.vue'
+import UserPreferences from 'components/visual/UserPreferences.vue'
 
 export default defineComponent({
   name: 'UserContext',
   components: { UserPreferences },
   setup() {
-    //const { userContext } = useUserContextAPI();
     return { };
   },
 });

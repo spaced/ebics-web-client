@@ -1,3 +1,4 @@
+
 export enum AllivenesStatusType {
     Unknown,
     RespondingImmediatelly,
@@ -28,7 +29,4 @@ export interface ConnectionStatusObject {
     totalCount: number,
 }
 
-export interface ConnectionStatus {
-    status: ConnectionStatusObject,
-}
 

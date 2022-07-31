@@ -1,6 +1,6 @@
 import { EbicsVersion } from 'components/models/ebics-version';
 import { Partner } from 'components/models/ebics-partner';
-import { ConnectionStatus } from './allivenes-health-status';
+import { ConnectionStatus } from './connection-status';
 
 export interface BankConnection extends ConnectionStatus {
     id: number;

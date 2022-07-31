@@ -1,5 +1,5 @@
 import { EbicsVersion } from 'components/models/ebics-version';
-import { ConnectionStatus } from './allivenes-health-status';
+import { ConnectionStatus } from './connection-status';
 
 export interface EbicsVersionSettings {
     version: EbicsVersion;

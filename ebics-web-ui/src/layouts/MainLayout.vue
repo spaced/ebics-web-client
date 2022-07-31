@@ -99,6 +99,7 @@
 
     <q-page-container>
       <router-view />
+      <!-- sticky-log-viewer / -->
     </q-page-container>
   </q-layout>
 </template>
@@ -108,8 +109,10 @@ import { defineComponent, ref, computed } from 'vue';
 import useUserContextAPI from 'src/components/user-context';
 import { useRouter } from 'vue-router';
 import { MenuItemRouteMeta } from 'src/components/vue-ext';
+//import StickyLogViewer from 'components/visual/StickyLogViewer.vue';
 
 export default defineComponent({
+//  components: { StickyLogViewer },
   name: 'MainLayout',
 
   setup() {

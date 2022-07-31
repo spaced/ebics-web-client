@@ -1,8 +1,8 @@
 import {
-  ConnectionStatus,
   ConnectionStatusObject,
   HealthStatusType,
 } from './models/allivenes-health-status';
+import { ConnectionStatus } from './models/connection-status';
 import {
   ApiResponse,
   ApiResponseType,
@@ -11,6 +11,7 @@ import {
 } from './models/api-response';
 import { BankConnection } from './models/ebics-bank-connection';
 import { Bank } from './models/ebics-bank';
+import { ApiError } from './models/ebics-api-error';
 
 function isBankConnection(
   connectionStatus: ConnectionStatus
@@ -128,14 +129,16 @@ export default function useHealthAllivenessStatusAPI() {
    */
   const updateHealthStatus = (
     connectionStatus?: ConnectionStatus,
-    error?: unknown
+    error?: unknown,
+    apiError?: ApiError,
   ): void => {
     console.log('Updating connection status');
     const relatedObjectReferences: RelatedObjectReference[] =
       connectionStatusToRelatedObjectReference(connectionStatus);
     const apiResponse = {
-      status: error ? ApiResponseType.Error : ApiResponseType.Ok,
+      status: apiError ? ApiResponseType.Error : ApiResponseType.Ok,
       error: error,
+      apiError: apiError,
       timeStamp: new Date(),
     } as ApiResponse;
     relatedObjectReferences.forEach(
@@ -156,12 +159,13 @@ export default function useHealthAllivenessStatusAPI() {
         );
         if (connectionStatus) {
           connectionStatus.status = newConnectionStatus;
+          connectionStatus.lastError = apiError;
         }
       }
     );
   };
 
   return {
-    updateHealthStatus,
+    updateHealthStatus, apiResponsesCache, referenceToKey
   };
 }

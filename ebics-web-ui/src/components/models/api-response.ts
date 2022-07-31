@@ -1,3 +1,5 @@
+import { ApiError } from './ebics-api-error';
+
 export enum RelatedObjectType {
     Bank,
     BankConnection,
@@ -17,6 +19,7 @@ export enum ApiResponseType {
 export interface ApiResponse {
     status: ApiResponseType,
     error?: unknown,
-    timeStamp: Date,
+    apiError?: ApiError,
     responseTime: number,
+    timeStamp: Date,
 }
