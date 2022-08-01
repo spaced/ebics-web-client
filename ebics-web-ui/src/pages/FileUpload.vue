@@ -3,10 +3,7 @@
     <div v-if="loadingOrderTypes || loadingBankConnections" class="q-pa-md">
       <q-banner class="bg-grey-3">
         <template v-slot:avatar>
-          <q-spinner-dots
-            color="primary"
-            size="2em"
-          />
+          <q-spinner-dots color="primary" size="2em" />
         </template>
         The bank connection are being loaded..
       </q-banner>
@@ -16,9 +13,17 @@
         <!-- style="max-width: 400px" -->
         <div class="q-pa-md">
           <q-form ref="uploadForm" @submit="processUpload" class="q-gutter-md">
-            <bank-connection-select v-model:bankConnection="bankConnection" :bankConnections="activeDisplayedBankConnections" />
-            
-            <connection-status-banner v-if="bankConnection" label="testr" :modelValue="bankConnection" :bankConnectionId="bankConnection.id"/>
+            <bank-connection-select
+              v-model:bankConnection="bankConnection"
+              :bankConnections="activeDisplayedBankConnections"
+            />
+
+            <connection-status-banner
+              v-if="bankConnection"
+              label="testr"
+              :modelValue="bankConnection"
+              :bankConnectionId="bankConnection.id"
+            />
 
             <q-item
               tag="label"
@@ -37,97 +42,20 @@
               </q-item-section>
             </q-item>
 
-            <div v-if="bankConnection" class="q-gutter-sm">
-              <q-radio
-                v-model="bankConnection.ebicsVersion"
-                :disable="
-                  !isEbicsVersionAllowedForUse(
-                    bankConnection.partner.bank,
-                    EbicsVersion.H004
-                  )
-                "
-                val="H004"
-                label="EBICS 2.5 (H004)"
-              />
-              <q-radio
-                v-model="bankConnection.ebicsVersion"
-                :disable="
-                  !isEbicsVersionAllowedForUse(
-                    bankConnection.partner.bank,
-                    EbicsVersion.H005
-                  )
-                "
-                val="H005"
-                label="EBICS 3.0 (H005)"
-              />
-            </div>
+            <ebics-version-radios v-model:bankConnection="bankConnection"/>
 
-            <q-select
-              v-if="
-                bankConnection?.ebicsVersion == 'H003' ||
-                bankConnection?.ebicsVersion == 'H004'
-              "
-              filled
-              v-model="orderType"
-              :options="orderTypes"
-              :option-label="(t) => orderTypeLabel(t)"
-              label="EBICS Order Type"
-              hint="Select EBICS Order Type"
-              lazy-rules
-              :rules="[(val) => val || 'Please select valid EBICS Order Type']"
-            >
-              <template v-slot:append>
-                <q-btn
-                  round
-                  dense
-                  flat
-                  icon="refresh"
-                  @click.stop="refreshOrderTypes(bankConnection)"
-                />
-              </template>
-              <template v-slot:option="scope">
-                <q-item v-bind="scope.itemProps">
-                  <q-item-section>
-                    <q-item-label v-html="orderTypeLabel(scope.opt)" />
-                    <q-item-label caption>{{
-                      scope.opt.description
-                    }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
-
-            <q-select
-              v-if="bankConnection?.ebicsVersion == 'H005'"
-              filled
-              v-model="btfType"
-              :options="btfTypes"
-              :option-label="(t) => btfTypeLabel(t)"
-              label="Business Transaction Format"
-              hint="Select EBICS Business Transaction Format (BTF)"
-              lazy-rules
-              :rules="[(val) => val || 'Please select valid EBICS BTF']"
-            >
-              <template v-slot:append>
-                <q-btn
-                  round
-                  dense
-                  flat
-                  icon="refresh"
-                  @click.stop="refreshBtfTypes(bankConnection)"
-                />
-              </template>
-              <template v-slot:option="scope">
-                <q-item v-bind="scope.itemProps">
-                  <q-item-section>
-                    <q-item-label v-html="btfTypeLabel(scope.opt)" />
-                    <q-item-label caption>{{
-                      scope.opt.description
-                    }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
+            <order-type-select
+              v-model:orderType="orderType"
+              :orderTypes="orderTypes"
+              :bankConnection="bankConnection"
+              @click:refreshOrderTypes="refreshOrderTypes(bankConnection)"
+            />
+            <btf-type-select
+              v-model:btfType="orderType"
+              :btfTypes="orderTypes"
+              :bankConnection="bankConnection"
+              @click:refreshOrderTypes="refreshBtfTypes(bankConnection)"
+            />
 
             <!-- DZHNN / OZHNN -->
             <q-toggle
@@ -247,8 +175,8 @@
           <template v-slot:avatar>
             <q-icon name="signal_wifi_off" color="primary" />
           </template>
-          You have no initialized bank connection. Create and initialize one bank
-          connection in order to upload files.
+          You have no initialized bank connection. Create and initialize one
+          bank connection in order to upload files.
           <template v-slot:action>
             <q-btn
               flat
@@ -290,8 +218,10 @@ import { VAceEditor } from 'vue3-ace-editor';
 import 'ace-builds/src-noconflict/mode-xml';
 import 'ace-builds/src-noconflict/theme-clouds';
 import UserPreferences from 'components/visual/UserPreferences.vue';
-import ConnectionStatusBanner from 'components/visual/ConnectionStatusBanner.vue'
-import BankConnectionSelect from 'components/visual/BankConnectionSelect.vue'
+import ConnectionStatusBanner from 'components/visual/ConnectionStatusBanner.vue';
+import BankConnectionSelect from 'components/visual/BankConnectionSelect.vue';
+import OrderTypeSelect from 'components/visual/OrderTypeSelect.vue';
+import EbicsVersionRadios from 'components/visual/EbicsVersionRadios.vue';
 
 //Composition APIs
 import useBankConnectionsAPI from 'components/bankconnections';
@@ -304,7 +234,14 @@ import useBanksAPI from 'src/components/banks';
 
 export default defineComponent({
   name: 'FileUpload',
-  components: { VAceEditor, UserPreferences, ConnectionStatusBanner, BankConnectionSelect},
+  components: {
+    VAceEditor,
+    UserPreferences,
+    ConnectionStatusBanner,
+    BankConnectionSelect,
+    OrderTypeSelect,
+    EbicsVersionRadios,
+  },
   props: {
     fileEditor: {
       type: Boolean,
@@ -331,12 +268,17 @@ export default defineComponent({
     const { isEbicsVersionAllowedForUse } = useBanksAPI(true);
     const { userSettings } = useUserSettings();
     const { orderTypeLabel, btfTypeLabel } = useOrderTypeLabelAPI();
-    const { btfTypes, orderTypes, refreshOrderTypes, refreshBtfTypes, loading: loadingOrderTypes } =
-      useOrderTypesAPI(
-        bankConnection,
-        activeBankConnections,
-        ref(OrderTypeFilter.UploadOnly)
-      );
+    const {
+      btfTypes,
+      orderTypes,
+      refreshOrderTypes,
+      refreshBtfTypes,
+      loading: loadingOrderTypes,
+    } = useOrderTypesAPI(
+      bankConnection,
+      activeBankConnections,
+      ref(OrderTypeFilter.UploadOnly)
+    );
 
     //Single file setup
     const testInput = ref(null);
@@ -586,7 +528,7 @@ export default defineComponent({
       btfTypes,
       btfTypeLabel,
       refreshBtfTypes,
-      
+
       //Loading flags
       loadingOrderTypes,
       loadingBankConnections,

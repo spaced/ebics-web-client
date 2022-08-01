@@ -34,82 +34,20 @@
               </q-item-section>
             </q-item>
 
-            <div v-if="bankConnection" class="q-gutter-sm">
-              <!-- q-radio
-                v-model="bankConnection.ebicsVersion"
-                val="H003"
-                label="EBICS 2.4 (H003)"
-              /-->
-              <q-radio
-                v-model="bankConnection.ebicsVersion"
-                val="H004"
-                label="EBICS 2.5 (H004)"
-                :disable="!isEbicsVersionAllowedForUse(bankConnection.partner.bank, EbicsVersion.H004)"
-              />
-              <q-radio
-                v-model="bankConnection.ebicsVersion"
-                val="H005"
-                label="EBICS 3.0 (H005)"
-                :disable="!isEbicsVersionAllowedForUse(bankConnection.partner.bank, EbicsVersion.H005)"
-              />
-            </div>
+            <ebics-version-radios v-model:bankConnection="bankConnection"/>
 
-            <q-select
-              v-if="
-                bankConnection?.ebicsVersion == 'H003' ||
-                bankConnection?.ebicsVersion == 'H004'
-              "
-              filled
-              v-model="orderType"
-              :options="orderTypes"
-              :option-label="(t) => orderTypeLabel(t)"
-              label="EBICS Order Type"
-              hint="Select EBICS Order Type"
-              lazy-rules
-              :rules="[(val) => val || 'Please select valid EBICS Order Type']"
-            >
-              <template v-slot:append>
-                <q-btn round dense flat icon="refresh" @click.stop="refreshOrderTypes(bankConnection)" />
-              </template>
-              <template v-slot:option="scope">
-                <q-item v-bind="scope.itemProps">
-                  <q-item-section>
-                    <q-item-label v-html="orderTypeLabel(scope.opt)" />
-                    <q-item-label caption>{{
-                      scope.opt.description
-                    }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
-
-            <q-select
-              v-if="bankConnection?.ebicsVersion == 'H005'"
-              filled
-              v-model="btfType"
-              :options="btfTypes"
-              :option-label="(t) => btfTypeLabel(t)"
-              label="Business Transaction Format"
-              hint="Select EBICS Business Transaction Format (BTF)"
-              lazy-rules
-              :rules="[
-                (val) => val || 'Please select valid EBICS BTF',
-              ]"
-            >
-              <template v-slot:append>
-                <q-btn round dense flat icon="refresh" @click.stop="refreshBtfTypes(bankConnection)" />
-              </template>
-              <template v-slot:option="scope">
-                <q-item v-bind="scope.itemProps">
-                  <q-item-section>
-                    <q-item-label v-html="btfTypeLabel(scope.opt)" />
-                    <q-item-label caption>{{
-                      scope.opt.description
-                    }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
+            <order-type-select
+              v-model:orderType="orderType"
+              :orderTypes="orderTypes"
+              :bankConnection="bankConnection"
+              @click:refreshOrderTypes="refreshOrderTypes(bankConnection)"
+            />
+            <btf-type-select
+              v-model:btfType="orderType"
+              :btfTypes="orderTypes"
+              :bankConnection="bankConnection"
+              @click:refreshOrderTypes="refreshBtfTypes(bankConnection)"
+            />
             
             <!--div v-if="bankConnection" class="q-gutter-sm">
               <q-checkbox
@@ -191,12 +129,14 @@ import useBanksAPI from 'components/banks'
 //Components
 import ConnectionStatusBanner from 'components/visual/ConnectionStatusBanner.vue';
 import BankConnectionSelect from 'components/visual/BankConnectionSelect.vue';
+import OrderTypeSelect from 'components/visual/OrderTypeSelect.vue';
+import EbicsVersionRadios from 'components/visual/EbicsVersionRadios.vue';
 
 import { HealthStatusType } from 'components/models/allivenes-health-status'
 
 export default defineComponent({
   name: 'FileDownload',
-  components: { ConnectionStatusBanner, BankConnectionSelect },
+  components: { ConnectionStatusBanner, BankConnectionSelect, OrderTypeSelect, EbicsVersionRadios },
   setup() {
     //Selected bank connection
     const bankConnection = ref<BankConnection>();
