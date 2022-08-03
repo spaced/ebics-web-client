@@ -31,7 +31,7 @@ class UserSettingsService(private val userSettingsRepository: UserSettingsReposi
         }
     }
 
-    fun updateUserSettings(userSettings: UserSettings) {
+    private fun updateUserSettings(userSettings: UserSettings) {
         userSettings.checkWriteAccess()
         userSettingsRepository.saveAndFlush(userSettings)
     }

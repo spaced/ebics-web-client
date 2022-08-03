@@ -1,5 +1,6 @@
 package org.ebics.client.api.bank
 
+import com.fasterxml.jackson.annotation.JsonFilter
 import org.ebics.client.api.EbicsBank
 import org.ebics.client.api.bank.cert.BankKeyStore
 import org.ebics.client.api.bank.versions.VersionSupport
@@ -8,6 +9,7 @@ import javax.persistence.*
 
 @Entity
 @Table(uniqueConstraints = [UniqueConstraint(columnNames = ["bankURL","hostId"])])
+@JsonFilter("bankPropertiesFilter")
 data class Bank(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

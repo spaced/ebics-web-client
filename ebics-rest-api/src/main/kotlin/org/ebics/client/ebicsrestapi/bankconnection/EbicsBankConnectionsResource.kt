@@ -2,6 +2,8 @@ package org.ebics.client.ebicsrestapi.bankconnection
 
 import org.ebics.client.api.bankconnection.permission.BankConnectionAccessType
 import org.ebics.client.api.bankconnection.*
+import org.ebics.client.ebicsrestapi.utils.restfilter.ApplyRestFilter
+import org.ebics.client.ebicsrestapi.utils.restfilter.JsonFilterProviderType
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -11,10 +13,12 @@ class EbicsBankConnectionsResource (
     private val userService: BankConnectionServiceImpl)
 {
     @GetMapping("")
+    @ApplyRestFilter(filterType = JsonFilterProviderType.DefaultNoFilter)
     fun listBankConnections(@RequestParam(required = false) permission: BankConnectionAccessType = BankConnectionAccessType.READ): List<BankConnectionEntity> =
         userService.findUsers(permission)
 
     @GetMapping("{userId}")
+    @ApplyRestFilter(filterType = JsonFilterProviderType.DefaultNoFilter)
     fun getBankConnectionById(@PathVariable userId: Long): BankConnectionEntity = userService.getUserById(userId)
 
     @DeleteMapping("{userId}")

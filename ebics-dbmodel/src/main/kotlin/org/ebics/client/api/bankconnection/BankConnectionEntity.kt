@@ -1,5 +1,6 @@
 package org.ebics.client.api.bankconnection
 
+import com.fasterxml.jackson.annotation.JsonFilter
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.ebics.client.api.EbicsUser
 import org.ebics.client.api.partner.Partner
@@ -11,6 +12,7 @@ import org.ebics.client.model.user.EbicsUserStatusEnum
 import javax.persistence.*
 
 @Entity(name = "EbicsUser")
+@JsonFilter("bankConnectionPropertiesFilter")
 data class BankConnectionEntity (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
