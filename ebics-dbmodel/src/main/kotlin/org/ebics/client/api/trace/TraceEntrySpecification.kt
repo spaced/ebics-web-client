@@ -25,6 +25,10 @@ fun <T, X> CriteriaBuilder.attributeEquals(path: Path<X>, attributeName: String,
     return equal(path.get<SingularAttribute<X, T>>(attributeName), value)
 }
 
+fun <T, X> CriteriaBuilder.attributeIsNotNull(path: Path<X>, attributeName: String): Predicate {
+    return isNotNull(path.get<SingularAttribute<X, T>>(attributeName))
+}
+
 fun bankConnectionEquals(bankConnection: BankConnectionEntity, useSharedPartnerData: Boolean = true): Specification<TraceEntry> {
     return Specification<TraceEntry> { root, _, builder ->
         val p = builder.disjunction()
@@ -96,6 +100,20 @@ fun traceTypeEquals(traceType: TraceType): Specification<TraceEntry> {
     }
 }
 
+fun traceCategoryEquals(traceCategory: TraceCategory): Specification<TraceEntry> {
+    return Specification<TraceEntry> { root, _, builder ->
+        builder.attributeEquals(root, "traceCategory", traceCategory)
+    }
+}
+
+fun traceMessageBodyIsNotEmpty(): Specification<TraceEntry> {
+    return Specification<TraceEntry> { root, _, builder ->
+        builder.attributeIsNotNull<String, TraceEntry>(root,"textMessageBody")
+    }.or { root, _, builder ->
+        builder.attributeIsNotNull<String, TraceEntry>(root, "binaryMessageBody")
+    }
+}
+
 fun fileDownloadFilter(creator: String, orderType: OrderTypeDefinition, user: BankConnectionEntity, ebicsVersion: EbicsVersion, useSharedPartnerData: Boolean = true): Specification<TraceEntry> {
     return creatorEquals(creator)
         .and(orderTypeEquals(orderType))
@@ -103,4 +121,6 @@ fun fileDownloadFilter(creator: String, orderType: OrderTypeDefinition, user: Ba
         .and(ebicsVersionEquals(ebicsVersion))
         .and(uploadEquals(false))
         .and(traceTypeEquals(TraceType.Content))
+        .and(traceCategoryEquals(TraceCategory.ebicsOk))
+        .and(traceMessageBodyIsNotEmpty())
 }

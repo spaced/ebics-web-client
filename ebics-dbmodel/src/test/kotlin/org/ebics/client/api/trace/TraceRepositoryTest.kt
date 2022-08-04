@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.data.jpa.domain.Specification
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
@@ -202,5 +203,67 @@ class TraceRepositoryTest(
         val positiveResult =
             traceRepository.findOne(ebicsVersionEquals(EbicsVersion.H004))
         Assertions.assertTrue(positiveResult.isPresent)
+    }
+
+    @Test
+    @WithMockUser(username = "jan", roles = ["USER"])
+    fun testTrRepoSearchByMessageBody() {
+        val mockUser1 = getMockUser()
+        val service = EbicsService("name", "s", "dd", message = EbicsMessage("name1", "ff", "001", "Zip"))
+        traceRepository.save(
+            TraceEntry(
+                null, "test", null, mockUser1,  null,"sessId1", "O5N3", EbicsVersion.H004, false, false, creator = "jan", orderType =
+                OrderTypeDefinition(EbicsAdminOrderType.HTD, service)
+            )
+        )
+
+        val positiveResult =
+            traceRepository.findOne(traceMessageBodyIsNotEmpty())
+        Assertions.assertTrue(positiveResult.isPresent)
+
+        val negativeResult =
+            traceRepository.findOne(Specification.not(traceMessageBodyIsNotEmpty()))
+        Assertions.assertFalse(negativeResult.isPresent)
+    }
+
+    @Test
+    @WithMockUser(username = "jan", roles = ["USER"])
+    fun testTrRepoSearchByMessageBodyNull() {
+        val mockUser1 = getMockUser()
+        val service = EbicsService("name", "s", "dd", message = EbicsMessage("name1", "ff", "001", "Zip"))
+        traceRepository.save(
+            TraceEntry(
+                null, null, null, mockUser1,  null,"sessId1", "O5N3", EbicsVersion.H004, false, false, creator = "jan", orderType =
+                OrderTypeDefinition(EbicsAdminOrderType.HTD, service)
+            )
+        )
+
+        val positiveResult =
+            traceRepository.findOne(traceMessageBodyIsNotEmpty())
+        Assertions.assertFalse(positiveResult.isPresent)
+    }
+
+    @Test
+    @WithMockUser(username = "jan", roles = ["USER"])
+    fun testTrRepoSearchByTraceCategory() {
+        val mockUser1 = getMockUser()
+        val service = EbicsService("name", "s", "dd", message = EbicsMessage("name1", "ff", "001", "Zip"))
+        traceRepository.save(
+            TraceEntry(
+                null, "test", null, mockUser1,  null,"sessId1", "O5N3", EbicsVersion.H004, false, false, creator = "jan", orderType =
+                OrderTypeDefinition(EbicsAdminOrderType.HTD, service),
+                traceCategory = TraceCategory.ebicsError
+            )
+        )
+
+        val positiveResult =
+            traceRepository.findOne(traceCategoryEquals(TraceCategory.ebicsError))
+        Assertions.assertTrue(positiveResult.isPresent)
+
+        val negativeResult =
+            traceRepository.findOne(traceCategoryEquals(TraceCategory.ebicsOk)
+                .or(traceCategoryEquals(TraceCategory.httpError))
+                .or(traceCategoryEquals(TraceCategory.httpOk)))
+        Assertions.assertFalse(negativeResult.isPresent)
     }
 }

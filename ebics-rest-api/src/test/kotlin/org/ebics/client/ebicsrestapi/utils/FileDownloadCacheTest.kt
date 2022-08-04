@@ -51,7 +51,6 @@ class FileDownloadCacheTest(
 
         //Remove all stored entries from cache (the fileDownloadCache has state)
         (fileService as FileServiceMockImpl).removeAllFilesOlderThan(ZonedDateTime.now())
-        //fileDownloadCache.houseKeepFiles(ZonedDateTime.now())
     }
 
     @Test

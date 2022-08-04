@@ -1,6 +1,6 @@
 package org.ebics.client.ebicsrestapi.trace
 
-import org.ebics.client.api.trace.TraceEntry
+import org.ebics.client.api.trace.BaseTraceEntry
 import org.ebics.client.api.trace.TraceService
 import org.ebics.client.ebicsrestapi.utils.restfilter.JsonFilterProviderType
 import org.ebics.client.ebicsrestapi.utils.restfilter.ApplyRestFilter
@@ -16,7 +16,7 @@ class TraceResource(val traceService: TraceService) {
 
     @ApplyRestFilter(filterType = JsonFilterProviderType.IdOnly)
     @GetMapping()
-    fun listTraces(): List<TraceEntry> {
-        return traceService.findTraces()
+    fun listTraces(): List<BaseTraceEntry> {
+        return traceService.findAllTraces()
     }
 }

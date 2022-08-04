@@ -13,7 +13,7 @@ import javax.persistence.*
 data class TraceEntry(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id:Long? = null,
+    override val id:Long? = null,
 
     /**
      * Text trace content (UFT-8), like XML files, text files,..
@@ -31,13 +31,13 @@ data class TraceEntry(
      * Reference to bank connection if given
      */
     @ManyToOne(optional = true)
-    val bankConnection:BankConnectionEntity?,
+    override val bankConnection:BankConnectionEntity?,
 
     /**
      * Reference to bank if given
      */
     @ManyToOne(optional = true)
-    val bank: Bank?,
+    override val bank: Bank?,
 
     val sessionId: String,
 
@@ -45,45 +45,45 @@ data class TraceEntry(
     /**
      * The EBICS version used for this entry
      */
-    val ebicsVersion: EbicsVersion,
+    override val ebicsVersion: EbicsVersion,
 
     /**
      * Is this EBICS upload or download
      */
-    val upload: Boolean,
+    override val upload: Boolean,
 
     /**
      * Is this request operation or response operation
      */
-    val request: Boolean,
+    override val request: Boolean,
 
     /**
      * Web user who created this entry
      */
-    val creator: String = AuthenticationContext.fromSecurityContext().name,
+    override val creator: String = AuthenticationContext.fromSecurityContext().name,
 
     /**
      * Time when was the entry created
      */
-    val dateTime: ZonedDateTime = ZonedDateTime.now(),
+    override val dateTime: ZonedDateTime = ZonedDateTime.now(),
 
     /**
      * Optional Order Type of this entry
      *  (currently null by standard EBICS tracing)
      */
     @Embedded
-    val orderType: OrderTypeDefinition? = null,
+    override val orderType: OrderTypeDefinition? = null,
 
-    val traceType: TraceType = TraceType.EbicsEnvelope,
+    override val traceType: TraceType = TraceType.EbicsEnvelope,
 
-    val traceCategory: TraceCategory = TraceCategory.ebicsOk,
+    override val traceCategory: TraceCategory = TraceCategory.ebicsOk,
 
     //Error relevant fields
-    val errorCode: Int? = null,
-    val errorCodeText: String? = null,
-    val errorMessage: String? = null,
-    val errorStackTrace: String? = null
-) : TraceAccessRightsController {
+    override val errorCode: Int? = null,
+    override val errorCodeText: String? = null,
+    override val errorMessage: String? = null,
+    override val errorStackTrace: String? = null
+) : TraceAccessRightsController, BaseTraceEntry {
     @JsonIgnore
     override fun getObjectName(): String = "Trace entry created by '$creator' from $dateTime"
 

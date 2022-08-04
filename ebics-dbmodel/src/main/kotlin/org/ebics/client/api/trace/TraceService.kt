@@ -39,8 +39,18 @@ class TraceService(
             val user = session.user as BankConnectionEntity
             traceRepository.save(
                 TraceEntry(
-                    null, element.toString(), null, user, user.partner.bank, session.sessionId, orderNumber, ebicsVersion, upload, request,
-                    orderType = orderType, traceType = TraceType.EbicsEnvelope
+                    null,
+                    element.toString(),
+                    null,
+                    user,
+                    user.partner.bank,
+                    session.sessionId,
+                    orderNumber,
+                    ebicsVersion,
+                    upload,
+                    request,
+                    orderType = orderType,
+                    traceType = TraceType.EbicsEnvelope
                 )
             )
         }
@@ -50,7 +60,22 @@ class TraceService(
         traceEnabled = enabled
     }
 
-    fun findTraces(): List<TraceEntry> {
+    /**
+     * Return all traces which are available, and those which are not owned are anonimized
+     */
+    fun findAllTraces(): List<BaseTraceEntry> {
+        return traceRepository.findAll().map { traceEntry ->
+            if (traceEntry.hasReadAccess(AuthenticationContext.fromSecurityContext()))
+                traceEntry
+            else
+                AnonymousTraceEntry.anonymizeTraceEntry(traceEntry)
+        }
+    }
+
+    /**
+     * Returns only the own created traces with all access
+     */
+    fun findOwnTraces(): List<TraceEntry> {
         return traceRepository.findAll().filter { it.hasReadAccess(AuthenticationContext.fromSecurityContext()) }
     }
 }
