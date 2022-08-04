@@ -6,6 +6,8 @@ import io.mockk.mockkConstructor
 import org.apache.xml.security.Init
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.ebics.client.api.trace.IFileService
+import org.ebics.client.api.trace.housekeeping.ITraceHouseKeeper
+import org.ebics.client.api.trace.housekeeping.TraceHouseKeeper
 import org.ebics.client.api.trace.orderType.OrderTypeDefinition
 import org.ebics.client.ebicsrestapi.EbicsProductConfiguration
 import org.ebics.client.ebicsrestapi.MockSession
@@ -48,7 +50,7 @@ class FileDownloadCacheTest(
         every { anyConstructed<org.ebics.client.filetransfer.h005.FileTransferSession>().fetchFile(any()) } returns bos
 
         //Remove all stored entries from cache (the fileDownloadCache has state)
-        fileService.removeAllFilesOlderThan(ZonedDateTime.now())
+        (fileService as FileServiceMockImpl).removeAllFilesOlderThan(ZonedDateTime.now())
         //fileDownloadCache.houseKeepFiles(ZonedDateTime.now())
     }
 

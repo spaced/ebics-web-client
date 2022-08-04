@@ -40,5 +40,5 @@ open class DbTestContext(
     open fun userService() = BankConnectionServiceImpl(userRepository, partnerService(), userKeyStoreService())
 
     @Bean
-    open fun fileService(): IFileService = FileService(traceRepository, 10)
+    open fun fileService(): IFileService = FileService(traceRepository)
 }

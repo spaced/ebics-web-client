@@ -49,6 +49,4 @@ interface IFileService {
         upload: Boolean,
         request: Boolean,
     )
-
-    fun removeAllFilesOlderThan(dateTime: ZonedDateTime)
 }

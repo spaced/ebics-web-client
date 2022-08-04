@@ -38,7 +38,7 @@ class FileServiceMockImpl : IFileService {
         this.fileContent = fileContent
     }
 
-    override fun removeAllFilesOlderThan(dateTime: ZonedDateTime) {
+    fun removeAllFilesOlderThan(dateTime: ZonedDateTime) {
         fileContent = null
     }
 }
