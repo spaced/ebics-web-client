@@ -10,6 +10,7 @@ data class TraceSession(
     override val session: EbicsSession,
     override val orderType: IOrderTypeDefinition25,
     override val upload: Boolean = true,
+    override val request: Boolean = true,
     override val ebicsVersion: EbicsVersion = EbicsVersion.H004,
     override val orderNumber: String = UUID.randomUUID().toString()
 ) : ITraceSession {

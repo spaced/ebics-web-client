@@ -21,8 +21,8 @@ class FileServiceMockImpl : IFileService {
         if (fileContent == null)
             throw NoSuchElementException("Mock: No value cached yet")
         else
-            return TraceEntry(1, "$fileContent-cached", user, "1",
-            "CCCX", ebicsVersion, false, creator = "jan", orderType = orderType)
+            return TraceEntry(1, "$fileContent-cached", null, user, null,"1",
+            "CCCX", ebicsVersion, false, false, creator = "jan", orderType = orderType)
     }
 
     override fun addTextFile(
@@ -32,7 +32,8 @@ class FileServiceMockImpl : IFileService {
         sessionId: String,
         orderNumber: String?,
         ebicsVersion: EbicsVersion,
-        upload: Boolean
+        upload: Boolean,
+        request: Boolean
     ) {
         this.fileContent = fileContent
     }

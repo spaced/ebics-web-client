@@ -10,6 +10,7 @@ interface ITraceSession {
     val orderNumber: String
     val orderType: IOrderTypeDefinition
     val upload: Boolean
+    val request: Boolean
     val ebicsVersion: EbicsVersion
     fun trace(element: EbicsRootElement)
 }

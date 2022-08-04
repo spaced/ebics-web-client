@@ -18,11 +18,13 @@ class FileDownloadCache(private val fileService: IFileService) : IFileDownloadCa
         return if (useCache) {
             try {
                 //Try to get file from cache
-                fileService.getLastDownloadedFile(
+                val traceEntry = fileService.getLastDownloadedFile(
                     orderType,
                     session.user as BankConnectionEntity,
                     ebicsVersion
-                ).messageBody.toByteArray()
+                )
+                    return requireNotNull(traceEntry.textMessageBody?.toByteArray() ?: traceEntry.binaryMessageBody)
+                        {"Unexpected failure, the trace entry doen't have content. This should be never the case and it should be prevented by correct JPA query in getLastDownloadedFile"}
             } catch (e: NoSuchElementException) {
                 //In case the cache is empty we retrieve file online
                 retrieveFileOnlineAndStoreToCache(session, orderType, ebicsVersion)

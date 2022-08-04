@@ -39,7 +39,7 @@ class TraceService(
             val user = session.user as BankConnectionEntity
             traceRepository.save(
                 TraceEntry(
-                    null, element.toString(), user, session.sessionId, orderNumber, ebicsVersion, upload,
+                    null, element.toString(), null, user, user.partner.bank, session.sessionId, orderNumber, ebicsVersion, upload, request,
                     orderType = orderType, traceType = TraceType.EbicsEnvelope
                 )
             )

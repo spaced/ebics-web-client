@@ -53,11 +53,13 @@ class TraceRepositoryTest(
             TraceEntry(
                 null,
                 "test",
+                null,
                 mockUser1,
+                null,
                 "sessId1",
                 "O5N3",
                 EbicsVersion.H004,
-                false,
+                false, false,
                 creator = "jan"
             )
         )
@@ -78,12 +80,14 @@ class TraceRepositoryTest(
         traceRepository.save(
             TraceEntry(
                 null,
-                "test",
+                "test", null,
                 mockUser1,
+                mockUser1.partner.bank,
                 "sessId1",
                 "O5N3",
                 EbicsVersion.H004,
                 false,
+                true,
                 creator = "jan"
             )
         )
@@ -105,8 +109,10 @@ class TraceRepositoryTest(
             TraceEntry(
                 null,
                 "test",
+                null,
                 mockUser1,
-                "sessId1", "O5N3", EbicsVersion.H004, false, creator = "jan",
+                null,
+                "sessId1", "O5N3", EbicsVersion.H004, false, false, creator = "jan",
                 orderType = OrderTypeDefinition(EbicsAdminOrderType.HTD)
             )
         )
@@ -126,7 +132,7 @@ class TraceRepositoryTest(
         val mockUser1 = getMockUser()
         traceRepository.save(
             TraceEntry(
-                null, "test", mockUser1, "sessId1", "O5N3", EbicsVersion.H004, false, creator = "jan", orderType =
+                null, "test", null, mockUser1, null, "sessId1", "O5N3", EbicsVersion.H004, false, false, creator = "jan", orderType =
                 OrderTypeDefinition(EbicsAdminOrderType.HTD, null, "XE2")
             )
         )
@@ -155,7 +161,7 @@ class TraceRepositoryTest(
         val service = EbicsService("name", "s", "dd", message = EbicsMessage("name1", "ff", "001", "Zip"))
         traceRepository.save(
             TraceEntry(
-                null, "test", mockUser1, "sessId1", "O5N3", EbicsVersion.H004, false, creator = "jan", orderType =
+                null, "test", null, mockUser1, null, "sessId1", "O5N3", EbicsVersion.H004, false, false, creator = "jan", orderType =
                 OrderTypeDefinition(EbicsAdminOrderType.HTD, service)
             )
         )
@@ -184,7 +190,7 @@ class TraceRepositoryTest(
         val service = EbicsService("name", "s", "dd", message = EbicsMessage("name1", "ff", "001", "Zip"))
         traceRepository.save(
             TraceEntry(
-                null, "test", mockUser1, "sessId1", "O5N3", EbicsVersion.H004, false, creator = "jan", orderType =
+                null, "test", null, mockUser1,  null,"sessId1", "O5N3", EbicsVersion.H004, false, false, creator = "jan", orderType =
                 OrderTypeDefinition(EbicsAdminOrderType.HTD, service)
             )
         )

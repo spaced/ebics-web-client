@@ -25,14 +25,14 @@ fun <T, X> CriteriaBuilder.attributeEquals(path: Path<X>, attributeName: String,
     return equal(path.get<SingularAttribute<X, T>>(attributeName), value)
 }
 
-fun bankConnectionEquals(user: BankConnectionEntity, useSharedPartnerData: Boolean = true): Specification<TraceEntry> {
+fun bankConnectionEquals(bankConnection: BankConnectionEntity, useSharedPartnerData: Boolean = true): Specification<TraceEntry> {
     return Specification<TraceEntry> { root, _, builder ->
         val p = builder.disjunction()
-        val userAttr = root.get<SingularAttribute<TraceEntry, String>>("user")
-        p.addEqualsIfNotNull(builder, userAttr, "id", user.id)
+        val userAttr = root.get<SingularAttribute<TraceEntry, String>>("bankConnection")
+        p.addEqualsIfNotNull(builder, userAttr, "id", bankConnection.id)
         if (useSharedPartnerData) {
             val partnerAttr = userAttr.get<SingularAttribute<TraceEntry, String>>("partner")
-            p.addEqualsIfNotNull(builder, partnerAttr, "id", user.partner.id)
+            p.addEqualsIfNotNull(builder, partnerAttr, "id", bankConnection.partner.id)
         }
         p
     }

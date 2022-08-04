@@ -38,7 +38,7 @@ data class BankConnectionEntity (
     val guestAccess: Boolean,
 
     @JsonIgnore
-    @OneToMany(cascade = [CascadeType.ALL], mappedBy = "user")
+    @OneToMany(cascade = [CascadeType.ALL], mappedBy = "bankConnection")
     val traces: List<TraceEntry> = emptyList(),
 
 ) : EbicsUser, BankConnectionAccessRightsController {

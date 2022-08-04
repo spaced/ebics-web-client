@@ -42,17 +42,20 @@ open class FileService(private val traceRepository: TraceRepository,
         sessionId: String,
         orderNumber: String?,
         ebicsVersion: EbicsVersion,
-        upload: Boolean
+        upload: Boolean,
+        request: Boolean,
     ) {
         traceRepository.save(
             TraceEntry(
                 null,
                 fileContent,
-                user,
+                null,
+                user, user.partner.bank,
                 sessionId,
                 orderNumber,
                 ebicsVersion,
                 upload,
+                request,
                 orderType = orderType,
                 traceType = TraceType.Content
             )

@@ -695,3 +695,137 @@ databaseChangeLog:
             name: x002CertDigest
             type: BLOB
         tableName: BankKeyStore
+- changeSet:
+    id: 1659539116286-1
+    author: honza (generated)
+    changes:
+    - renameColumn:
+          oldColumnName: user_id
+          newColumnName: bankConnection_id
+          tableName: TraceEntry
+          type: bigint
+- changeSet:
+    id: 1659539116286-2
+    author: honza (generated)
+    changes:
+    - addColumn:
+        columns:
+        - column:
+            name: bank_id
+            type: bigint
+        tableName: TraceEntry
+- changeSet:
+    id: 1659539116286-3
+    author: honza (generated)
+    changes:
+    - addColumn:
+        columns:
+        - column:
+            name: binaryMessageBody
+            type: blob
+        tableName: TraceEntry
+- changeSet:
+    id: 1659539116286-4
+    author: honza (generated)
+    changes:
+    - addColumn:
+        columns:
+        - column:
+            name: errorCode
+            type: integer
+        tableName: TraceEntry
+- changeSet:
+    id: 1659539116286-5
+    author: honza (generated)
+    changes:
+    - addColumn:
+        columns:
+        - column:
+            name: errorCodeText
+            type: varchar(255)
+        tableName: TraceEntry
+- changeSet:
+    id: 1659539116286-6
+    author: honza (generated)
+    changes:
+    - addColumn:
+        columns:
+        - column:
+            name: errorMessage
+            type: varchar(255)
+        tableName: TraceEntry
+- changeSet:
+    id: 1659539116286-7
+    author: honza (generated)
+    changes:
+    - addColumn:
+        columns:
+        - column:
+            name: errorStackTrace
+            type: clob
+        tableName: TraceEntry
+- changeSet:
+    id: 1659539116286-8
+    author: honza (generated)
+    changes:
+    - addColumn:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: request
+            type: boolean
+        tableName: TraceEntry
+- changeSet:
+    id: 1659539116286-9
+    author: honza (generated)
+    changes:
+    - renameColumn:
+          oldColumnName: messageBody
+          newColumnName: textMessageBody
+          tableName: TraceEntry
+          type: clob
+- changeSet:
+    id: 1659539116286-10
+    author: honza (generated)
+    changes:
+    - addColumn:
+        columns:
+        - column:
+            name: traceCategory
+            type: integer
+        tableName: TraceEntry
+- changeSet:
+    id: 1659539116286-11
+    author: honza (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: bankConnection_id
+        baseTableName: TraceEntry
+        constraintName: TraceEntryBankConnectionId
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: EbicsUser
+        validate: true
+- changeSet:
+    id: 1659539116286-12
+    author: honza (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: bank_id
+        baseTableName: TraceEntry
+        constraintName: TraceEntryBankId
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: Bank
+        validate: true
+- changeSet:
+    id: 1659539116286-13
+    author: honza (generated)
+    changes:
+    - dropForeignKeyConstraint:
+        baseTableName: TRACEENTRY
+        constraintName: FKTBXDXNB92Q9XBPBTWNVOS7K8W
+

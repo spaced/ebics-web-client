@@ -20,7 +20,7 @@ interface IFileService {
         fileContent: String,
         sessionId: String,
         ebicsVersion: EbicsVersion,
-    ) = addTextFile(user, orderType, fileContent, sessionId, null, ebicsVersion, false)
+    ) = addTextFile(user, orderType, fileContent, sessionId, null, ebicsVersion, upload = false, request = false)
 
     fun addUploadedTextFile(
         session: EbicsSession,
@@ -28,7 +28,16 @@ interface IFileService {
         fileContent: String,
         orderNumber: String,
         ebicsVersion: EbicsVersion,
-    ) = addTextFile(session.user as BankConnectionEntity, orderType, fileContent, session.sessionId, orderNumber, ebicsVersion, true)
+    ) = addTextFile(
+        session.user as BankConnectionEntity,
+        orderType,
+        fileContent,
+        session.sessionId,
+        orderNumber,
+        ebicsVersion,
+        upload = true,
+        request = true
+    )
 
     fun addTextFile(
         user: BankConnectionEntity,
@@ -37,7 +46,8 @@ interface IFileService {
         sessionId: String,
         orderNumber: String?,
         ebicsVersion: EbicsVersion,
-        upload: Boolean
+        upload: Boolean,
+        request: Boolean,
     )
 
     fun removeAllFilesOlderThan(dateTime: ZonedDateTime)

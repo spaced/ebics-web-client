@@ -1,6 +1,7 @@
 package org.ebics.client.api.trace
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import org.ebics.client.api.bank.Bank
 import org.ebics.client.api.security.AuthenticationContext
 import org.ebics.client.api.trace.orderType.OrderTypeDefinition
 import org.ebics.client.api.bankconnection.BankConnectionEntity
@@ -14,11 +15,29 @@ data class TraceEntry(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id:Long? = null,
 
+    /**
+     * Text trace content (UFT-8), like XML files, text files,..
+     */
     @Lob
-    val messageBody:String,
+    val textMessageBody:String?,
 
-    @ManyToOne(optional = false)
-    val user:BankConnectionEntity,
+    /**
+     * Binary trace content (like zip files, PDFs,..)
+     */
+    @Lob
+    val binaryMessageBody:ByteArray?,
+
+    /**
+     * Reference to bank connection if given
+     */
+    @ManyToOne(optional = true)
+    val bankConnection:BankConnectionEntity?,
+
+    /**
+     * Reference to bank if given
+     */
+    @ManyToOne(optional = true)
+    val bank: Bank?,
 
     val sessionId: String,
 
@@ -28,7 +47,15 @@ data class TraceEntry(
      */
     val ebicsVersion: EbicsVersion,
 
+    /**
+     * Is this EBICS upload or download
+     */
     val upload: Boolean,
+
+    /**
+     * Is this request operation or response operation
+     */
+    val request: Boolean,
 
     /**
      * Web user who created this entry
@@ -47,7 +74,15 @@ data class TraceEntry(
     @Embedded
     val orderType: OrderTypeDefinition? = null,
 
-    val traceType: TraceType = TraceType.EbicsEnvelope
+    val traceType: TraceType = TraceType.EbicsEnvelope,
+
+    val traceCategory: TraceCategory = TraceCategory.ebicsOk,
+
+    //Error relevant fields
+    val errorCode: Int? = null,
+    val errorCodeText: String? = null,
+    val errorMessage: String? = null,
+    val errorStackTrace: String? = null
 ) : TraceAccessRightsController {
     @JsonIgnore
     override fun getObjectName(): String = "Trace entry created by '$creator' from $dateTime"
