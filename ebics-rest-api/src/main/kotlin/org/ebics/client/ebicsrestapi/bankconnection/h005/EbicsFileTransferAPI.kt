@@ -7,7 +7,8 @@ import org.ebics.client.ebicsrestapi.bankconnection.UploadResponse
 import org.ebics.client.ebicsrestapi.bankconnection.UserIdPass
 import org.ebics.client.ebicsrestapi.bankconnection.session.IEbicsSessionFactory
 import org.ebics.client.ebicsrestapi.utils.IFileDownloadCache
-import org.ebics.client.filetransfer.h005.FileTransferSession
+import org.ebics.client.filetransfer.h005.FileDownload
+import org.ebics.client.filetransfer.h005.FileUpload
 import org.ebics.client.model.EbicsVersion
 import org.ebics.client.order.EbicsAdminOrderType
 import org.ebics.client.order.h005.EbicsDownloadOrder
@@ -26,6 +27,8 @@ class EbicsFileTransferAPI(
     private val sessionFactory: IEbicsSessionFactory,
     private val fileDownloadCache: IFileDownloadCache,
     private val fileService: IFileService,
+    private val fileUpload: FileUpload,
+    private val fileDownload: FileDownload,
 ) {
 
     fun uploadFile(userId: Long, uploadRequest: UploadRequest, uploadFile: MultipartFile): UploadResponse {
@@ -37,7 +40,7 @@ class EbicsFileTransferAPI(
             uploadRequest.fileName,
             uploadRequest.params ?: emptyMap()
         )
-        val response = FileTransferSession(session).sendFile(uploadFile.bytes, order)
+        val response = fileUpload.sendFile(session, uploadFile.bytes, order)
         fileService.addUploadedTextFile(
             session,
             OrderTypeDefinition(EbicsAdminOrderType.BTU, EbicsService.fromEbicsService(uploadRequest.orderService)),
@@ -58,7 +61,7 @@ class EbicsFileTransferAPI(
             downloadRequest.endDate?.toDate(),
             downloadRequest.params
         )
-        val outputStream = FileTransferSession(session).fetchFile(order)
+        val outputStream = fileDownload.fetchFile(session, order)
         val resource = ByteArrayResource(outputStream.toByteArray())
         return ResponseEntity.ok().contentLength(resource.contentLength()).body(resource)
     }

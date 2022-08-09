@@ -1,5 +1,6 @@
-package org.ebics.client.http
+package org.ebics.client.http.client
 
+import org.ebics.client.http.client.request.HttpClientRequest
 import org.ebics.client.interfaces.ContentFactory
 import org.ebics.client.io.ByteArrayContentFactory
 import java.net.URL

@@ -1,11 +1,14 @@
 package org.ebics.client.api.trace
 
+import org.ebics.client.api.EbicsBank
+import org.ebics.client.api.bank.Bank
 import org.ebics.client.api.security.AuthenticationContext
-import org.ebics.client.api.trace.orderType.EbicsService
 import org.ebics.client.api.trace.orderType.OrderTypeDefinition
 import org.ebics.client.api.bankconnection.BankConnectionEntity
-import org.ebics.client.interfaces.EbicsRootElement
+import org.ebics.client.exception.IErrorCodeText
+import org.ebics.client.interfaces.ContentFactory
 import org.springframework.stereotype.Service
+import java.lang.Exception
 
 @Service
 class TraceService(
@@ -13,44 +16,56 @@ class TraceService(
     private var traceEnabled: Boolean = true
 ) : TraceManager {
 
-    override fun trace(element: EbicsRootElement, traceSession: org.ebics.client.api.trace.h004.ITraceSession) {
-        if (traceEnabled) {
-            with(traceSession) {
-                val orderType =
-                    OrderTypeDefinition(orderType.adminOrderType, businessOrderType = orderType.businessOrderType)
-                trace(element, orderType, traceSession)
-            }
-        }
-    }
-
-    override fun trace(element: EbicsRootElement, traceSession: org.ebics.client.api.trace.h005.ITraceSession) {
-        if (traceEnabled) {
-            with(traceSession) {
-                val ebicsServiceType = orderType.service?.let { service -> EbicsService.fromEbicsService(service) }
-                val orderType =
-                    OrderTypeDefinition(orderType.adminOrderType, ebicsServiceType = ebicsServiceType)
-                trace(element, orderType, traceSession)
-            }
-        }
-    }
-
-    private fun trace(element: EbicsRootElement, orderType: OrderTypeDefinition, traceSession: ITraceSession) {
+    override fun trace(content: ContentFactory, traceSession: IBaseTraceSession, request: Boolean) {
         with(traceSession) {
-            val user = session.user as BankConnectionEntity
+            val orderTypeDefinition = OrderTypeDefinition.fromOrderType(orderType)
+            val bankConnection = (traceSession as? IBankConnectionTraceSession)?.bankConnection as? BankConnectionEntity
+            val bank = bank as? Bank
             traceRepository.save(
                 TraceEntry(
                     null,
-                    element.toString(),
-                    null,
-                    user,
-                    user.partner.bank,
-                    session.sessionId,
+                    //The non UTF-8 characters would be marked as � (U+FFFD)
+                    content.getFactoryContent().decodeToString(),
+                    content.getFactoryContent(),
+                    bankConnection,
+                    bank,
+                    sessionId,
                     orderNumber,
                     ebicsVersion,
                     upload,
                     request,
-                    orderType = orderType,
-                    traceType = TraceType.EbicsEnvelope
+                    orderType = orderTypeDefinition,
+                    traceType = TraceType.EbicsEnvelope,
+                    traceCategory = TraceCategory.httpOk,
+                )
+            )
+        }
+    }
+
+    override fun traceException(exception: Exception, traceSession: IBaseTraceSession) {
+        with(traceSession) {
+            val orderTypeDefinition = OrderTypeDefinition.fromOrderType(orderType)
+            val bankConnection = (traceSession as? IBankConnectionTraceSession)?.bankConnection as? BankConnectionEntity
+            val bank = bank as? Bank
+            traceRepository.save(
+                TraceEntry(
+                    null,
+                    null,
+                    null,
+                    bankConnection,
+                    bank,
+                    sessionId,
+                    orderNumber,
+                    ebicsVersion,
+                    upload,
+                    request = false,
+                    orderType = orderTypeDefinition,
+                    traceType = TraceType.EbicsEnvelope,
+                    traceCategory = TraceCategory.fromException(exception),
+                    errorStackTrace = exception.stackTraceToString(),
+                    errorMessage = exception.message,
+                    errorCode = (exception as? IErrorCodeText)?.errorCode,
+                    errorCodeText = (exception as? IErrorCodeText)?.errorCodeText,
                 )
             )
         }

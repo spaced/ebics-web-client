@@ -2,17 +2,16 @@ package org.ebics.client.ebicsrestapi.utils
 
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
-import io.mockk.mockkConstructor
 import org.apache.xml.security.Init
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.ebics.client.api.trace.IFileService
-import org.ebics.client.api.trace.housekeeping.ITraceHouseKeeper
-import org.ebics.client.api.trace.housekeeping.TraceHouseKeeper
 import org.ebics.client.api.trace.orderType.OrderTypeDefinition
 import org.ebics.client.ebicsrestapi.EbicsProductConfiguration
 import org.ebics.client.ebicsrestapi.MockSession
 import org.ebics.client.ebicsrestapi.TestContext
 import org.ebics.client.ebicsrestapi.configuration.EbicsRestConfiguration
+import org.ebics.client.exception.EbicsServerException
+import org.ebics.client.exception.h005.EbicsReturnCode
 import org.ebics.client.model.EbicsVersion
 import org.ebics.client.order.EbicsAdminOrderType
 import org.junit.jupiter.api.Assertions
@@ -32,7 +31,9 @@ import java.time.ZonedDateTime
 class FileDownloadCacheTest(
     @Autowired private val fileDownloadCache: IFileDownloadCache,
     @Autowired private val fileService: IFileService,
-    @Autowired private val configuration: EbicsRestConfiguration
+    @Autowired private val configuration: EbicsRestConfiguration,
+    @Autowired private val fileDownloadH004: org.ebics.client.filetransfer.h004.FileDownload,
+    @Autowired private val fileDownloadH005: org.ebics.client.filetransfer.h005.FileDownload,
 ) {
     init {
         Init.init()
@@ -46,8 +47,8 @@ class FileDownloadCacheTest(
         //Mock getting files from EBICS
         val bos = ByteArrayOutputStream()
         bos.write("firstLiveDownload".toByteArray())
-        mockkConstructor(org.ebics.client.filetransfer.h005.FileTransferSession::class)
-        every { anyConstructed<org.ebics.client.filetransfer.h005.FileTransferSession>().fetchFile(any()) } returns bos
+        every { fileDownloadH004.fetchFile(any(), any()) } returns bos
+        every { fileDownloadH005.fetchFile(any(), any()) } returns bos
 
         //Remove all stored entries from cache (the fileDownloadCache has state)
         (fileService as FileServiceMockImpl).removeAllFilesOlderThan(ZonedDateTime.now())
@@ -109,6 +110,54 @@ class FileDownloadCacheTest(
                 EbicsVersion.H005
             )
         Assertions.assertEquals("firstLiveDownload", String(result))
+
+        val result2 =
+            fileDownloadCache.getLastFileCached(
+                session,
+                OrderTypeDefinition(EbicsAdminOrderType.HTD),
+                EbicsVersion.H005
+            )
+        Assertions.assertEquals("firstLiveDownload-cached", String(result2))
+    }
+
+    @Test
+    fun whenCall1Exception_call2Ok_call3Exception_call4ok_then_call2ReturnsLiveResultAndCall4Cached_otherwiseExceptions() {
+        every { fileDownloadH005.fetchFile(any(), any())} throws EbicsServerException(EbicsReturnCode.EBICS_NO_DOWNLOAD_DATA_AVAILABLE)
+
+        val session = MockSession.getSession(1, false, prod, configuration)
+        try {
+            fileDownloadCache.getLastFileCached(
+                session,
+                OrderTypeDefinition(EbicsAdminOrderType.HTD),
+                EbicsVersion.H005
+            )
+        } catch (exception: EbicsServerException) {
+            Assertions.assertEquals(EbicsReturnCode.EBICS_NO_DOWNLOAD_DATA_AVAILABLE, exception.ebicsReturnCode)
+        }
+
+        val bos = ByteArrayOutputStream()
+        bos.write("firstLiveDownload".toByteArray())
+        every { fileDownloadH005.fetchFile(any(), any()) } returns bos
+
+        val result1 =
+            fileDownloadCache.getLastFileCached(
+                session,
+                OrderTypeDefinition(EbicsAdminOrderType.HTD),
+                EbicsVersion.H005
+            )
+        Assertions.assertEquals("firstLiveDownload", String(result1))
+
+        every { fileDownloadH005.fetchFile(any(), any())} throws EbicsServerException(EbicsReturnCode.EBICS_NO_DOWNLOAD_DATA_AVAILABLE)
+
+        try {
+            fileDownloadCache.getLastFileCached(
+                session,
+                OrderTypeDefinition(EbicsAdminOrderType.HTD),
+                EbicsVersion.H005
+            )
+        } catch (exception: EbicsServerException) {
+            Assertions.assertEquals(EbicsReturnCode.EBICS_NO_DOWNLOAD_DATA_AVAILABLE, exception.ebicsReturnCode)
+        }
 
         val result2 =
             fileDownloadCache.getLastFileCached(

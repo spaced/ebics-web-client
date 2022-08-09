@@ -55,7 +55,7 @@ interface BaseTraceEntry {
     val traceCategory: TraceCategory
 
     //Error relevant fields
-    val errorCode: Int?
+    val errorCode: String?
     val errorCodeText: String?
     val errorMessage: String?
     val errorStackTrace: String?

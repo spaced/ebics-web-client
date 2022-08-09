@@ -7,6 +7,7 @@ import org.ebics.client.api.bank.Bank
 import org.ebics.client.api.bank.BankService
 import org.ebics.client.api.bank.versions.VersionSupport
 import org.ebics.client.api.bank.versions.VersionSupportService
+import org.ebics.client.bank.BankOperations
 import org.ebics.client.ebicsrestapi.configuration.EbicsRestConfiguration
 import org.ebics.client.model.EbicsVersion
 import org.springframework.context.annotation.Bean
@@ -53,5 +54,8 @@ class EbicsBankAPITestContext {
     }
 
     @Bean
-    fun ebicsBankApi() = EbicsBankAPI(configuration, bankService(), versionSupportService())
+    fun bankOperations() = mockk<BankOperations>()
+
+    @Bean
+    fun ebicsBankApi() = EbicsBankAPI(configuration, bankService(), versionSupportService(), bankOperations())
 }

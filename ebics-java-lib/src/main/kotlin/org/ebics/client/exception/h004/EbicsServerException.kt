@@ -1,5 +1,5 @@
 package org.ebics.client.exception.h004
 
-import org.ebics.client.exception.EbicsException
+import org.ebics.client.exception.EbicsServerException
 
-open class EbicsServerException(val ebicsReturnCode: EbicsReturnCode, message: String = ebicsReturnCode.toString()) : EbicsException( message )
+open class EbicsServerException(ebicsReturnCode: EbicsReturnCode ) : EbicsServerException( ebicsReturnCode )

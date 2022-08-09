@@ -45,11 +45,8 @@ public class INIRequestElement extends DefaultEbicsRootElement {
 
   @Override
   public void build() throws EbicsException {
-    SignaturePubKeyOrderDataElement signaturePubKey;
-
     signaturePubKey = new SignaturePubKeyOrderDataElement(session);
     signaturePubKey.build();
-    traceSession.trace(signaturePubKey);
     unsecuredRequest = new UnsecuredRequestElement(session,
 	                                           EbicsAdminOrderType.INI,
 	                                           Utils.zip(signaturePubKey.prettyPrint()));
@@ -68,10 +65,15 @@ public class INIRequestElement extends DefaultEbicsRootElement {
     unsecuredRequest.validate();
   }
 
+  public SignaturePubKeyOrderDataElement getSignaturePubKey() {
+    return signaturePubKey;
+  }
+
   // --------------------------------------------------------------------
   // DATA MEMBERS
   // --------------------------------------------------------------------
 
+  private SignaturePubKeyOrderDataElement signaturePubKey;
   private UnsecuredRequestElement unsecuredRequest;
   private TraceSession traceSession;
   private static final long 		serialVersionUID = -1966559247739923555L;

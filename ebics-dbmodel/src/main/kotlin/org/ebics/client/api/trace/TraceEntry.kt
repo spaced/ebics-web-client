@@ -79,7 +79,7 @@ data class TraceEntry(
     override val traceCategory: TraceCategory = TraceCategory.ebicsOk,
 
     //Error relevant fields
-    override val errorCode: Int? = null,
+    override val errorCode: String? = null,
     override val errorCodeText: String? = null,
     override val errorMessage: String? = null,
     override val errorStackTrace: String? = null

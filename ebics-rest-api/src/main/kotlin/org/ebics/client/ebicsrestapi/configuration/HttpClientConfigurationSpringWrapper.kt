@@ -1,6 +1,6 @@
 package org.ebics.client.ebicsrestapi.configuration
 
-import org.ebics.client.http.HttpClientConfiguration
+import org.ebics.client.http.client.HttpClientConfiguration
 
 class HttpClientConfigurationSpringWrapper(
     override var displayName: String = "default",

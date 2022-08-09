@@ -18,7 +18,7 @@ class AnonymousTraceEntry(
     override val orderType: OrderTypeDefinition?,
     override val traceType: TraceType,
     override val traceCategory: TraceCategory,
-    override val errorCode: Int?,
+    override val errorCode: String?,
     override val errorCodeText: String?,
     override val errorMessage: String?,
     override val errorStackTrace: String?

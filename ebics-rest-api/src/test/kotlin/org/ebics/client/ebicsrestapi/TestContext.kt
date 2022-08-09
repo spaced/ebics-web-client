@@ -32,8 +32,14 @@ class TestContext {
         return TomcatServletWebServerFactory()
     }
 
+    @MockkBean
+    private lateinit var fileDownloadH004: org.ebics.client.filetransfer.h004.FileDownload
+
+    @MockkBean
+    private lateinit var fileDownloadH005: org.ebics.client.filetransfer.h005.FileDownload
+
     @Bean(name = ["TestFileDownloadCache"])
-    fun fileDownloadCache(): IFileDownloadCache = FileDownloadCache(fileService())
+    fun fileDownloadCache(): IFileDownloadCache = FileDownloadCache(fileService(), fileDownloadH004, fileDownloadH005)
 
     @Bean(name = ["FileServiceMockImpl"])
     fun fileService(): IFileService = FileServiceMockImpl()

@@ -1,4 +1,4 @@
-package org.ebics.client.http
+package org.ebics.client.http.client
 
 import org.apache.http.HttpHeaders
 import org.apache.http.client.entity.EntityBuilder
@@ -7,15 +7,17 @@ import org.apache.http.client.methods.HttpPost
 import org.apache.http.impl.client.CloseableHttpClient
 import org.apache.http.util.EntityUtils
 import org.ebics.client.exception.EbicsException
+import org.ebics.client.exception.HttpServerException
+import org.ebics.client.http.client.request.HttpClientRequest
 import org.ebics.client.io.ByteArrayContentFactory
 import org.slf4j.LoggerFactory
 import java.lang.Exception
 import javax.annotation.PreDestroy
 
-class SimpleHttpClient(
+open class SimpleHttpClient(
     private val httpClient: CloseableHttpClient,
     override val configuration: HttpClientRequestConfiguration,
-    val configurationName: String = "default"
+    val configurationName: String = "default",
 ) : HttpClient {
     override fun send(request: HttpClientRequest): ByteArrayContentFactory {
         logger.trace("Sending HTTP POST request to URL: ${request.requestURL} using config: $configurationName")
@@ -52,8 +54,8 @@ class SimpleHttpClient(
             //Try to get response content if there is something
             val responseContent = try {
                 EntityUtils.toString(response.entity, "UTF-8")
-            } catch (ex:Exception) {
-                ""
+            } catch (ex: Exception) {
+                null
             }
 
             //Get response headers
@@ -61,21 +63,18 @@ class SimpleHttpClient(
 
             if (!responseContent.isNullOrBlank()) {
                 logger.warn(
-                    "Unexpected HTTP Code: {0} returned as EBICS response, reason: {1}, response headers '{2}', response content: '{3}'",
-                    httpCode, reasonPhrase, responseHeaders, responseContent)
+                    "Unexpected HTTP Code: $httpCode returned as EBICS response, reason: $reasonPhrase, response headers '$responseHeaders', response content: '$responseContent'",
+                    httpCode, reasonPhrase, responseHeaders, responseContent
+                )
             } else {
                 logger.warn(
-                    "Unexpected HTTP Code: {0} returned as EBICS response, reason: {1}, response headers '{2}' (no response content available)",
+                    "Unexpected HTTP Code: $httpCode returned as EBICS response, reason: $reasonPhrase, response headers '$responseHeaders' (no response content available)",
                     httpCode, reasonPhrase, responseHeaders
                 )
             }
-            throw EbicsException(
-                String.format(
-                    "Wrong returned HTTP code: %d %s",
-                    httpCode,
-                    reasonPhrase
-                )
-            )
+            throw HttpServerException(
+                httpCode.toString(), reasonPhrase,
+                "Wrong returned HTTP code: $httpCode $reasonPhrase")
         }
     }
 
@@ -86,6 +85,6 @@ class SimpleHttpClient(
     }
 
     companion object {
-        private val logger = LoggerFactory.getLogger(PooledHttpClientFactory::class.java)
+        private val logger = LoggerFactory.getLogger(SimpleHttpClient::class.java)
     }
 }

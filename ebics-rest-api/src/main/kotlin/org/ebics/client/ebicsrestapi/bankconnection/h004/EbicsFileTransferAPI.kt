@@ -6,7 +6,8 @@ import org.ebics.client.ebicsrestapi.bankconnection.UploadResponse
 import org.ebics.client.ebicsrestapi.bankconnection.UserIdPass
 import org.ebics.client.ebicsrestapi.bankconnection.session.IEbicsSessionFactory
 import org.ebics.client.ebicsrestapi.utils.IFileDownloadCache
-import org.ebics.client.filetransfer.h004.FileTransferSession
+import org.ebics.client.filetransfer.h004.FileDownload
+import org.ebics.client.filetransfer.h004.FileUpload
 import org.ebics.client.model.EbicsVersion
 import org.ebics.client.order.EbicsAdminOrderType
 import org.ebics.client.order.h004.EbicsDownloadOrder
@@ -25,13 +26,14 @@ class EbicsFileTransferAPI(
     private val sessionFactory: IEbicsSessionFactory,
     private val fileDownloadCache: IFileDownloadCache,
     private val fileService: IFileService,
+    private val fileUploadService: FileUpload,
+    private val fileDownloadService: FileDownload,
 ) {
-
     fun uploadFile(userId: Long, uploadRequest: UploadRequest, uploadFile: MultipartFile): UploadResponse {
         val session = sessionFactory.getSession(UserIdPass(userId, uploadRequest.password))
         val order =
             EbicsUploadOrder(uploadRequest.orderType, uploadRequest.attributeType, uploadRequest.params ?: emptyMap())
-        val response = FileTransferSession(session).sendFile(uploadFile.bytes, order)
+        val response = fileUploadService.sendFile(session, uploadFile.bytes, order)
         fileService.addUploadedTextFile(
             session,
             OrderTypeDefinition(EbicsAdminOrderType.BTU, businessOrderType = uploadRequest.orderType),
@@ -51,7 +53,7 @@ class EbicsFileTransferAPI(
             downloadRequest.endDate?.toDate(),
             downloadRequest.params
         )
-        val outputStream = FileTransferSession(session).fetchFile(order)
+        val outputStream = fileDownloadService.fetchFile(session, order)
         val resource = ByteArrayResource(outputStream.toByteArray())
         return ResponseEntity.ok().contentLength(resource.contentLength()).body(resource)
     }

@@ -50,7 +50,6 @@ public class HIARequestElement extends DefaultEbicsRootElement {
 
     requestOrderData = new HIARequestOrderDataElement(session);
     requestOrderData.build();
-    traceSession.trace(requestOrderData);
     unsecuredRequest = new UnsecuredRequestElement(session,
 	                                           EbicsAdminOrderType.HIA,
 	                                           Utils.zip(requestOrderData.prettyPrint()));
@@ -69,10 +68,15 @@ public class HIARequestElement extends DefaultEbicsRootElement {
     unsecuredRequest.validate();
   }
 
+  public HIARequestOrderDataElement getRequestOrderData() {
+    return requestOrderData;
+  }
+
   // --------------------------------------------------------------------
   // DATA MEMBERS
   // --------------------------------------------------------------------
 
+  private HIARequestOrderDataElement requestOrderData;
   private UnsecuredRequestElement unsecuredRequest;
   private TraceSession traceSession;
   private static final long 		serialVersionUID = 1130436605993828777L;

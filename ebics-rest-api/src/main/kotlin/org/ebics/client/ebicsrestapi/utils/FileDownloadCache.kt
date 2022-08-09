@@ -8,7 +8,9 @@ import org.ebics.client.model.EbicsVersion
 import org.springframework.stereotype.Service
 
 @Service
-class FileDownloadCache(private val fileService: IFileService) : IFileDownloadCache {
+class FileDownloadCache(private val fileService: IFileService,
+                        private val fileDownloadH004: org.ebics.client.filetransfer.h004.FileDownload,
+                        private val fileDownloadH005: org.ebics.client.filetransfer.h005.FileDownload,) : IFileDownloadCache {
     override fun getLastFileCached(
         session: EbicsSession,
         orderType: OrderTypeDefinition,
@@ -42,7 +44,8 @@ class FileDownloadCache(private val fileService: IFileService) : IFileDownloadCa
     ): ByteArray {
         val outputStream =
             if (ebicsVersion == EbicsVersion.H005) {
-                org.ebics.client.filetransfer.h005.FileTransferSession(session).fetchFile(
+                fileDownloadH005.fetchFile(
+                    session,
                     org.ebics.client.order.h005.EbicsDownloadOrder(
                         orderType.adminOrderType,
                         orderType.ebicsServiceType,
@@ -51,7 +54,8 @@ class FileDownloadCache(private val fileService: IFileService) : IFileDownloadCa
                     )
                 )
             } else {
-                org.ebics.client.filetransfer.h004.FileTransferSession(session).fetchFile(
+                fileDownloadH004.fetchFile(
+                    session,
                     org.ebics.client.order.h004.EbicsDownloadOrder(
                         orderType.adminOrderType,
                         orderType.businessOrderType,

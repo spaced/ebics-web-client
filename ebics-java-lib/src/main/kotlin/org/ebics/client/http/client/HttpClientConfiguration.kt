@@ -1,4 +1,4 @@
-package org.ebics.client.http
+package org.ebics.client.http.client
 
 interface HttpClientConfiguration : HttpClientRequestConfiguration {
     /**

@@ -28,7 +28,7 @@ class EbicsBankAPITest(@Autowired private val bankAPI: EbicsBankAPI) {
     @Test
     fun onlineTestTwoVersions() {
         mockkConstructor(BankOperations::class)
-        every { anyConstructed<BankOperations>().sendHEV(any(), any(), any()) } returns listOf(EbicsVersion.H005, EbicsVersion.H004)
+        every { anyConstructed<BankOperations>().sendHEV(any(), any()) } returns listOf(EbicsVersion.H005, EbicsVersion.H004)
         val versions = bankAPI.getSupportedVersions(1, URL("http://test.url"), "bankhostid", "default", EbicsAccessMode.ForcedOnline)
         Assertions.assertTrue(versions.size == 2)
         with(versions.single{ it.version == EbicsVersion.H005 }) {
@@ -48,7 +48,7 @@ class EbicsBankAPITest(@Autowired private val bankAPI: EbicsBankAPI) {
     @Test
     fun onlineTestUnknownVersion() {
         mockkConstructor(BankOperations::class)
-        every { anyConstructed<BankOperations>().sendHEV(any(), any(), any()) } returns listOf(EbicsVersion.H002)
+        every { anyConstructed<BankOperations>().sendHEV(any(), any()) } returns listOf(EbicsVersion.H002)
         val versions = bankAPI.getSupportedVersions(1, URL("http://test.url"), "bankhostid", "default", EbicsAccessMode.ForcedOnline)
         Assertions.assertTrue(versions.size == 3)
         Assertions.assertFalse(versions.any{ it.isAllowedForUse })
@@ -57,7 +57,7 @@ class EbicsBankAPITest(@Autowired private val bankAPI: EbicsBankAPI) {
     @Test
     fun optionalOnlineTest() {
         mockkConstructor(BankOperations::class)
-        every { anyConstructed<BankOperations>().sendHEV(any(), any(), any()) } throws IOException("error reading HEV")
+        every { anyConstructed<BankOperations>().sendHEV(any(), any()) } throws IOException("error reading HEV")
         val versions = bankAPI.getSupportedVersions(2, URL("http://test.url"), "bankhostid", "default", EbicsAccessMode.OptionalOnline)
         Assertions.assertTrue(versions.size == 2)
         with(versions.single{ it.version == EbicsVersion.H005 }) {

@@ -1,9 +1,9 @@
-package org.ebics.client.http
+package org.ebics.client.http.client.request
 
 import org.ebics.client.interfaces.ContentFactory
 import java.net.URL
 
-data class HttpClientRequest (
-    val requestURL: URL,
+interface IHttpClientRequest {
+    val requestURL: URL
     val content: ContentFactory
-)
+}

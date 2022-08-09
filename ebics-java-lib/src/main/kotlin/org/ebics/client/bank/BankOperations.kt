@@ -18,26 +18,51 @@
  */
 package org.ebics.client.bank
 
+import org.ebics.client.api.EbicsBank
 import org.ebics.client.api.EbicsConfiguration
+import org.ebics.client.api.trace.TraceManager
+import org.ebics.client.api.trace.h000.BankTraceSession
 import org.ebics.client.exception.EbicsException
+import org.ebics.client.http.client.TraceableHttpClient
+import org.ebics.client.http.client.request.HttpClientRequest
+import org.ebics.client.http.factory.ITraceableHttpClientFactory
 
 import org.ebics.client.io.ByteArrayContentFactory
 import org.ebics.client.model.EbicsVersion
+import org.ebics.client.order.EbicsAdminOrderType
+import org.ebics.client.order.h004.OrderTypeDefinition
 import org.ebics.client.xml.h000.HEVRequest
 import org.ebics.client.xml.h000.HEVResponse
+import org.springframework.stereotype.Component
 import java.io.IOException
-import java.net.URL
+import java.util.*
 
-class BankOperations(val configuration: EbicsConfiguration)  {
+@Component
+class BankOperations(
+    val configuration: EbicsConfiguration,
+    val httpClient: ITraceableHttpClientFactory<TraceableHttpClient>,
+    val traceManager: TraceManager
+) {
     @Throws(EbicsException::class, IOException::class)
-    fun sendHEV(bankURL: URL, bankHostId: String, configurationName: String = "default"): List<EbicsVersion> {
-        val request = HEVRequest(bankHostId).apply { build(); validate() }
-        val responseBody = configuration.httpClientFactory.getHttpClient(configurationName).send(bankURL, ByteArrayContentFactory(request.prettyPrint()))
-        val response =  HEVResponse(responseBody).apply {
-            build()
-            validate()
+    fun sendHEV(bank: EbicsBank, configurationName: String = "default"): List<EbicsVersion> {
+        val request = HEVRequest(bank.hostId).apply { build(); validate() }
+        val traceSession = BankTraceSession(
+            bank,
+            upload = false,
+            true,
+            UUID.randomUUID().toString(),
+            EbicsVersion.H000,
+            OrderTypeDefinition(EbicsAdminOrderType.HEV)
+        )
+        val responseBody = httpClient.getHttpClient(configurationName)
+            .sendAndTrace(HttpClientRequest(bank.bankURL, ByteArrayContentFactory(request.prettyPrint())), traceSession)
+        val response = HEVResponse(responseBody).apply {
+            traceManager.callAndTraceException(traceSession) {
+                build()
+                validate()
+                report()
+            }
         }
-        response.report()
         return response.getSupportedVersions()
     }
 }

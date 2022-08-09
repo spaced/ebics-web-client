@@ -1,6 +1,6 @@
 package org.ebics.client.ebicsrestapi.configuration
 
-import org.ebics.client.http.HttpClientGlobalConfiguration
+import org.ebics.client.http.factory.HttpClientGlobalConfiguration
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping

@@ -732,7 +732,7 @@ databaseChangeLog:
         columns:
         - column:
             name: errorCode
-            type: integer
+            type: varchar(255)
         tableName: TraceEntry
 - changeSet:
     id: 1659539116286-5

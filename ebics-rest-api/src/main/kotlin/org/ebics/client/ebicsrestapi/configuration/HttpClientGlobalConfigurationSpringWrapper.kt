@@ -1,7 +1,7 @@
 package org.ebics.client.ebicsrestapi.configuration
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import org.ebics.client.http.HttpClientGlobalConfiguration
+import org.ebics.client.http.factory.HttpClientGlobalConfiguration
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Configuration
 

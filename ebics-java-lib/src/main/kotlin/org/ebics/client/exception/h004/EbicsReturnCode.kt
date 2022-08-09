@@ -18,6 +18,8 @@
  */
 package org.ebics.client.exception.h004
 
+import org.ebics.client.exception.AbstractEbicsReturnCode
+import org.ebics.client.exception.EbicsReturnCodeCompanion
 import java.io.Serializable
 import java.util.*
 
@@ -34,41 +36,24 @@ import java.util.*
  * @param text the code text
  */
 class EbicsReturnCode (
-    val code: String,
-    val text: String
-) : Serializable {
-    /**
-     * Throws an equivalent `EbicsException`
-     * @throws EbicsServerException
-     */
-    @Throws(EbicsServerException::class)
-    fun throwException() {
-        throw EbicsServerException(this, text)
-    }
+    code: String,
+    text: String
+) : AbstractEbicsReturnCode(code, text) {
 
     /**
      * Tells if the return code is an OK one.
      * @return True if the return code is OK one.
      */
-    val isOk: Boolean
+    override val isOk: Boolean
      get() = code == EBICS_OK.code
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null || javaClass != other.javaClass) return false
-        val that = other as EbicsReturnCode
-        return code == that.code
-    }
+    companion object : EbicsReturnCodeCompanion {
+        /**
+         * Map of all ebics error codes
+         * Can't be enum, because there can be unknown error codes, for which would be then difficult logging otherwise
+         */
+        private val returnCodes: MutableMap<String, EbicsReturnCode> = HashMap()
 
-    override fun hashCode(): Int {
-        return Objects.hash(code)
-    }
-
-    override fun toString(): String {
-        return "$code $text"
-    }
-
-    companion object {
         /**
          * Returns the equivalent `ReturnCode` of a given code
          * @param code the given code
@@ -76,12 +61,12 @@ class EbicsReturnCode (
          * @return the equivalent `ReturnCode`
          */
         @JvmStatic
-        fun toReturnCode(code: String, text: String): EbicsReturnCode {
+        override fun toReturnCode(code: String, text: String): EbicsReturnCode {
             return EbicsReturnCode(code, text)
         }
 
         @JvmStatic
-        fun toReturnCode(code: String): EbicsReturnCode {
+        override fun toReturnCode(code: String): EbicsReturnCode {
             return returnCodes.getOrDefault(
                 code, EbicsReturnCode(
                     code,
@@ -90,7 +75,6 @@ class EbicsReturnCode (
             )
         }
 
-        private val returnCodes: MutableMap<String, EbicsReturnCode> = HashMap()
 
         val EBICS_OK: EbicsReturnCode = create("000000", "EBICS_OK")
         @JvmField
@@ -124,9 +108,7 @@ class EbicsReturnCode (
         val EBICS_SIGNATURE_VERIFICATION_FAILED = create("091301", "EBICS_SIGNATURE_VERIFICATION_FAILED")
         val EBICS_INVALID_ORDER_DATA_FORMAT = create("090004", "EBICS_INVALID_ORDER_DATA_FORMAT")
 
-        private const val BUNDLE_NAME = "org.ebics.client.exception.messages"
-
-        private fun create(code: String, symbolicName: String): EbicsReturnCode {
+        override fun create(code: String, symbolicName: String): EbicsReturnCode {
             val returnCode = EbicsReturnCode(code, symbolicName)
             returnCodes[code] = returnCode
             return returnCode

@@ -17,7 +17,8 @@ import java.net.URL
 class EbicsBankAPI(
     private val configuration: EbicsRestConfiguration,
     private val bankService: BankService,
-    private val versionSupportService: VersionSupportService
+    private val versionSupportService: VersionSupportService,
+    private val bankOperations: BankOperations,
 ) {
 
     fun updateSupportedVersion(bankId: Long, versionSupport: VersionSupportBase) {
@@ -136,7 +137,7 @@ class EbicsBankAPI(
     }
 
     private fun getEbicsServerVersions(bank: Bank): List<EbicsVersion> {
-        val versions = BankOperations(configuration).sendHEV(bank.bankURL, bank.hostId, bank.httpClientConfigurationName)
+        val versions = bankOperations.sendHEV(bank)
         if (versions.isEmpty())
             throw FunctionException(
                 "The bank ${bank.bankURL} with hostID: ${bank.hostId} doen't support any EBICS version, HEV return empty list",

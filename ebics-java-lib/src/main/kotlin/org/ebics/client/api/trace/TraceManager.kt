@@ -18,7 +18,9 @@
  */
 package org.ebics.client.api.trace
 
-import org.ebics.client.interfaces.EbicsRootElement
+import org.ebics.client.interfaces.ContentFactory
+import java.lang.Exception
+import kotlin.reflect.KFunction
 
 /**
  * A mean to make EBICS transfer logged by saving
@@ -26,7 +28,8 @@ import org.ebics.client.interfaces.EbicsRootElement
  */
 interface TraceManager {
     /**
-     * Saves the `EbicsRootElement` in the traces
+     * Saves the content in the traces,
+     * and annotate it with all information in TraceSession
      *
      * @param element the element to trace
      * @param traceRequest all the trace request attributes
@@ -34,14 +37,39 @@ interface TraceManager {
      * @see Configuration.isTraceEnabled
      */
     fun trace(
-        element: EbicsRootElement,
-        traceSession: org.ebics.client.api.trace.h004.ITraceSession
+        contentFactory: ContentFactory,
+        traceSession: IBaseTraceSession,
+        request:Boolean = traceSession.request,
     )
 
-    fun trace(
-        element: EbicsRootElement,
-        traceSession: org.ebics.client.api.trace.h005.ITraceSession
+    fun traceException(
+        exception: Exception,
+        traceSession: IBaseTraceSession
     )
+
+
+
+    /**
+     * This is calling the provided function,
+     * In case exception is thrown, the exception is traced and propagated further
+     */
+    fun <T> callAndTraceException(traceSession: IBaseTraceSession, function: KFunction<T>, vararg params: Any?):T {
+        return try {
+            function.call(params)
+        } catch (exception: Exception) {
+            traceException(exception, traceSession)
+            throw exception
+        }
+    }
+
+    fun <T> callAndTraceException(traceSession: IBaseTraceSession, function: () -> T):T {
+        return try {
+            function().apply {  }
+        } catch (exception: Exception) {
+            traceException(exception, traceSession)
+            throw exception
+        }
+    }
 
     /**
      * Enables or disables the trace feature

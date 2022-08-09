@@ -1,4 +1,4 @@
-package org.ebics.client.http
+package org.ebics.client.http.factory
 
 import org.apache.http.HttpHost
 import org.apache.http.auth.AuthScope
@@ -10,22 +10,31 @@ import org.apache.http.impl.client.HttpClientBuilder
 import org.apache.http.impl.client.ProxyAuthenticationStrategy
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager
 import org.apache.http.ssl.SSLContexts
+import org.ebics.client.http.*
+import org.ebics.client.http.client.HttpClient
+import org.ebics.client.http.client.HttpClientConfiguration
+import org.ebics.client.http.client.request.HttpClientRequest
+import org.ebics.client.http.client.HttpClientRequestConfiguration
+import org.ebics.client.interfaces.ContentFactory
+import org.ebics.client.io.ByteArrayContentFactory
 import org.ebics.client.utils.requireNotNullAndNotBlank
 import org.slf4j.LoggerFactory
+import org.springframework.stereotype.Component
 import java.io.File
 import javax.annotation.PreDestroy
 
 
-class PooledHttpClientFactory(
+@Component
+abstract class AbstractPooledHttpClientFactory<T: HttpClient>(
     config: HttpClientGlobalConfiguration
-) : HttpClientFactory {
+) : IHttpClientFactory<T> {
 
     private val poolingConnManager = PoolingHttpClientConnectionManager().apply {
         maxTotal = config.connectionPoolMaxTotal
         defaultMaxPerRoute = config.connectionPoolDefaultMaxPerRoute
     }
 
-    private val httpClients: Map<String, SimpleHttpClient>
+    private val httpClients: Map<String, T>
 
     init {
         val configurations = config.configurations.ifEmpty {
@@ -52,15 +61,27 @@ class PooledHttpClientFactory(
         poolingConnManager.close()
     }
 
-    override fun getHttpClient(configurationName: String): HttpClient {
+    override fun getHttpClient(configurationName: String): T {
         return requireNotNull(httpClients[configurationName]) {
             "Requested HTTP configuration: '$configurationName' doesn't existing, following configuration names are available: ${httpClients.keys}"
         }
     }
 
-    private fun createHttpClients(namedClientConfigurations: Map<String, HttpClientConfiguration>): Map<String, SimpleHttpClient> {
+    override fun sendRequest(
+        httpTransferSession: IHttpTransferSession,
+        contentFactory: ContentFactory
+    ): ByteArrayContentFactory {
+        return getHttpClient(httpTransferSession.httpConfigurationName).send(
+            HttpClientRequest(
+                httpTransferSession.ebicsUrl,
+                contentFactory
+            )
+        )
+    }
+
+    private fun createHttpClients(namedClientConfigurations: Map<String, HttpClientConfiguration>): Map<String, T> {
         return namedClientConfigurations.map { config ->
-            config.key to SimpleHttpClient(
+            config.key to instantiateHttpClient(
                 createHttpClient(config.key, config.value),
                 config.value,
                 config.key
@@ -69,7 +90,7 @@ class PooledHttpClientFactory(
     }
 
     /**
-     * Create HTTP client from EBICS configuration
+     * Create Apache CloseableHttpClient client from EBICS configuration
      */
     private fun createHttpClient(
         configurationName: String,
@@ -138,6 +159,6 @@ class PooledHttpClientFactory(
     }
 
     companion object {
-        private val logger = LoggerFactory.getLogger(PooledHttpClientFactory::class.java)
+        private val logger = LoggerFactory.getLogger(AbstractPooledHttpClientFactory::class.java)
     }
 }
