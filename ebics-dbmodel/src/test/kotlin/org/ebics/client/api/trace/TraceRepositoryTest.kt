@@ -252,17 +252,17 @@ class TraceRepositoryTest(
             TraceEntry(
                 null, "test", null, mockUser1,  null,"sessId1", "O5N3", EbicsVersion.H004, false, false, creator = "jan", orderType =
                 OrderTypeDefinition(EbicsAdminOrderType.HTD, service),
-                traceCategory = TraceCategory.ebicsError
+                traceCategory = TraceCategory.ebicsServerError
             )
         )
 
         val positiveResult =
-            traceRepository.findOne(traceCategoryEquals(TraceCategory.ebicsError))
+            traceRepository.findOne(traceCategoryEquals(TraceCategory.ebicsServerError))
         Assertions.assertTrue(positiveResult.isPresent)
 
         val negativeResult =
             traceRepository.findOne(traceCategoryEquals(TraceCategory.ebicsOk)
-                .or(traceCategoryEquals(TraceCategory.httpError))
+                .or(traceCategoryEquals(TraceCategory.httpServerError))
                 .or(traceCategoryEquals(TraceCategory.httpOk)))
         Assertions.assertFalse(negativeResult.isPresent)
     }

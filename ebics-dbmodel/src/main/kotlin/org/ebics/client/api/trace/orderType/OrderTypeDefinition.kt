@@ -21,9 +21,9 @@ data class OrderTypeDefinition(
     companion object {
         fun fromOrderType(orderType: IOrderTypeDefinition): OrderTypeDefinition {
             return when {
-                (orderType.javaClass.isAssignableFrom(IOrderTypeDefinition25::class.java)) ->
+                (IOrderTypeDefinition25::class.java.isAssignableFrom(orderType.javaClass)) ->
                    OrderTypeDefinition(orderType.adminOrderType, businessOrderType = (orderType as IOrderTypeDefinition25).businessOrderType)
-                (orderType.javaClass.isAssignableFrom(IOrderTypeDefinition30::class.java)) -> {
+                (IOrderTypeDefinition30::class.java.isAssignableFrom(orderType.javaClass)) -> {
                     val ebicsService = (orderType as IOrderTypeDefinition30).service?.let { service -> EbicsService.fromEbicsService(service)}
                     OrderTypeDefinition(orderType.adminOrderType, ebicsServiceType = ebicsService)
                 }

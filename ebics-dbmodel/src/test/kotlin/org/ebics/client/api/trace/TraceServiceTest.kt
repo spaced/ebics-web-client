@@ -6,7 +6,13 @@ import org.ebics.client.api.bank.BankService
 import org.ebics.client.api.bankconnection.BankConnection
 import org.ebics.client.api.bankconnection.BankConnectionEntity
 import org.ebics.client.api.bankconnection.BankConnectionServiceImpl
+import org.ebics.client.api.trace.h005.TraceSession
+import org.ebics.client.exception.EbicsServerException
+import org.ebics.client.exception.HttpServerException
+import org.ebics.client.exception.h005.EbicsReturnCode
 import org.ebics.client.model.EbicsVersion
+import org.ebics.client.order.EbicsAdminOrderType
+import org.ebics.client.order.h005.OrderTypeDefinition
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -149,5 +155,55 @@ class TraceServiceTest(
         val result2 = traceService.findOwnTraces()
         Assertions.assertEquals(1, result2.size)
         Assertions.assertTrue(result2[0].javaClass.isAssignableFrom(TraceEntry::class.java))
+    }
+
+    @Test
+    @WithMockUser(username = "jan", roles = ["USER"])
+    fun whenEbicsExceptionTraced_thenTheEbicsExceptionRecordToBeFound() {
+        val mockUser1 = getMockUser()
+        val traceSession = TraceSession(mockUser1, OrderTypeDefinition(adminOrderType = EbicsAdminOrderType.BTD, service = null), false, request = false, "sessionId1")
+        traceService.traceException(EbicsServerException(EbicsReturnCode.EBICS_NO_DOWNLOAD_DATA_AVAILABLE), traceSession)
+
+        val result = traceService.findAllTraces()
+        Assertions.assertEquals(1, result.size)
+        Assertions.assertTrue(result[0].javaClass.isAssignableFrom(TraceEntry::class.java))
+        with(result[0] as TraceEntry) {
+            Assertions.assertNull(textMessageBody)
+            Assertions.assertNull(binaryMessageBody)
+            Assertions.assertEquals(mockUser1.partner.bank.bankURL, bank?.bankURL)
+            Assertions.assertEquals(mockUser1.partner.partnerId, bankConnection?.partner?.partnerId)
+            Assertions.assertEquals("sessionId1", sessionId)
+            Assertions.assertEquals(TraceType.EbicsEnvelope, traceType)
+            Assertions.assertEquals(TraceCategory.ebicsServerError, traceCategory)
+            Assertions.assertEquals(EbicsReturnCode.EBICS_NO_DOWNLOAD_DATA_AVAILABLE.toString(), errorMessage)
+            Assertions.assertEquals(EbicsReturnCode.EBICS_NO_DOWNLOAD_DATA_AVAILABLE.code, errorCode)
+            Assertions.assertEquals(EbicsReturnCode.EBICS_NO_DOWNLOAD_DATA_AVAILABLE.text, errorCodeText)
+            Assertions.assertFalse(errorStackTrace.isNullOrBlank())
+        }
+    }
+
+    @Test
+    @WithMockUser(username = "jan", roles = ["USER"])
+    fun whenHttpExceptionTraced_thenTheHttpExceptionRecordToBeFound() {
+        val mockUser1 = getMockUser()
+        val traceSession = TraceSession(mockUser1, OrderTypeDefinition(adminOrderType = EbicsAdminOrderType.BTD, service = null), false, request = false, "sessionId1")
+        traceService.traceException(HttpServerException("503", "Error 503", "err 503"), traceSession)
+
+        val result = traceService.findAllTraces()
+        Assertions.assertEquals(1, result.size)
+        Assertions.assertTrue(result[0].javaClass.isAssignableFrom(TraceEntry::class.java))
+        with(result[0] as TraceEntry) {
+            Assertions.assertNull(textMessageBody)
+            Assertions.assertNull(binaryMessageBody)
+            Assertions.assertEquals(mockUser1.partner.bank.bankURL, bank?.bankURL)
+            Assertions.assertEquals(mockUser1.partner.partnerId, bankConnection?.partner?.partnerId)
+            Assertions.assertEquals("sessionId1", sessionId)
+            Assertions.assertEquals(TraceType.EbicsEnvelope, traceType)
+            Assertions.assertEquals(TraceCategory.httpServerError, traceCategory)
+            Assertions.assertEquals("err 503", errorMessage)
+            Assertions.assertEquals("503", errorCode)
+            Assertions.assertEquals("Error 503", errorCodeText)
+            Assertions.assertFalse(errorStackTrace.isNullOrBlank())
+        }
     }
 }
