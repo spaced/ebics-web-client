@@ -1,6 +1,5 @@
 package org.ebics.client.exception
 
-import org.ebics.client.exception.h005.EbicsReturnCode
 import java.util.*
 
 abstract class AbstractEbicsReturnCode(val code: String, val text: String) {
@@ -23,7 +22,7 @@ abstract class AbstractEbicsReturnCode(val code: String, val text: String) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || javaClass != other.javaClass) return false
-        val that = other as EbicsReturnCode
+        val that = other as AbstractEbicsReturnCode
         return code == that.code
     }
 

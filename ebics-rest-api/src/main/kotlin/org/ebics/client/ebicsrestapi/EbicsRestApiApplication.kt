@@ -15,7 +15,14 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import java.io.File
 
 @SpringBootApplication
-@ComponentScan("org.ebics.client.api", "org.ebics.client.ebicsrestapi")
+@ComponentScan(
+    "org.ebics.client.api",
+    "org.ebics.client.ebicsrestapi",
+    "org.ebics.client.bank",
+    "org.ebics.client.filetransfer",
+    "org.ebics.client.keymgmt",
+    "org.ebics.client.http.factory"
+)
 @EntityScan("org.ebics.client.api")
 @EnableJpaRepositories("org.ebics.client.api")
 class EbicsRestApiApplication : SpringBootServletInitializer() {
@@ -52,7 +59,7 @@ class EbicsRestApiApplication : SpringBootServletInitializer() {
                     println("EWC_CONFIG_HOME is not set, all mandatory external properties must be set as system or environment variable")
                 }
                 setLocations(*resources.toTypedArray())
-            } catch (ex:Exception) {
+            } catch (ex: Exception) {
                 System.err.println("Failed to start application -> failed to configure property placeholder: $ex")
                 throw ex
             }

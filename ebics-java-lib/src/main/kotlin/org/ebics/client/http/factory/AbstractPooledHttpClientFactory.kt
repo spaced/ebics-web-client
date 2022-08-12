@@ -21,12 +21,12 @@ import org.ebics.client.utils.requireNotNullAndNotBlank
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.io.File
+import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
 
 
-@Component
 abstract class AbstractPooledHttpClientFactory<T: HttpClient>(
-    config: HttpClientGlobalConfiguration
+    private val config: HttpClientGlobalConfiguration
 ) : IHttpClientFactory<T> {
 
     private val poolingConnManager = PoolingHttpClientConnectionManager().apply {
@@ -34,9 +34,10 @@ abstract class AbstractPooledHttpClientFactory<T: HttpClient>(
         defaultMaxPerRoute = config.connectionPoolDefaultMaxPerRoute
     }
 
-    private val httpClients: Map<String, T>
+    private lateinit var httpClients: Map<String, T>
 
-    init {
+    @PostConstruct
+    fun initConfigurations() {
         val configurations = config.configurations.ifEmpty {
             mapOf("default" to object : HttpClientConfiguration {
                 override val displayName: String = "default"

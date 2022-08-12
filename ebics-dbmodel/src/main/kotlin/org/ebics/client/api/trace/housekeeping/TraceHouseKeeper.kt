@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional
 import java.time.ZonedDateTime
 
 @Service
-class TraceHouseKeeper(private val traceRepository: TraceRepository,
+open class TraceHouseKeeper(private val traceRepository: TraceRepository,
                        @Value("\${housekeeping.trace.older-than-days:30}")
                        private val houseKeepOlderThanDays: Long) : ITraceHouseKeeper {
 

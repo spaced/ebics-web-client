@@ -775,6 +775,7 @@ databaseChangeLog:
               nullable: false
             name: request
             type: boolean
+            defaultValue: false
         tableName: TraceEntry
 - changeSet:
     id: 1659539116286-9

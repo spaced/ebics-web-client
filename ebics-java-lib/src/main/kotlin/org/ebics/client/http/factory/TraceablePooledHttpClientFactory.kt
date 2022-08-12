@@ -8,11 +8,13 @@ import org.ebics.client.http.client.HttpClientRequestConfiguration
 import org.ebics.client.http.client.TraceableHttpClient
 import org.ebics.client.interfaces.ContentFactory
 import org.ebics.client.io.ByteArrayContentFactory
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+import javax.annotation.PostConstruct
 
 @Component
-class TraceablePooledHttpClientFactory(config: HttpClientGlobalConfiguration,
-                                       private val traceManager: TraceManager) :
+class TraceablePooledHttpClientFactory(private val config: HttpClientGlobalConfiguration,
+                                       @Autowired private val traceManager: TraceManager) :
     AbstractPooledHttpClientFactory<TraceableHttpClient>(config),
     ITraceableHttpClientFactory<TraceableHttpClient> {
 

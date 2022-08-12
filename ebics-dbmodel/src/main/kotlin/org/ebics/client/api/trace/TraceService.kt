@@ -1,6 +1,5 @@
 package org.ebics.client.api.trace
 
-import org.ebics.client.api.EbicsBank
 import org.ebics.client.api.bank.Bank
 import org.ebics.client.api.security.AuthenticationContext
 import org.ebics.client.api.trace.orderType.OrderTypeDefinition

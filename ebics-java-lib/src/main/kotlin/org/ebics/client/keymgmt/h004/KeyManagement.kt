@@ -49,7 +49,7 @@ import java.security.GeneralSecurityException
  *
  * @author Hachani
  */
-@Component
+@Component("H004.KeyManagement")
 class KeyManagement(
     private val httpClient: ITraceableHttpClientFactory<TraceableHttpClient>,
     private val traceManager: TraceManager

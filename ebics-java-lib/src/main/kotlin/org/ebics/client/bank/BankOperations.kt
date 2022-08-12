@@ -34,10 +34,11 @@ import org.ebics.client.order.h004.OrderTypeDefinition
 import org.ebics.client.xml.h000.HEVRequest
 import org.ebics.client.xml.h000.HEVResponse
 import org.springframework.stereotype.Component
+import org.springframework.stereotype.Service
 import java.io.IOException
 import java.util.*
 
-@Component
+@Component("H000.BankOperations")
 class BankOperations(
     val configuration: EbicsConfiguration,
     val httpClient: ITraceableHttpClientFactory<TraceableHttpClient>,

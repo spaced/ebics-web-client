@@ -70,7 +70,7 @@ import java.io.IOException
  *
  * @author Hachani
  */
-@Component("H005.FileUpload")
+@Component("H005.FileDownload")
 class FileDownload(private val httpClient: ITraceableHttpClientFactory<TraceableHttpClient>,
                    private val traceManager: TraceManager
 )  {
