@@ -71,7 +71,7 @@
         </template>
       </q-table>
       <v-ace-editor
-        v-bind:value="selectedTrace?.messageBody ?? ''"
+        v-bind:value="selectedTrace?.textMessageBody ?? ''"
         lang="xml"
         theme="clouds"
         style="height: 300px"
@@ -130,7 +130,7 @@ export default defineComponent({
         required: true,
         label: 'EBICS User',
         align: 'left',
-        field: (row: TraceEntry) => row.user.userId,
+        field: (row: TraceEntry) => row.bankConnection?.userId,
         sortable: true,
       },
       {
@@ -138,7 +138,7 @@ export default defineComponent({
         required: true,
         label: 'EBICS Customer',
         align: 'left',
-        field: (row: TraceEntry) => row.user.partner.partnerId,
+        field: (row: TraceEntry) => row.bankConnection?.partner?.partnerId,
         sortable: true,
       },
       {
@@ -153,7 +153,7 @@ export default defineComponent({
         name: 'messageBody',
         label: 'Message Body',
         align: 'left',
-        field: (row: TraceEntry) => row.messageBody,
+        field: (row: TraceEntry) => row.textMessageBody,
         sortable: true,
       },
       {
@@ -251,15 +251,17 @@ export default defineComponent({
       if (lowerCaseSearchCriteriaInput) {
 
       const lowCaseFieldValues:string[] = [
-        traceEntry.messageBody,
+        traceEntry.textMessageBody,
         traceEntry.creator,
         traceEntry.sessionId,
         traceEntry.orderNumber,
-        traceEntry.user.creator,
-        traceEntry.user.userId,
-        traceEntry.user.name,
-        traceEntry.user.partner.partnerId,
-        traceEntry.user.partner.bank.hostId,
+        traceEntry.bankConnection?.userId,
+        traceEntry.bankConnection?.name,
+        traceEntry.bankConnection?.partner.partnerId,
+        traceEntry.bankConnection?.partner.bank.hostId,
+        traceEntry.bank?.hostId,
+        traceEntry.bank?.bankURL,
+        traceEntry.bank?.name,
         traceEntry.orderType?.adminOrderType, 
         traceEntry.orderType?.businessOrderType,
         traceEntry.orderType?.ebicsServiceType?.serviceName,

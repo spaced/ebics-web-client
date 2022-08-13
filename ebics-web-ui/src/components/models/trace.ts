@@ -1,6 +1,7 @@
 import { EbicsVersion } from 'components/models/ebics-version';
-import { BankConnection } from 'components/models/ebics-bank-connection';
+import { BankConnectionId } from 'components/models/ebics-bank-connection';
 import { BtfService } from 'src/components/models/btf-service';
+import { Bank } from './ebics-bank';
 
 
 export enum TraceType {
@@ -16,14 +17,16 @@ export interface OrderTypeDefinition {
 
 export interface TraceEntry {
   id: number;
-  messageBody: string;
-  user: BankConnection;
+  textMessageBody: string;
+  bankConnection?: BankConnectionId;
+  bank?: Bank;
   creator: string;
   dateTime: Date;
   sessionId: string;
   orderNumber?: string;
   ebicsVesion: EbicsVersion;
   upload: boolean;
+  request: boolean;
   traceType: TraceType;
   orderType: OrderTypeDefinition;
 }

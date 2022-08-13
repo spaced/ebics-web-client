@@ -42,7 +42,7 @@ open class FileService(private val traceRepository: TraceRepository) : IFileServ
         traceRepository.save(
             TraceEntry(
                 null,
-                fileContent.toString(),
+                fileContent.decodeToString(),
                 fileContent,
                 bankConnection, bankConnection.partner.bank,
                 sessionId,

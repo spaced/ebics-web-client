@@ -26,20 +26,20 @@ class JsonFilterProviderHelper {
     /**
      * This is the filter which returns only the important entity IDs
      */
-    private val idOnlyFilter: FilterProvider = SimpleFilterProvider().addFilter(
+    private val idAndNameOnlyFilter: FilterProvider = SimpleFilterProvider().addFilter(
         "bankConnectionPropertiesFilter",
-        SimpleBeanPropertyFilter.filterOutAllExcept("id", "userId", "partner")
+        SimpleBeanPropertyFilter.filterOutAllExcept("id", "name", "userId", "partner")
     ).addFilter(
         "partnerPropertiesFilter",
         SimpleBeanPropertyFilter.filterOutAllExcept("id", "partnerId", "bank")
     ).addFilter(
         "bankPropertiesFilter",
-        SimpleBeanPropertyFilter.filterOutAllExcept("id", "bankURL")
+        SimpleBeanPropertyFilter.filterOutAllExcept("id", "name", "bankURL")
     )
 
     private val filterMap = mapOf(
         JsonFilterProviderType.DefaultNoFilter to defaultNoFilter,
-        JsonFilterProviderType.IdOnly to idOnlyFilter
+        JsonFilterProviderType.IdAndNameOnly to idAndNameOnlyFilter
     )
 
     fun applyJsonFilter(bean: Any, filterType: JsonFilterProviderType = JsonFilterProviderType.DefaultNoFilter): MappingJacksonValue {

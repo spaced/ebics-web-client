@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController
 @CrossOrigin(origins = ["http://localhost:8081"])
 class TraceResource(val traceService: TraceService) {
 
-    @ApplyRestFilter(filterType = JsonFilterProviderType.IdOnly)
+    @ApplyRestFilter(filterType = JsonFilterProviderType.IdAndNameOnly)
     @GetMapping()
     fun listTraces(): List<BaseTraceEntry> {
         return traceService.findAllTraces()
