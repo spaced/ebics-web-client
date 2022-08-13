@@ -76,7 +76,7 @@ data class TraceEntry(
 
     override val traceType: TraceType = TraceType.EbicsEnvelope,
 
-    override val traceCategory: TraceCategory = TraceCategory.Request,
+    override val traceCategory: TraceCategory? = null,
 
     //Error relevant fields
     override val errorCode: String? = null,

@@ -829,9 +829,3 @@ databaseChangeLog:
     - dropForeignKeyConstraint:
         baseTableName: TRACEENTRY
         constraintName: FKTBXDXNB92Q9XBPBTWNVOS7K8W
-- changeSet:
-      id: 1659539116286-14
-      author: honza
-      changes:
-          - sql: update TraceEntry set traceCategory=2 where traceType=1
-          - sql: update TraceEntry set traceCategory=0 where traceType=0

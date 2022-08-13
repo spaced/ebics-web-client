@@ -10,7 +10,7 @@ import java.time.ZonedDateTime
 
 @Service
 class FileServiceMockImpl : IFileService {
-    var fileContent: String? = null
+    var fileContent: ByteArray? = null
 
     override fun getLastDownloadedFile(
         orderType: OrderTypeDefinition,
@@ -21,14 +21,14 @@ class FileServiceMockImpl : IFileService {
         if (fileContent == null)
             throw NoSuchElementException("Mock: No value cached yet")
         else
-            return TraceEntry(1, "$fileContent-cached", null, user, null,"1",
-            "CCCX", ebicsVersion, false, false, creator = "jan", orderType = orderType)
+            return TraceEntry(1, "${String(fileContent!!)}-cached", null, user, null,"1",
+            "CCCX", ebicsVersion, upload = false, request = false, creator = "jan", orderType = orderType)
     }
 
-    override fun addTextFile(
+    override fun addFile(
         user: BankConnectionEntity,
         orderType: OrderTypeDefinition,
-        fileContent: String,
+        fileContent: ByteArray,
         sessionId: String,
         orderNumber: String?,
         ebicsVersion: EbicsVersion,

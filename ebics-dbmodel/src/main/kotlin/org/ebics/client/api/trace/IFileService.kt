@@ -4,7 +4,6 @@ import org.ebics.client.api.EbicsSession
 import org.ebics.client.api.trace.orderType.OrderTypeDefinition
 import org.ebics.client.api.bankconnection.BankConnectionEntity
 import org.ebics.client.model.EbicsVersion
-import java.time.ZonedDateTime
 
 interface IFileService {
     fun getLastDownloadedFile(
@@ -14,21 +13,21 @@ interface IFileService {
         useSharedPartnerData: Boolean = true
     ): TraceEntry
 
-    fun addDownloadedTextFile(
+    fun addDownloadedFile(
         user: BankConnectionEntity,
         orderType: OrderTypeDefinition,
-        fileContent: String,
+        fileContent: ByteArray,
         sessionId: String,
         ebicsVersion: EbicsVersion,
-    ) = addTextFile(user, orderType, fileContent, sessionId, null, ebicsVersion, upload = false, request = false)
+    ) = addFile(user, orderType, fileContent, sessionId, null, ebicsVersion, upload = false, request = false)
 
-    fun addUploadedTextFile(
+    fun addUploadedFile(
         session: EbicsSession,
         orderType: OrderTypeDefinition,
-        fileContent: String,
+        fileContent: ByteArray,
         orderNumber: String,
         ebicsVersion: EbicsVersion,
-    ) = addTextFile(
+    ) = addFile(
         session.user as BankConnectionEntity,
         orderType,
         fileContent,
@@ -39,10 +38,10 @@ interface IFileService {
         request = true
     )
 
-    fun addTextFile(
+    fun addFile(
         user: BankConnectionEntity,
         orderType: OrderTypeDefinition,
-        fileContent: String,
+        fileContent: ByteArray,
         sessionId: String,
         orderNumber: String?,
         ebicsVersion: EbicsVersion,

@@ -17,7 +17,7 @@ class AnonymousTraceEntry(
     override val dateTime: ZonedDateTime,
     override val orderType: OrderTypeDefinition?,
     override val traceType: TraceType,
-    override val traceCategory: TraceCategory,
+    override val traceCategory: TraceCategory?,
     override val errorCode: String?,
     override val errorCodeText: String?,
     override val errorMessage: String?,

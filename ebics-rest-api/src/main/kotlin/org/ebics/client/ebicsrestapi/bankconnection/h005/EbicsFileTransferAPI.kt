@@ -1,5 +1,6 @@
 package org.ebics.client.ebicsrestapi.bankconnection.h005
 
+import org.ebics.client.api.bankconnection.BankConnectionEntity
 import org.ebics.client.api.trace.IFileService
 import org.ebics.client.api.trace.orderType.EbicsService
 import org.ebics.client.api.trace.orderType.OrderTypeDefinition
@@ -41,10 +42,10 @@ class EbicsFileTransferAPI(
             uploadRequest.params ?: emptyMap()
         )
         val response = fileUpload.sendFile(session, uploadFile.bytes, order)
-        fileService.addUploadedTextFile(
+        fileService.addUploadedFile(
             session,
             OrderTypeDefinition(EbicsAdminOrderType.BTU, EbicsService.fromEbicsService(uploadRequest.orderService)),
-            String(uploadFile.bytes),
+            uploadFile.bytes,
             response.orderNumber,
             EbicsVersion.H005
         )
@@ -62,6 +63,13 @@ class EbicsFileTransferAPI(
             downloadRequest.params
         )
         val outputStream = fileDownload.fetchFile(session, order)
+        fileService.addDownloadedFile(
+            session.user as BankConnectionEntity,
+            OrderTypeDefinition(EbicsAdminOrderType.BTD, downloadRequest.orderService?.let { EbicsService.fromEbicsService(downloadRequest.orderService) } ),
+            outputStream.toByteArray(),
+            "NOID",
+            EbicsVersion.H005
+        )
         val resource = ByteArrayResource(outputStream.toByteArray())
         return ResponseEntity.ok().contentLength(resource.contentLength()).body(resource)
     }

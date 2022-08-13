@@ -5,38 +5,34 @@ import org.ebics.client.api.trace.orderType.OrderTypeDefinition
 import org.ebics.client.api.bankconnection.BankConnectionEntity
 import org.ebics.client.model.EbicsVersion
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
-import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
-import java.time.ZonedDateTime
 
 @Service
 open class FileService(private val traceRepository: TraceRepository) : IFileService {
 
     override fun getLastDownloadedFile(
         orderType: OrderTypeDefinition,
-        user: BankConnectionEntity,
+        bankConnection: BankConnectionEntity,
         ebicsVersion: EbicsVersion,
         useSharedPartnerData: Boolean
     ): TraceEntry {
         val authCtx = AuthenticationContext.fromSecurityContext()
         return traceRepository
             .findAll(
-                fileDownloadFilter(authCtx.name, orderType, user, ebicsVersion, useSharedPartnerData),
+                fileDownloadFilter(authCtx.name, orderType, bankConnection, ebicsVersion, useSharedPartnerData),
                 PageRequest.of(0, 1, Sort.by(Sort.Direction.DESC, "dateTime"))
             )
             .single { it.hasReadAccess(authCtx) }.also {
-                logger.debug("File retrieved from file service, orderType {}, bank connection id={}, userId={}, ebicsVersion={}", orderType.toString(), user.id, user.userId, ebicsVersion)
+                logger.debug("File retrieved from file service, orderType {}, bank connection id={}, userId={}, ebicsVersion={}", orderType.toString(), bankConnection.id, bankConnection.userId, ebicsVersion)
             }
     }
 
-    override fun addTextFile(
-        user: BankConnectionEntity,
+    override fun addFile(
+        bankConnection: BankConnectionEntity,
         orderType: OrderTypeDefinition,
-        fileContent: String,
+        fileContent: ByteArray,
         sessionId: String,
         orderNumber: String?,
         ebicsVersion: EbicsVersion,
@@ -46,16 +42,17 @@ open class FileService(private val traceRepository: TraceRepository) : IFileServ
         traceRepository.save(
             TraceEntry(
                 null,
+                fileContent.toString(),
                 fileContent,
-                null,
-                user, user.partner.bank,
+                bankConnection, bankConnection.partner.bank,
                 sessionId,
                 orderNumber,
                 ebicsVersion,
                 upload,
                 request,
                 orderType = orderType,
-                traceType = TraceType.Content
+                traceType = TraceType.Content,
+                traceCategory = null
             )
         )
     }
