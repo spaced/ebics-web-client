@@ -121,6 +121,6 @@ fun fileDownloadFilter(creator: String, orderType: OrderTypeDefinition, user: Ba
         .and(ebicsVersionEquals(ebicsVersion))
         .and(uploadEquals(false))
         .and(traceTypeEquals(TraceType.Content))
-        .and(traceCategoryEquals(TraceCategory.ebicsOk))
+        .and(traceCategoryEquals(TraceCategory.EbicsResponseOk))
         .and(traceMessageBodyIsNotEmpty())
 }

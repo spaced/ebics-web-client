@@ -12,5 +12,6 @@ data class BankTraceSession(
     override val sessionId: String,
     override val ebicsVersion: EbicsVersion,
     override val orderType: IOrderTypeDefinition25,
-    override val orderNumber: String? = UUID.randomUUID().toString()
+    override val orderNumber: String? = UUID.randomUUID().toString(),
+    override var lastTraceId: Long? = null
 ) : IBankTraceSession

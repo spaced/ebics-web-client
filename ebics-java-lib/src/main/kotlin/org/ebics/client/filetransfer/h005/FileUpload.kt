@@ -109,7 +109,7 @@ class FileUpload(
             responseBody,
             orderType
         )
-        traceManager.callAndTraceException(traceSession) {
+        traceManager.callAndUpdateLastTrace(traceSession) {
             response.build()
         }
 
@@ -164,7 +164,7 @@ class FileUpload(
             httpClient.sendAndTraceRequest(httpSession, traceSession, ByteArrayContentFactory(uploader.prettyPrint()))
 
         val response = TransferResponseElement(responseBody)
-        traceManager.callAndTraceException(traceSession) {
+        traceManager.callAndUpdateLastTrace(traceSession) {
             response.build()
         }
     }

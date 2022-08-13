@@ -73,7 +73,7 @@ class KeyManagement(
         val responseBody = httpClient.sendAndTraceRequest(httpSession, traceSession, ByteArrayContentFactory(request.prettyPrint()))
         
         response = KeyManagementResponseElement(responseBody)
-        traceManager.callAndTraceException(traceSession) {
+        traceManager.callAndUpdateLastTrace(traceSession) {
             response.build()
             response.report()
         }
@@ -97,7 +97,7 @@ class KeyManagement(
         val responseBody = httpClient.sendAndTraceRequest(httpSession, traceSession, ByteArrayContentFactory(request.prettyPrint()))
         
         response = KeyManagementResponseElement(responseBody)
-        traceManager.callAndTraceException(traceSession) {
+        traceManager.callAndUpdateLastTrace(traceSession) {
             response.build()
             response.report()
         }
@@ -122,7 +122,7 @@ class KeyManagement(
 
         val responseBody = httpClient.sendAndTraceRequest(httpSession, traceSession, ByteArrayContentFactory(request.prettyPrint()))
         val response = KeyManagementResponseElement(responseBody)
-        traceManager.callAndTraceException(traceSession) {
+        traceManager.callAndUpdateLastTrace(traceSession) {
             response.build()
             response.report()
         }
@@ -158,7 +158,7 @@ class KeyManagement(
 
         val responseBody = httpClient.sendAndTraceRequest(httpSession, traceSession, ByteArrayContentFactory(request.prettyPrint()))
         val response = SPRResponseElement(responseBody)
-        traceManager.callAndTraceException(traceSession) {
+        traceManager.callAndUpdateLastTrace(traceSession) {
             response.build()
             response.report()
         }

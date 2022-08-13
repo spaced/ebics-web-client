@@ -15,7 +15,8 @@ data class TraceSession(
     override val sessionId: String,
     override val ebicsVersion: EbicsVersion = EbicsVersion.H005,
     override val orderNumber: String = UUID.randomUUID().toString(),
-    override val bank: EbicsBank = bankConnection.partner.bank
+    override val bank: EbicsBank = bankConnection.partner.bank,
+    override var lastTraceId: Long? = null,
 ) : ITraceSession {
     constructor(ebicsSession: EbicsSession, orderType: IOrderTypeDefinition30, upload: Boolean = true, request: Boolean = true):
             this(ebicsSession.user, orderType, upload, request, ebicsSession.sessionId)

@@ -14,7 +14,7 @@ import javax.annotation.PostConstruct
 
 @Component
 class TraceablePooledHttpClientFactory(private val config: HttpClientGlobalConfiguration,
-                                       @Autowired private val traceManager: TraceManager) :
+                                       private val traceManager: TraceManager) :
     AbstractPooledHttpClientFactory<TraceableHttpClient>(config),
     ITraceableHttpClientFactory<TraceableHttpClient> {
 

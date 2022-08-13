@@ -12,4 +12,10 @@ interface IBaseTraceSession {
     val ebicsVersion: EbicsVersion
     val sessionId: String
     val orderNumber: String?
+
+    /**
+     * Here is stored last trace id
+     * This is used for eventual update of the last trace entry in this session
+     */
+    var lastTraceId: Long?
 }

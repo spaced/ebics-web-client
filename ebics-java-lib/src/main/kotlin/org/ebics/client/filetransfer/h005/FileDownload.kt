@@ -114,7 +114,7 @@ class FileDownload(private val httpClient: ITraceableHttpClientFactory<Traceable
             responseBody,
             orderType
         )
-        traceManager.callAndTraceException(traceSession) {
+        traceManager.callAndUpdateLastTrace(traceSession) {
             response.build()
             response.report()
         }
@@ -146,7 +146,7 @@ class FileDownload(private val httpClient: ITraceableHttpClientFactory<Traceable
         val receiptResponseBody = httpClient.sendAndTraceRequest(httpSession, traceSession, ByteArrayContentFactory(receipt.prettyPrint()))
 
         val receiptResponse = ReceiptResponseElement(receiptResponseBody)
-        traceManager.callAndTraceException(traceSession) {
+        traceManager.callAndUpdateLastTrace(traceSession) {
             receiptResponse.build()
             receiptResponse.report()
         }
@@ -202,7 +202,7 @@ class FileDownload(private val httpClient: ITraceableHttpClientFactory<Traceable
             responseBody,
             orderType
         )
-        traceManager.callAndTraceException(traceSession) {
+        traceManager.callAndUpdateLastTrace(traceSession) {
             response.build()
             response.report()
         }

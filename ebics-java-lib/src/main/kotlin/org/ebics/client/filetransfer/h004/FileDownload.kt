@@ -124,7 +124,7 @@ class FileDownload(
         )
 
         val response = DownloadInitializationResponseElement(responseBody)
-        traceManager.callAndTraceException(traceSession) {
+        traceManager.callAndUpdateLastTrace(traceSession) {
             response.build()
             response.report()
         }
@@ -158,7 +158,7 @@ class FileDownload(
             httpClient.sendAndTraceRequest(httpSession, traceSession, ByteArrayContentFactory(receipt.prettyPrint()))
 
         val receiptResponse = ReceiptResponseElement(receiptResponseBody)
-        traceManager.callAndTraceException(traceSession) {
+        traceManager.callAndUpdateLastTrace(traceSession) {
             receiptResponse.build()
             receiptResponse.report()
         }
@@ -215,7 +215,7 @@ class FileDownload(
             adminOrderType
         )
 
-        traceManager.callAndTraceException(traceSession) {
+        traceManager.callAndUpdateLastTrace(traceSession) {
             response.build()
             response.report()
         }
