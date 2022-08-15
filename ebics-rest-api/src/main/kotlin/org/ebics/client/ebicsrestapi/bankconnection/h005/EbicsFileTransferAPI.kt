@@ -45,13 +45,7 @@ class EbicsFileTransferAPI(
         val orderType = OrderTypeDefinition(EbicsAdminOrderType.BTU, EbicsService.fromEbicsService(uploadRequest.orderService))
         val traceSession = BankConnectionTraceSession(session, orderType)
         val response = fileUpload.sendFile(session, traceSession, uploadFile.bytes, order)
-        fileService.addUploadedFile(
-            session,
-            orderType,
-            uploadFile.bytes,
-            response.orderNumber,
-            EbicsVersion.H005
-        )
+        fileService.addUploadedFile(traceSession, uploadFile.bytes)
         return UploadResponse(response.orderNumber, response.transactionId)
     }
 
@@ -68,13 +62,7 @@ class EbicsFileTransferAPI(
         val orderType = OrderTypeDefinition(EbicsAdminOrderType.BTD, downloadRequest.orderService?.let { EbicsService.fromEbicsService(downloadRequest.orderService) } )
         val traceSession = BankConnectionTraceSession(session, orderType, false)
         val outputStream = fileDownload.fetchFile(session, traceSession, order)
-        fileService.addDownloadedFile(
-            session.user as BankConnectionEntity,
-            orderType,
-            outputStream.toByteArray(),
-            session.sessionId,
-            EbicsVersion.H005
-        )
+        fileService.addDownloadedFile(traceSession, outputStream.toByteArray())
         val resource = ByteArrayResource(outputStream.toByteArray())
         return ResponseEntity.ok().contentLength(resource.contentLength()).body(resource)
     }
@@ -82,7 +70,7 @@ class EbicsFileTransferAPI(
     fun getOrderTypes(userId: Long, password: String, useCache: Boolean): List<OrderType> {
         val session = sessionFactory.getSession(UserIdPass(userId, password))
         val orderType = OrderTypeDefinition(EbicsAdminOrderType.HTD)
-        val traceSession = BankConnectionTraceSession(session, orderType)
+        val traceSession = BankConnectionTraceSession(session, orderType, false)
         val htdFileContent = fileDownloadCache.getLastFileCached(
             session,
             traceSession,

@@ -96,4 +96,9 @@ interface TraceManager {
      * @param enabled is trace enabled?
      */
     fun setTraceEnabled(enabled: Boolean)
+
+    /**
+     * This updates the order number of all previous trace entries in the given @param traceSession
+     */
+    fun updateSessionOrderNumber(traceSession: IBankConnectionTraceSession, orderNumber: String)
 }

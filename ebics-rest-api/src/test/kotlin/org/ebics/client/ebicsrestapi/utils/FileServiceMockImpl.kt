@@ -4,6 +4,7 @@ import org.ebics.client.api.trace.IFileService
 import org.ebics.client.api.trace.TraceEntry
 import org.ebics.client.api.trace.orderType.OrderTypeDefinition
 import org.ebics.client.api.bankconnection.BankConnectionEntity
+import org.ebics.client.api.trace.ITraceOrderTypeDefinition
 import org.ebics.client.model.EbicsVersion
 import org.springframework.stereotype.Service
 import java.time.ZonedDateTime
@@ -13,7 +14,7 @@ class FileServiceMockImpl : IFileService {
     var fileContent: ByteArray? = null
 
     override fun getLastDownloadedFile(
-        orderType: OrderTypeDefinition,
+        orderType: ITraceOrderTypeDefinition,
         user: BankConnectionEntity,
         ebicsVersion: EbicsVersion,
         useSharedPartnerData: Boolean
@@ -22,12 +23,12 @@ class FileServiceMockImpl : IFileService {
             throw NoSuchElementException("Mock: No value cached yet")
         else
             return TraceEntry(1, "${String(fileContent!!)}-cached", null, user, null,"1",
-            "CCCX", ebicsVersion, upload = false, request = false, creator = "jan", orderType = orderType)
+            "CCCX", ebicsVersion, upload = false, request = false, creator = "jan", orderType = OrderTypeDefinition.fromOrderTypeDefinition(orderType))
     }
 
     override fun addFile(
         user: BankConnectionEntity,
-        orderType: OrderTypeDefinition,
+        orderType: ITraceOrderTypeDefinition,
         fileContent: ByteArray,
         sessionId: String,
         orderNumber: String?,

@@ -10,7 +10,7 @@ interface IBaseTraceSession {
     val request: Boolean
     val ebicsVersion: EbicsVersion
     val sessionId: String
-    val orderNumber: String?
+    var orderNumber: String?
 
     /**
      * Here is stored last trace id

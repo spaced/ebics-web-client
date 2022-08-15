@@ -108,6 +108,7 @@ class FileUpload(
         traceManager.callAndUpdateLastTrace(traceSession) {
             response.build()
         }
+        traceManager.updateSessionOrderNumber(traceSession, response.orderNumber)
 
         val state = TransferState(initializer.segmentNumber, response.transactionId)
         while (state.hasNext()) {

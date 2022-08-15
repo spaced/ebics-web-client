@@ -15,7 +15,7 @@ data class BankTraceSession(
     override val sessionId: String,
     override val ebicsVersion: EbicsVersion,
     override val orderType: ITraceOrderTypeDefinition,
-    override val orderNumber: String? = UUID.randomUUID().toString(),
+    override var orderNumber: String? = UUID.randomUUID().toString(),
     override var lastTraceId: Long? = null
 ) : IBankTraceSession {
     constructor(bank: EbicsBank, upload: Boolean, request: Boolean, sessionId: String, ebicsVersion: EbicsVersion, orderType: IOrderTypeDefinition25)

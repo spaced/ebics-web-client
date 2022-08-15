@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import org.springframework.transaction.annotation.Transactional
 import java.time.ZonedDateTime
+import javax.persistence.Transient
 
 @Transactional
 interface TraceRepository : JpaRepository<TraceEntry, Long>, JpaSpecificationExecutor<TraceEntry> {
@@ -30,6 +31,10 @@ interface TraceRepository : JpaRepository<TraceEntry, Long>, JpaSpecificationExe
     ): Int
 
     @Modifying
-    @Query("update TraceEntry t set t.orderNumber = :newOrderNumber where t.orderNumber = :currentOrderNumber")
-    fun updateOrderNumber(@Param("newOrderNumber") newOrderNumber: String, @Param("currentOrderNumber") currentOrderNumber: String): Int
+    @Query("update TraceEntry t set t.orderNumber = :newOrderNumber where t.orderNumber = :currentOrderNumber and t.sessionId = :sessionId")
+    fun updateNonNullOrderNumber(@Param("sessionId") sessionId: String, @Param("newOrderNumber") newOrderNumber: String, @Param("currentOrderNumber") currentOrderNumber: String): Int
+
+    @Modifying
+    @Query("update TraceEntry t set t.orderNumber = :newOrderNumber where t.orderNumber is null and t.sessionId = :sessionId")
+    fun updateNullOrderNumber(@Param("sessionId") sessionId: String, @Param("newOrderNumber") newOrderNumber: String): Int
 }

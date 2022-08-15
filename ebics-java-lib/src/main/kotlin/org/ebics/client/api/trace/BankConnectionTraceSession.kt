@@ -19,7 +19,7 @@ data class BankConnectionTraceSession(
     override val request: Boolean = true,
     override val sessionId: String,
     override val ebicsVersion: EbicsVersion = EbicsVersion.H005,
-    override val orderNumber: String = UUID.randomUUID().toString(),
+    override var orderNumber: String? = UUID.randomUUID().toString(),
     override val bank: EbicsBank = bankConnection.partner.bank,
     override var lastTraceId: Long? = null,
 ) : IBankConnectionTraceSession {

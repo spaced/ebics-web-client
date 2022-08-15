@@ -38,13 +38,7 @@ class EbicsFileTransferAPI(
         val orderType = OrderTypeDefinition(EbicsAdminOrderType.UPL, businessOrderType = uploadRequest.orderType)
         val traceSession = BankConnectionTraceSession(session, orderType)
         val response = fileUploadService.sendFile(session, traceSession, uploadFile.bytes, order)
-        fileService.addUploadedFile(
-            session,
-            orderType,
-            uploadFile.bytes,
-            response.orderNumber,
-            EbicsVersion.H004
-        )
+        fileService.addUploadedFile(traceSession, uploadFile.bytes)
         return UploadResponse(response.orderNumber, response.transactionId)
     }
 
@@ -60,13 +54,7 @@ class EbicsFileTransferAPI(
             downloadRequest.params
         )
         val outputStream = fileDownloadService.fetchFile(session, traceSession, order)
-        fileService.addDownloadedFile(
-            session.user as BankConnectionEntity,
-            orderType,
-            outputStream.toByteArray(),
-            session.sessionId,
-            EbicsVersion.H004
-        )
+        fileService.addDownloadedFile(traceSession, outputStream.toByteArray())
         val resource = ByteArrayResource(outputStream.toByteArray())
         return ResponseEntity.ok().contentLength(resource.contentLength()).body(resource)
     }
@@ -75,7 +63,7 @@ class EbicsFileTransferAPI(
         val session = sessionFactory.getSession(UserIdPass(userId, password))
 
         val orderType = OrderTypeDefinition(EbicsAdminOrderType.HTD)
-        val traceSession = BankConnectionTraceSession(session, orderType)
+        val traceSession = BankConnectionTraceSession(session, orderType, false)
         val htdFileContent = fileDownloadCache.getLastFileCached(
             session,
             traceSession,

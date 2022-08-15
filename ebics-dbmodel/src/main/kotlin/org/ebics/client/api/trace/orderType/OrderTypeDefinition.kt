@@ -20,6 +20,13 @@ data class OrderTypeDefinition(
     override val businessOrderType: String? = null,
 ) : ITraceOrderTypeDefinition {
     companion object {
+
+        fun fromOrderTypeDefinition(orderType: ITraceOrderTypeDefinition): OrderTypeDefinition {
+            val result = orderType as? OrderTypeDefinition
+            if (result != null) return result
+            return OrderTypeDefinition(orderType.adminOrderType,orderType.ebicsServiceType?.let { serviceType -> EbicsService.fromEbicsService(serviceType) }, orderType.businessOrderType)
+        }
+
         fun fromOrderType(orderType: IOrderTypeDefinition): OrderTypeDefinition {
             return when {
                 (IOrderTypeDefinition25::class.java.isAssignableFrom(orderType.javaClass)) ->

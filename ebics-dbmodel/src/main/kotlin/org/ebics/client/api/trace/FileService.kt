@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service
 open class FileService(private val traceRepository: TraceRepository) : IFileService {
 
     override fun getLastDownloadedFile(
-        orderType: OrderTypeDefinition,
+        orderType: ITraceOrderTypeDefinition,
         bankConnection: BankConnectionEntity,
         ebicsVersion: EbicsVersion,
         useSharedPartnerData: Boolean
@@ -31,7 +31,7 @@ open class FileService(private val traceRepository: TraceRepository) : IFileServ
 
     override fun addFile(
         bankConnection: BankConnectionEntity,
-        orderType: OrderTypeDefinition,
+        orderType: ITraceOrderTypeDefinition,
         fileContent: ByteArray,
         sessionId: String,
         orderNumber: String?,
@@ -50,7 +50,7 @@ open class FileService(private val traceRepository: TraceRepository) : IFileServ
                 ebicsVersion,
                 upload,
                 request,
-                orderType = orderType,
+                orderType = OrderTypeDefinition.fromOrderTypeDefinition(orderType),
                 traceType = TraceType.Content,
                 traceCategory = null
             )

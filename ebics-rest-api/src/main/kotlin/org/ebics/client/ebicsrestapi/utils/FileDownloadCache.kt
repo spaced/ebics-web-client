@@ -70,11 +70,8 @@ class FileDownloadCache(private val fileService: IFileService,
                 )
             }
         fileService.addDownloadedFile(
-            session.user as BankConnectionEntity,
-            orderType,
+            traceSession,
             outputStream.toByteArray(),
-            session.sessionId,
-            ebicsVersion
         )
         return outputStream.toByteArray()
     }

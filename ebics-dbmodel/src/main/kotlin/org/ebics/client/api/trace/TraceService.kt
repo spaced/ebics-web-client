@@ -10,7 +10,6 @@ import org.ebics.client.interfaces.ContentFactory
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.lang.Exception
-import java.util.*
 
 @Service
 class TraceService(
@@ -100,6 +99,15 @@ class TraceService(
 
     override fun setTraceEnabled(enabled: Boolean) {
         traceEnabled = enabled
+    }
+
+    override fun updateSessionOrderNumber(traceSession: IBankConnectionTraceSession, newOrderNumber: String) {
+        val currentOrderNumber = traceSession.orderNumber
+        if (currentOrderNumber == null)
+            traceRepository.updateNullOrderNumber(traceSession.sessionId, newOrderNumber)
+        else
+            traceRepository.updateNonNullOrderNumber(traceSession.sessionId, newOrderNumber, currentOrderNumber)
+        traceSession.orderNumber = newOrderNumber
     }
 
     /**

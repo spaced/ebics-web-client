@@ -48,15 +48,16 @@ fun creatorEquals(creator: String): Specification<TraceEntry> {
     }
 }
 
-fun orderTypeEquals(orderType: OrderTypeDefinition): Specification<TraceEntry> {
+fun orderTypeEquals(orderType: ITraceOrderTypeDefinition): Specification<TraceEntry> {
     return Specification<TraceEntry> { root, _, builder ->
         val p = builder.conjunction()
         with(orderType) {
             val orderTypeAttr = root.get<SingularAttribute<TraceEntry, String>>("orderType")
             p.addEqualsIfNotNull(builder, orderTypeAttr, "adminOrderType", adminOrderType)
             p.addEqualsIfNotNull(builder, orderTypeAttr, "businessOrderType", businessOrderType)
-            if (ebicsServiceType != null) {
-                with(ebicsServiceType) {
+            val ebicsService = ebicsServiceType
+            if (ebicsService != null) {
+                with(ebicsService) {
                     val serviceTypeAttr = orderTypeAttr.get<SingularAttribute<TraceEntry, String>>("ebicsServiceType")
                     p.addEqualsIfNotNull(builder, serviceTypeAttr, "serviceName", serviceName)
                     p.addEqualsIfNotNull(builder, serviceTypeAttr, "serviceOption", serviceOption)
@@ -114,7 +115,7 @@ fun traceMessageBodyIsNotEmpty(): Specification<TraceEntry> {
     }
 }
 
-fun fileDownloadFilter(creator: String, orderType: OrderTypeDefinition, user: BankConnectionEntity, ebicsVersion: EbicsVersion, useSharedPartnerData: Boolean = true): Specification<TraceEntry> {
+fun fileDownloadFilter(creator: String, orderType: ITraceOrderTypeDefinition, user: BankConnectionEntity, ebicsVersion: EbicsVersion, useSharedPartnerData: Boolean = true): Specification<TraceEntry> {
     return creatorEquals(creator)
         .and(orderTypeEquals(orderType))
         .and(bankConnectionEquals(user, useSharedPartnerData))
