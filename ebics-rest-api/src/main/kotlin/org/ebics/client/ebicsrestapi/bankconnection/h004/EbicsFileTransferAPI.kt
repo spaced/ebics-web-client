@@ -2,6 +2,7 @@ package org.ebics.client.ebicsrestapi.bankconnection.h004
 
 import org.ebics.client.api.bankconnection.BankConnectionEntity
 import org.ebics.client.api.trace.IFileService
+import org.ebics.client.api.trace.BankConnectionTraceSession
 import org.ebics.client.api.trace.orderType.OrderTypeDefinition
 import org.ebics.client.ebicsrestapi.bankconnection.UploadResponse
 import org.ebics.client.ebicsrestapi.bankconnection.UserIdPass
@@ -34,10 +35,12 @@ class EbicsFileTransferAPI(
         val session = sessionFactory.getSession(UserIdPass(userId, uploadRequest.password))
         val order =
             EbicsUploadOrder(uploadRequest.orderType, uploadRequest.attributeType, uploadRequest.params ?: emptyMap())
-        val response = fileUploadService.sendFile(session, uploadFile.bytes, order)
+        val orderType = OrderTypeDefinition(EbicsAdminOrderType.UPL, businessOrderType = uploadRequest.orderType)
+        val traceSession = BankConnectionTraceSession(session, orderType)
+        val response = fileUploadService.sendFile(session, traceSession, uploadFile.bytes, order)
         fileService.addUploadedFile(
             session,
-            OrderTypeDefinition(EbicsAdminOrderType.BTU, businessOrderType = uploadRequest.orderType),
+            orderType,
             uploadFile.bytes,
             response.orderNumber,
             EbicsVersion.H004
@@ -47,6 +50,8 @@ class EbicsFileTransferAPI(
 
     fun downloadFile(userId: Long, downloadRequest: DownloadRequest): ResponseEntity<Resource> {
         val session = sessionFactory.getSession(UserIdPass(userId, downloadRequest.password))
+        val orderType = OrderTypeDefinition(EbicsAdminOrderType.DNL, businessOrderType = downloadRequest.orderType)
+        val traceSession = BankConnectionTraceSession(session, orderType, false)
         val order = EbicsDownloadOrder(
             downloadRequest.adminOrderType,
             downloadRequest.orderType,
@@ -54,12 +59,12 @@ class EbicsFileTransferAPI(
             downloadRequest.endDate?.toDate(),
             downloadRequest.params
         )
-        val outputStream = fileDownloadService.fetchFile(session, order)
+        val outputStream = fileDownloadService.fetchFile(session, traceSession, order)
         fileService.addDownloadedFile(
             session.user as BankConnectionEntity,
-            OrderTypeDefinition(EbicsAdminOrderType.BTU, businessOrderType = downloadRequest.orderType),
+            orderType,
             outputStream.toByteArray(),
-            "NOID",
+            session.sessionId,
             EbicsVersion.H004
         )
         val resource = ByteArrayResource(outputStream.toByteArray())
@@ -69,9 +74,12 @@ class EbicsFileTransferAPI(
     fun getOrderTypes(userId: Long, password: String, useCache: Boolean): List<OrderType> {
         val session = sessionFactory.getSession(UserIdPass(userId, password))
 
+        val orderType = OrderTypeDefinition(EbicsAdminOrderType.HTD)
+        val traceSession = BankConnectionTraceSession(session, orderType)
         val htdFileContent = fileDownloadCache.getLastFileCached(
             session,
-            OrderTypeDefinition(EbicsAdminOrderType.HTD),
+            traceSession,
+            orderType,
             EbicsVersion.H004,
             useCache
         )

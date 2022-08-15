@@ -6,7 +6,6 @@ import org.ebics.client.api.bank.BankService
 import org.ebics.client.api.bankconnection.BankConnection
 import org.ebics.client.api.bankconnection.BankConnectionEntity
 import org.ebics.client.api.bankconnection.BankConnectionServiceImpl
-import org.ebics.client.api.trace.h005.TraceSession
 import org.ebics.client.exception.EbicsServerException
 import org.ebics.client.exception.HttpServerException
 import org.ebics.client.exception.h005.EbicsReturnCode
@@ -166,7 +165,7 @@ class TraceServiceTest(
     @WithMockUser(username = "jan", roles = ["USER"])
     fun whenEbicsEnvelopeTraced_thenTheEbicsEnvelopeRecordToBeFound() {
         val mockUser1 = getMockUser()
-        val traceSession = TraceSession(
+        val traceSession = BankConnectionTraceSession(
             mockUser1,
             OrderTypeDefinition(adminOrderType = EbicsAdminOrderType.BTD, service = null),
             upload = true,
@@ -200,7 +199,7 @@ class TraceServiceTest(
     @WithMockUser(username = "jan", roles = ["USER"])
     fun whenEbicsExceptionTraced_thenTheEbicsExceptionRecordToBeFound() {
         val mockUser1 = getMockUser()
-        val traceSession = TraceSession(
+        val traceSession = BankConnectionTraceSession(
             mockUser1,
             OrderTypeDefinition(adminOrderType = EbicsAdminOrderType.BTD, service = null),
             true,
@@ -236,7 +235,7 @@ class TraceServiceTest(
     @WithMockUser(username = "jan", roles = ["USER"])
     fun whenHttpExceptionTraced_thenTheHttpExceptionRecordToBeFound() {
         val mockUser1 = getMockUser()
-        val traceSession = TraceSession(
+        val traceSession = BankConnectionTraceSession(
             mockUser1,
             OrderTypeDefinition(adminOrderType = EbicsAdminOrderType.BTD, service = null),
             false,

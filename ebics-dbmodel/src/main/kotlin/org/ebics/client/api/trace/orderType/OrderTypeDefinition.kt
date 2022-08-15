@@ -1,5 +1,6 @@
 package org.ebics.client.api.trace.orderType
 
+import org.ebics.client.api.trace.ITraceOrderTypeDefinition
 import org.ebics.client.order.EbicsAdminOrderType
 import org.ebics.client.order.IOrderTypeDefinition
 import org.ebics.client.order.IOrderTypeDefinition25
@@ -10,14 +11,14 @@ import javax.persistence.Embedded
 @Embeddable
 data class OrderTypeDefinition(
     //For H002-H005
-    val adminOrderType: EbicsAdminOrderType,
+    override val adminOrderType: EbicsAdminOrderType,
 
     //For H005 order types
     @Embedded
-    val ebicsServiceType: EbicsService? = null,
+    override val ebicsServiceType: EbicsService? = null,
     //For H002-H004 order types
-    val businessOrderType: String? = null,
-) {
+    override val businessOrderType: String? = null,
+) : ITraceOrderTypeDefinition {
     companion object {
         fun fromOrderType(orderType: IOrderTypeDefinition): OrderTypeDefinition {
             return when {

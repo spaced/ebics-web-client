@@ -20,9 +20,8 @@ package org.ebics.client.filetransfer.h004
 
 import org.ebics.client.api.EbicsSession
 import org.ebics.client.api.TransferState
+import org.ebics.client.api.trace.IBankConnectionTraceSession
 import org.ebics.client.api.trace.TraceManager
-import org.ebics.client.api.trace.h004.ITraceSession
-import org.ebics.client.api.trace.h004.TraceSession
 import org.ebics.client.exception.EbicsException
 import org.ebics.client.http.client.TraceableHttpClient
 import org.ebics.client.http.factory.HttpTransferSession
@@ -84,6 +83,7 @@ class FileUpload(
     @Throws(IOException::class, EbicsException::class)
     fun sendFile(
         ebicsSession: EbicsSession,
+        traceSession: IBankConnectionTraceSession,
         content: ByteArray,
         uploadOrder: EbicsUploadOrder
     ): EbicsUploadOrderResponse {
@@ -96,8 +96,6 @@ class FileUpload(
         )
         initializer.build()
         initializer.validate()
-        val traceSession =
-            TraceSession(ebicsSession, OrderTypeDefinition(uploadOrder.adminOrderType, uploadOrder.orderType))
         traceManager.trace(ByteArrayContentFactory(initializer.userSignature.toByteArray()), traceSession)
 
         val responseBody = httpClient.sendAndTraceRequest(
@@ -142,7 +140,7 @@ class FileUpload(
         lastSegment: Boolean,
         transactionId: ByteArray,
         orderType: String,
-        traceSession: ITraceSession,
+        traceSession: IBankConnectionTraceSession,
         httpSession: HttpTransferSession,
     ) {
         val segmentStr = if (lastSegment) "last segment ($segmentNumber)" else "segment ($segmentNumber)"

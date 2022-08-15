@@ -20,7 +20,7 @@ package org.ebics.client.keymgmt.h004
 
 import org.ebics.client.api.EbicsSession
 import org.ebics.client.api.trace.TraceManager
-import org.ebics.client.api.trace.h004.TraceSession
+import org.ebics.client.api.trace.BankConnectionTraceSession
 import org.ebics.client.certificate.BankCertificateManager
 import org.ebics.client.certificate.BankCertificateManager.Companion.createFromCertificates
 import org.ebics.client.certificate.BankCertificateManager.Companion.createFromPubKeyExponentAndModulus
@@ -66,8 +66,8 @@ class KeyManagement(
         val response: KeyManagementResponseElement
         ebicsSession.user.checkAction(EbicsUserAction.INI)
         val httpSession = HttpTransferSession(ebicsSession)
-        val traceSession = TraceSession(ebicsSession, OrderTypeDefinition(EbicsAdminOrderType.INI))
-        val request = INIRequestElement(ebicsSession, traceSession).apply { build(); validate() }
+        val traceSession = BankConnectionTraceSession(ebicsSession, OrderTypeDefinition(EbicsAdminOrderType.INI))
+        val request = INIRequestElement(ebicsSession).apply { build(); validate() }
         traceManager.trace(ByteArrayContentFactory(request.signaturePubKey.toByteArray()), traceSession, false)
 
         val responseBody = httpClient.sendAndTraceRequest(httpSession, traceSession, ByteArrayContentFactory(request.prettyPrint()))
@@ -91,8 +91,8 @@ class KeyManagement(
         val response: KeyManagementResponseElement
         ebicsSession.user.checkAction(EbicsUserAction.HIA)
         val httpSession = HttpTransferSession(ebicsSession)
-        val traceSession = TraceSession(ebicsSession, OrderTypeDefinition(EbicsAdminOrderType.HIA))
-        val request = HIARequestElement(ebicsSession, traceSession).apply { build(); validate() }
+        val traceSession = BankConnectionTraceSession(ebicsSession, OrderTypeDefinition(EbicsAdminOrderType.HIA))
+        val request = HIARequestElement(ebicsSession).apply { build(); validate() }
         traceManager.trace(ByteArrayContentFactory(request.requestOrderData.toByteArray()), traceSession, false)
         val responseBody = httpClient.sendAndTraceRequest(httpSession, traceSession, ByteArrayContentFactory(request.prettyPrint()))
         
@@ -118,7 +118,7 @@ class KeyManagement(
         ebicsSession.user.checkAction(EbicsUserAction.HPB)
         val httpSession = HttpTransferSession(ebicsSession)
         val request = HPBRequestElement(ebicsSession).apply { build(); validate() }
-        val traceSession = TraceSession(ebicsSession, OrderTypeDefinition(EbicsAdminOrderType.HPB))
+        val traceSession = BankConnectionTraceSession(ebicsSession, OrderTypeDefinition(EbicsAdminOrderType.HPB))
 
         val responseBody = httpClient.sendAndTraceRequest(httpSession, traceSession, ByteArrayContentFactory(request.prettyPrint()))
         val response = KeyManagementResponseElement(responseBody)
@@ -154,7 +154,7 @@ class KeyManagement(
         ebicsSession.user.checkAction(EbicsUserAction.SPR)
         val httpSession = HttpTransferSession(ebicsSession)
         val request = SPRRequestElement(ebicsSession).apply { build(); validate() }
-        val traceSession = TraceSession(ebicsSession, OrderTypeDefinition(EbicsAdminOrderType.SPR))
+        val traceSession = BankConnectionTraceSession(ebicsSession, OrderTypeDefinition(EbicsAdminOrderType.SPR))
 
         val responseBody = httpClient.sendAndTraceRequest(httpSession, traceSession, ByteArrayContentFactory(request.prettyPrint()))
         val response = SPRResponseElement(responseBody)

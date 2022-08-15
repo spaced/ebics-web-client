@@ -9,6 +9,15 @@ export enum TraceType {
   Content = 'Content'
 }
 
+export enum TraceCategory {
+  Request = 'Request',
+  HttpResponseOk = 'HttpResponseOk',
+  HttpResponseError = 'HttpResponseError',
+  EbicsResponseOk = 'EbicsResponseOk',
+  EbicsResponseError = 'EbicsResponseError',
+  GeneralError = 'GeneralError',
+}
+
 export interface OrderTypeDefinition {
   adminOrderType: string;
   ebicsServiceType?: BtfService;
@@ -29,4 +38,9 @@ export interface TraceEntry {
   request: boolean;
   traceType: TraceType;
   orderType: OrderTypeDefinition;
+  traceCategory?: TraceCategory;
+  errorCode?: string,
+  errorCodeText?: string,
+  errorMessage?: string,
+  errorStackTrace?: string,
 }

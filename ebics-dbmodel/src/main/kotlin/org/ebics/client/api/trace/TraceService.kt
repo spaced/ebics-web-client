@@ -20,7 +20,6 @@ class TraceService(
 
     override fun trace(content: ContentFactory, traceSession: IBaseTraceSession, request: Boolean) {
         with(traceSession) {
-            val orderTypeDefinition = OrderTypeDefinition.fromOrderType(orderType)
             val bankConnection = (traceSession as? IBankConnectionTraceSession)?.bankConnection as? BankConnectionEntity
             val bank = bank as? Bank
             val traceEntry = traceRepository.save(
@@ -36,7 +35,7 @@ class TraceService(
                     ebicsVersion,
                     upload,
                     request,
-                    orderType = orderTypeDefinition,
+                    orderType = orderType as OrderTypeDefinition,
                     traceType = TraceType.EbicsEnvelope,
                     traceCategory = if (request) TraceCategory.Request else TraceCategory.HttpResponseOk,
                 )
@@ -47,7 +46,6 @@ class TraceService(
 
     override fun traceException(exception: Exception, traceSession: IBaseTraceSession) {
         with(traceSession) {
-            val orderTypeDefinition = OrderTypeDefinition.fromOrderType(orderType)
             val bankConnection = (traceSession as? IBankConnectionTraceSession)?.bankConnection as? BankConnectionEntity
             val bank = bank as? Bank
             traceRepository.save(
@@ -62,7 +60,7 @@ class TraceService(
                     ebicsVersion,
                     upload,
                     request = false,
-                    orderType = orderTypeDefinition,
+                    orderType = orderType as OrderTypeDefinition,
                     traceType = TraceType.EbicsEnvelope,
                     traceCategory = TraceCategory.fromException(exception),
                     errorStackTrace = exception.stackTraceToString(),

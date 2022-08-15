@@ -20,7 +20,7 @@
 package org.ebics.client.xml.h005;
 
 import org.ebics.client.api.EbicsSession;
-import org.ebics.client.api.trace.h005.TraceSession;
+import org.ebics.client.api.trace.BankConnectionTraceSession;
 import org.ebics.client.exception.EbicsException;
 import org.ebics.client.order.EbicsAdminOrderType;
 import org.ebics.client.utils.Utils;
@@ -38,9 +38,8 @@ public class INIRequestElement extends DefaultEbicsRootElement {
    * Constructs a new INI request element.
    * @param session the ebics session.
    */
-  public INIRequestElement(EbicsSession session, TraceSession traceSession) {
+  public INIRequestElement(EbicsSession session) {
     super(session);
-    this.traceSession = traceSession;
   }
 
   @Override
@@ -75,6 +74,5 @@ public class INIRequestElement extends DefaultEbicsRootElement {
 
   private SignaturePubKeyOrderDataElement signaturePubKey;
   private UnsecuredRequestElement unsecuredRequest;
-  private TraceSession traceSession;
   private static final long 		serialVersionUID = -1966559247739923555L;
 }

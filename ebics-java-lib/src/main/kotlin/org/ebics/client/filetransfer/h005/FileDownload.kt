@@ -20,9 +20,8 @@ package org.ebics.client.filetransfer.h005
 
 import org.ebics.client.api.EbicsSession
 import org.ebics.client.api.TransferState
+import org.ebics.client.api.trace.IBankConnectionTraceSession
 import org.ebics.client.api.trace.TraceManager
-import org.ebics.client.api.trace.h005.ITraceSession
-import org.ebics.client.api.trace.h005.TraceSession
 import org.ebics.client.exception.EbicsException
 import org.ebics.client.http.client.TraceableHttpClient
 import org.ebics.client.http.factory.HttpTransferSession
@@ -86,6 +85,7 @@ class FileDownload(private val httpClient: ITraceableHttpClientFactory<Traceable
     @Throws(IOException::class, EbicsException::class)
     fun fetchFile(
         ebicsSession: EbicsSession,
+        traceSession: IBankConnectionTraceSession,
         downloadOrder: EbicsDownloadOrder
     ): ByteArrayOutputStream {
         logger.info(
@@ -105,8 +105,6 @@ class FileDownload(private val httpClient: ITraceableHttpClientFactory<Traceable
             DownloadInitializationRequestElement(ebicsSession, downloadOrder)
         initializer.build()
         initializer.validate()
-        val traceSession =
-            TraceSession(ebicsSession, OrderTypeDefinition(downloadOrder.adminOrderType, downloadOrder.orderService), false)
 
         val responseBody = httpClient.sendAndTraceRequest(httpSession, traceSession, ByteArrayContentFactory(initializer.prettyPrint()))
 
@@ -183,7 +181,7 @@ class FileDownload(private val httpClient: ITraceableHttpClientFactory<Traceable
         lastSegment: Boolean,
         transactionId: ByteArray,
         joiner: Joiner,
-        traceSession: ITraceSession,
+        traceSession: IBankConnectionTraceSession,
         httpSession: HttpTransferSession
     ) {
         val downloader = DownloadTransferRequestElement(

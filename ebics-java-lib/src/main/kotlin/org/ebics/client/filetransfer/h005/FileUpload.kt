@@ -20,8 +20,8 @@ package org.ebics.client.filetransfer.h005
 
 import org.ebics.client.api.EbicsSession
 import org.ebics.client.api.TransferState
+import org.ebics.client.api.trace.IBankConnectionTraceSession
 import org.ebics.client.api.trace.TraceManager
-import org.ebics.client.api.trace.h005.TraceSession
 import org.ebics.client.exception.EbicsException
 import org.ebics.client.http.client.TraceableHttpClient
 import org.ebics.client.http.factory.HttpTransferSession
@@ -83,6 +83,7 @@ class FileUpload(
     @Throws(IOException::class, EbicsException::class)
     fun sendFile(
         session: EbicsSession,
+        traceSession: IBankConnectionTraceSession,
         content: ByteArray,
         ebicsUploadOrder: EbicsUploadOrder
     ): EbicsUploadOrderResponse {
@@ -94,8 +95,6 @@ class FileUpload(
             ebicsUploadOrder,
             content
         ).apply { build(); validate() }
-        val traceSession =
-            TraceSession(session, OrderTypeDefinition(ebicsUploadOrder.adminOrderType, ebicsUploadOrder.orderService))
 
         traceManager.trace(ByteArrayContentFactory(initializer.userSignature.toByteArray()), traceSession)
 
@@ -144,7 +143,7 @@ class FileUpload(
         lastSegment: Boolean,
         transactionId: ByteArray,
         orderType: EbicsAdminOrderType,
-        traceSession: TraceSession,
+        traceSession: IBankConnectionTraceSession,
         httpSession: HttpTransferSession
     ) {
         val segmentStr = if (lastSegment) "last segment ($segmentNumber)" else "segment ($segmentNumber)"
