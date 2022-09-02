@@ -7,11 +7,11 @@ import org.apache.http.client.methods.HttpPost
 import org.apache.http.impl.client.CloseableHttpClient
 import org.apache.http.util.EntityUtils
 import org.ebics.client.exception.EbicsException
+import org.ebics.client.exception.HttpClientException
 import org.ebics.client.exception.HttpServerException
 import org.ebics.client.http.client.request.HttpClientRequest
 import org.ebics.client.io.ByteArrayContentFactory
 import org.slf4j.LoggerFactory
-import java.lang.Exception
 import javax.annotation.PreDestroy
 
 open class SimpleHttpClient(
@@ -27,14 +27,18 @@ open class SimpleHttpClient(
             logger.trace("Setting HTTP POST content header: ${configuration.httpContentType}")
             method.setHeader(HttpHeaders.CONTENT_TYPE, configuration.httpContentType)
         }
-        httpClient.execute(method).use { response ->
-            logger.trace("Received HTTP POST response code ${response.statusLine.statusCode} from URL: ${request.requestURL} using config: $configurationName")
-            //Check the HTTP return code (must be 200)
-            checkHttpCode(response)
-            //If ok returning content
-            return ByteArrayContentFactory(
-                EntityUtils.toByteArray(response.entity)
-            )
+        try {
+            httpClient.execute(method).use { response ->
+                logger.trace("Received HTTP POST response code ${response.statusLine.statusCode} from URL: ${request.requestURL} using config: $configurationName")
+                //Check the HTTP return code (must be 200)
+                checkHttpCode(response)
+                //If ok returning content
+                return ByteArrayContentFactory(
+                    EntityUtils.toByteArray(response.entity)
+                )
+            }
+        } catch (exception: Exception) {
+            throw HttpClientException("Exception while sending HTTP request to ${request.requestURL}", exception)
         }
     }
 
@@ -74,7 +78,8 @@ open class SimpleHttpClient(
             }
             throw HttpServerException(
                 httpCode.toString(), reasonPhrase,
-                "Wrong returned HTTP code: $httpCode $reasonPhrase")
+                "Wrong returned HTTP code: $httpCode $reasonPhrase"
+            )
         }
     }
 

@@ -4,7 +4,7 @@ import org.apache.http.impl.client.CloseableHttpClient
 import org.ebics.client.http.client.HttpClientRequestConfiguration
 import org.ebics.client.http.client.SimpleHttpClient
 
-class PooledSimpleHttpClientFactory(config: HttpClientGlobalConfiguration) :
+class PooledSimpleHttpClientFactory(config: IHttpClientGlobalConfiguration) :
     AbstractPooledHttpClientFactory<SimpleHttpClient>(config) {
     override fun instantiateHttpClient(
         httpClient: CloseableHttpClient,

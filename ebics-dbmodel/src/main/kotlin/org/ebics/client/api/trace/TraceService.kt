@@ -1,15 +1,14 @@
 package org.ebics.client.api.trace
 
 import org.ebics.client.api.bank.Bank
+import org.ebics.client.api.bankconnection.BankConnectionEntity
 import org.ebics.client.api.security.AuthenticationContext
 import org.ebics.client.api.trace.orderType.OrderTypeDefinition
-import org.ebics.client.api.bankconnection.BankConnectionEntity
-import org.ebics.client.exception.EbicsServerException
+import org.ebics.client.exception.EbicsException
 import org.ebics.client.exception.IErrorCodeText
 import org.ebics.client.interfaces.ContentFactory
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import java.lang.Exception
 
 @Service
 class TraceService(
@@ -74,7 +73,7 @@ class TraceService(
     override fun updateLastTrace(
         traceSession: IBaseTraceSession,
         newTraceCategory: TraceCategory,
-        exception: EbicsServerException?
+        exception: EbicsException?
     ) {
         val lastTraceId = traceSession.lastTraceId
         val updatedRows = if (lastTraceId != null) {

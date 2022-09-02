@@ -1,11 +1,6 @@
 package org.ebics.client.ebicsrestapi.configuration
 
 import org.ebics.client.api.EbicsConfiguration
-import org.ebics.client.api.trace.TraceManager
-import org.ebics.client.api.trace.TraceService
-import org.ebics.client.http.factory.IHttpClientFactory
-import org.ebics.client.http.factory.HttpClientGlobalConfiguration
-import org.ebics.client.http.factory.AbstractPooledHttpClientFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
 import java.util.*

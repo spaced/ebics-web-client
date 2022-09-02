@@ -18,9 +18,9 @@
  */
 package org.ebics.client.api.trace
 
+import org.ebics.client.exception.EbicsException
 import org.ebics.client.exception.EbicsServerException
 import org.ebics.client.interfaces.ContentFactory
-import java.lang.Exception
 import kotlin.reflect.KFunction
 
 /**
@@ -88,7 +88,7 @@ interface TraceManager {
     fun updateLastTrace(
         traceSession: IBaseTraceSession,
         traceCategory: TraceCategory,
-        exception: EbicsServerException? = null
+        exception: EbicsException? = null
     )
 
     /**

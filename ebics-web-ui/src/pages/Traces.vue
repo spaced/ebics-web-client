@@ -1,6 +1,6 @@
 <template>
   <q-page class="justify-evenly">
-    <div class="q-pa-md q-ma-md">
+    <div class="q-pa-md">
       <q-table
         title="Traces"
         :filter="customFilterInput"
@@ -10,6 +10,7 @@
         selection="single"
         v-model:selected="selectedTraceList"
         :filter-method="customFilterFunction"
+        class="q-ma-sm"
       >
         <template v-slot:top-right>
           <div class="bg-grey-2 q-pa-sm q-mr-sm rounded-borders">
@@ -76,6 +77,7 @@
         theme="clouds"
         style="height: 300px"
         :printMargin="false"
+        class="q-ma-sm"
       />
     </div>
   </q-page>
@@ -90,6 +92,7 @@ import useOrderTypeLabelAPI from 'components/order-type-label';
 import { VAceEditor } from 'vue3-ace-editor';
 import 'ace-builds/src-noconflict/mode-xml';
 import 'ace-builds/src-noconflict/theme-clouds';
+import { EbicsVersion } from 'src/components/models/ebics-version';
 
 interface CustomFilterInput {
   traceTypeValue: Ref<TraceType[]>,
@@ -117,6 +120,13 @@ export default defineComponent({
     };
 
     const columns = [
+      {
+        name: 'traceCategory',
+        label: 'Category',
+        align: 'left',
+        field: (row: TraceEntry) => row.traceCategory,
+        sortable: true,
+      },
       {
         name: 'dateTime',
         required: true,
@@ -160,7 +170,7 @@ export default defineComponent({
         name: 'ebicsVersion',
         label: 'Version',
         align: 'left',
-        field: (row: TraceEntry) => row.ebicsVesion,
+        field: (row: TraceEntry) => row.ebicsVersion,
         sortable: true,
       },
       {

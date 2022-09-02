@@ -10,23 +10,20 @@ import org.apache.http.impl.client.HttpClientBuilder
 import org.apache.http.impl.client.ProxyAuthenticationStrategy
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager
 import org.apache.http.ssl.SSLContexts
-import org.ebics.client.http.*
 import org.ebics.client.http.client.HttpClient
-import org.ebics.client.http.client.HttpClientConfiguration
+import org.ebics.client.http.client.IHttpClientConfiguration
 import org.ebics.client.http.client.request.HttpClientRequest
-import org.ebics.client.http.client.HttpClientRequestConfiguration
 import org.ebics.client.interfaces.ContentFactory
 import org.ebics.client.io.ByteArrayContentFactory
 import org.ebics.client.utils.requireNotNullAndNotBlank
 import org.slf4j.LoggerFactory
-import org.springframework.stereotype.Component
 import java.io.File
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
 
 
 abstract class AbstractPooledHttpClientFactory<T: HttpClient>(
-    private val config: HttpClientGlobalConfiguration
+    private val config: IHttpClientGlobalConfiguration
 ) : IHttpClientFactory<T> {
 
     private val poolingConnManager = PoolingHttpClientConnectionManager().apply {
@@ -39,7 +36,7 @@ abstract class AbstractPooledHttpClientFactory<T: HttpClient>(
     @PostConstruct
     fun initConfigurations() {
         val configurations = config.configurations.ifEmpty {
-            mapOf("default" to object : HttpClientConfiguration {
+            mapOf("default" to object : IHttpClientConfiguration {
                 override val displayName: String = "default"
                 override val sslTrustedStoreFile: String? = null
                 override val sslTrustedStoreFilePassword: String? = null
@@ -80,7 +77,7 @@ abstract class AbstractPooledHttpClientFactory<T: HttpClient>(
         )
     }
 
-    private fun createHttpClients(namedClientConfigurations: Map<String, HttpClientConfiguration>): Map<String, T> {
+    private fun createHttpClients(namedClientConfigurations: Map<String, IHttpClientConfiguration>): Map<String, T> {
         return namedClientConfigurations.map { config ->
             config.key to instantiateHttpClient(
                 createHttpClient(config.key, config.value),
@@ -95,7 +92,7 @@ abstract class AbstractPooledHttpClientFactory<T: HttpClient>(
      */
     private fun createHttpClient(
         configurationName: String,
-        configuration: HttpClientConfiguration
+        configuration: IHttpClientConfiguration
     ): CloseableHttpClient {
         with(configuration) {
             val logPrefix = "HttpClient '$configurationName:${configuration.displayName}'"

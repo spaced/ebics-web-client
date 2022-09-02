@@ -1,15 +1,16 @@
-package org.ebics.client.ebicsrestapi
+package org.ebics.client.ebicsrestapi.exceptions
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.springframework.http.HttpStatus
-import java.util.*
+import java.time.LocalDateTime
 
-data class ErrorMessage(
-    val timestamp: Date = Date(),
+open class ErrorMessage(
+    val timestamp: LocalDateTime = LocalDateTime.now(),
     @JsonIgnore
     val httpStatus: HttpStatus,
     val status: Int = httpStatus.value(),
     val error: String = httpStatus.reasonPhrase,
     val message: String,
-    val description: String,
+    val causeMessage: String?,
+    val exceptionClass: String,
 )

@@ -33,7 +33,7 @@ export interface TraceEntry {
   dateTime: Date;
   sessionId: string;
   orderNumber?: string;
-  ebicsVesion: EbicsVersion;
+  ebicsVersion: EbicsVersion;
   upload: boolean;
   request: boolean;
   traceType: TraceType;

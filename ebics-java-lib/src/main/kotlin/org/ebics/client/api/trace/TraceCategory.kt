@@ -2,10 +2,10 @@ package org.ebics.client.api.trace
 
 import org.ebics.client.exception.EbicsServerException
 import org.ebics.client.exception.HttpServerException
-import java.lang.Exception
 
 enum class TraceCategory {
     Request,
+    RequestError,
     HttpResponseOk,
     HttpResponseError,
     EbicsResponseOk,
