@@ -6,13 +6,13 @@ import org.ebics.client.api.bank.BankService
 import org.ebics.client.api.bankconnection.BankConnection
 import org.ebics.client.api.bankconnection.BankConnectionEntity
 import org.ebics.client.api.bankconnection.BankConnectionServiceImpl
+import org.ebics.client.api.trace.orderType.OrderTypeDefinition
 import org.ebics.client.exception.EbicsServerException
 import org.ebics.client.exception.HttpServerException
 import org.ebics.client.exception.h005.EbicsReturnCode
 import org.ebics.client.io.ByteArrayContentFactory
 import org.ebics.client.model.EbicsVersion
 import org.ebics.client.order.EbicsAdminOrderType
-import org.ebics.client.order.h005.OrderTypeDefinition
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -165,9 +165,10 @@ class TraceServiceTest(
     @WithMockUser(username = "jan", roles = ["USER"])
     fun whenEbicsEnvelopeTraced_thenTheEbicsEnvelopeRecordToBeFound() {
         val mockUser1 = getMockUser()
+        val orderTypeDefinition = OrderTypeDefinition(adminOrderType = EbicsAdminOrderType.BTD)
         val traceSession = BankConnectionTraceSession(
             mockUser1,
-            OrderTypeDefinition(adminOrderType = EbicsAdminOrderType.BTD, service = null),
+            orderType = orderTypeDefinition,
             upload = true,
             request = true,
             "sessionId1"
@@ -181,13 +182,13 @@ class TraceServiceTest(
         with(result[0] as TraceEntry) {
             Assertions.assertEquals(testInput, textMessageBody)
             Assertions.assertArrayEquals(testInput.toByteArray(), binaryMessageBody)
-            Assertions.assertTrue(request) //Should NOT be overriten for standard trace case
+            Assertions.assertTrue(request) //Should NOT be overwritten for standard trace case
             Assertions.assertTrue(upload)
             Assertions.assertEquals(mockUser1.partner.bank.bankURL, bank?.bankURL)
             Assertions.assertEquals(mockUser1.partner.partnerId, bankConnection?.partner?.partnerId)
             Assertions.assertEquals("sessionId1", sessionId)
             Assertions.assertEquals(TraceType.EbicsEnvelope, traceType)
-            Assertions.assertEquals(TraceCategory.HttpResponseOk, traceCategory)
+            Assertions.assertEquals(TraceCategory.Request, traceCategory)
             Assertions.assertNull(errorMessage)
             Assertions.assertNull(errorCode)
             Assertions.assertNull(errorCodeText)
@@ -201,7 +202,7 @@ class TraceServiceTest(
         val mockUser1 = getMockUser()
         val traceSession = BankConnectionTraceSession(
             mockUser1,
-            OrderTypeDefinition(adminOrderType = EbicsAdminOrderType.BTD, service = null),
+            OrderTypeDefinition(adminOrderType = EbicsAdminOrderType.BTD),
             true,
             request = false,
             "sessionId1"
@@ -217,7 +218,7 @@ class TraceServiceTest(
         with(result[0] as TraceEntry) {
             Assertions.assertNull(textMessageBody)
             Assertions.assertNull(binaryMessageBody)
-            Assertions.assertFalse(request) //Should be overriten for exception to false
+            Assertions.assertFalse(request) //Should be overwritten for exception to false
             Assertions.assertTrue(upload)
             Assertions.assertEquals(mockUser1.partner.bank.bankURL, bank?.bankURL)
             Assertions.assertEquals(mockUser1.partner.partnerId, bankConnection?.partner?.partnerId)
@@ -237,7 +238,7 @@ class TraceServiceTest(
         val mockUser1 = getMockUser()
         val traceSession = BankConnectionTraceSession(
             mockUser1,
-            OrderTypeDefinition(adminOrderType = EbicsAdminOrderType.BTD, service = null),
+            OrderTypeDefinition(adminOrderType = EbicsAdminOrderType.BTD),
             false,
             request = true,
             "sessionId1"
@@ -250,7 +251,7 @@ class TraceServiceTest(
         with(result[0] as TraceEntry) {
             Assertions.assertNull(textMessageBody)
             Assertions.assertNull(binaryMessageBody)
-            Assertions.assertFalse(request) //Should be overriten for exception to false
+            Assertions.assertFalse(request) //Should be overwritten for exception to false
             Assertions.assertFalse(upload)
             Assertions.assertEquals(mockUser1.partner.bank.bankURL, bank?.bankURL)
             Assertions.assertEquals(mockUser1.partner.partnerId, bankConnection?.partner?.partnerId)

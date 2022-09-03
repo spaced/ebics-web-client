@@ -5,9 +5,12 @@ import org.ebics.client.api.bank.cert.BankKeyStore
 import org.ebics.client.api.bank.cert.BankKeyStoreService
 import org.ebics.client.api.bankconnection.BankConnectionEntity
 import org.ebics.client.api.bankconnection.BankConnectionServiceImpl
+import org.ebics.client.api.trace.BankConnectionTraceSession
+import org.ebics.client.api.trace.orderType.OrderTypeDefinition
 import org.ebics.client.ebicsrestapi.bankconnection.UserIdPass
 import org.ebics.client.ebicsrestapi.bankconnection.session.IEbicsSessionFactory
 import org.ebics.client.keymgmt.h005.KeyManagement
+import org.ebics.client.order.EbicsAdminOrderType
 import org.springframework.stereotype.Component
 
 @Component("EbicsKeyManagementAPIH005")
@@ -21,21 +24,24 @@ class EbicsKeyManagementAPI(
 
     fun sendINI(userIdPass: UserIdPass) {
         val session = sessionFactory.getSession(userIdPass, false)
-        keyManagement.sendINI(session)
+        val traceSession = BankConnectionTraceSession(session, OrderTypeDefinition(EbicsAdminOrderType.INI), true)
+        keyManagement.sendINI(session, traceSession)
         //The state of user was changed after INI, must be persisted
         userService.saveUser(session.user as BankConnectionEntity)
     }
 
     fun sendHIA(userIdPass: UserIdPass) {
         val session = sessionFactory.getSession(userIdPass, false)
-        keyManagement.sendHIA(session)
+        val traceSession = BankConnectionTraceSession(session, OrderTypeDefinition(EbicsAdminOrderType.HIA), true)
+        keyManagement.sendHIA(session, traceSession)
         //The state of user was changed after HIA, must be persisted
         userService.saveUser(session.user as BankConnectionEntity)
     }
 
     fun sendHPB(userIdPass: UserIdPass) {
         val session = sessionFactory.getSession(userIdPass, false)
-        val bankCertManager = keyManagement.sendHPB(session, userIdPass.password)
+        val traceSession = BankConnectionTraceSession(session, OrderTypeDefinition(EbicsAdminOrderType.HPB), false)
+        val bankCertManager = keyManagement.sendHPB(session, traceSession, userIdPass.password)
         val user = session.user as BankConnectionEntity
         val bankKeyStore = BankKeyStore.fromBankCertMgr(bankCertManager, user.partner.bank)
         bankKeyStoreService.save(bankKeyStore) //BankKeyStore must be saved
