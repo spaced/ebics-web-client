@@ -3,10 +3,10 @@ package org.ebics.client.api.trace
 import DbTestContext
 import org.ebics.client.api.bank.BankData
 import org.ebics.client.api.bank.BankService
-import org.ebics.client.api.trace.orderType.OrderTypeDefinition
 import org.ebics.client.api.bankconnection.BankConnection
 import org.ebics.client.api.bankconnection.BankConnectionEntity
 import org.ebics.client.api.bankconnection.BankConnectionServiceImpl
+import org.ebics.client.api.trace.orderType.OrderTypeDefinition
 import org.ebics.client.model.EbicsVersion
 import org.ebics.client.order.EbicsAdminOrderType
 import org.junit.jupiter.api.Assertions
@@ -53,7 +53,9 @@ class FileServiceTest(
     @WithMockUser(username = "jan", roles = ["USER"])
     fun addAndGetLastWithAdminOt_then_returnTheAddedFile() {
         val mockUser1 = getMockUser()
-        IFileService.addFile(mockUser1, OrderTypeDefinition(EbicsAdminOrderType.HTD), "htdFileContent".toByteArray(), "sessId1", "ONHX", EbicsVersion.H005, false, false)
+        IFileService.addFile(mockUser1, OrderTypeDefinition(EbicsAdminOrderType.HTD), "htdFileContent".toByteArray(), "sessId1", "ONHX", EbicsVersion.H005, false,
+            request = false
+        )
         val fileContent = IFileService.getLastDownloadedFile(OrderTypeDefinition(EbicsAdminOrderType.HTD), mockUser1, EbicsVersion.H005)
         Assertions.assertEquals("htdFileContent", fileContent.textMessageBody)
     }

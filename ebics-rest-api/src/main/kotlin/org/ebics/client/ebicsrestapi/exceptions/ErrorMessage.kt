@@ -8,8 +8,8 @@ open class ErrorMessage(
     val timestamp: LocalDateTime = LocalDateTime.now(),
     @JsonIgnore
     val httpStatus: HttpStatus,
-    val status: Int = httpStatus.value(),
-    val error: String = httpStatus.reasonPhrase,
+    val httpStatusCode: Int = httpStatus.value(),
+    val httpStatusReasonPhrase: String = httpStatus.reasonPhrase,
     val message: String,
     val causeMessage: String?,
     val exceptionClass: String,

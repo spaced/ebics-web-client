@@ -9,7 +9,7 @@ function isAxiosError<T>(error: unknown): error is AxiosError<T> {
 }
 
 export function isEbicsApiError(error: ApiError): error is EbicsApiError {
-  return (error as EbicsApiError).timestamp !== undefined;
+  return (error as EbicsApiError).exceptionClass !== undefined;
 }
 
 export function isEbicsServerApiError(error: ApiError): error is EbicsServerApiError {
@@ -40,35 +40,36 @@ function errorResponseToApiError(error: unknown): ApiError {
       }
     } else { 
       //There is no real response data, but it is still axios error
-      return {timestamp: new Date().toISOString(), error: 'Axios error without response data', message: JSON.stringify(error.message)} as ApiError
+      return {timestamp: new Date().toISOString(), message: JSON.stringify(error.message)} as ApiError
     } 
   } else {
     //Non axios error
-    return {timestamp: new Date().toISOString(), error: 'Generall error', message: JSON.stringify(error)} as ApiError
+    return {timestamp: new Date().toISOString(), message: JSON.stringify(error)} as ApiError
   }
 }
 
-export function getFormatedErrorMessage(ebicsApiError: ApiError | EbicsApiError | EbicsServerApiError): string {
-  if (isEbicsServerApiError(ebicsApiError)) {
-    if (ebicsApiError.causeMessage)
-      return `${ebicsApiError.message} caused by: ${ebicsApiError.causeMessage} of type: ${ebicsApiError.exceptionClass}`
+export function getFormatedErrorMessage(apiError: ApiError | EbicsApiError | EbicsServerApiError): string {
+  if (isEbicsServerApiError(apiError)) {
+    if (apiError.causeMessage)
+      return `${apiError.message} caused by: ${apiError.causeMessage} of type: ${apiError.exceptionClass}`
     else
-    return `${ebicsApiError.message} of type: ${ebicsApiError.exceptionClass}`
-  } else if (isEbicsApiError(ebicsApiError)) {
-    if (ebicsApiError.causeMessage)
-      return `${ebicsApiError.message} caused by: ${ebicsApiError.causeMessage} of type: ${ebicsApiError.exceptionClass}`
+    return `${apiError.message} of type: ${apiError.exceptionClass}`
+  } else if (isEbicsApiError(apiError)) {
+    if (apiError.causeMessage)
+      return `${apiError.message} caused by: ${apiError.causeMessage} of type: ${apiError.exceptionClass}`
     else
-    return `${ebicsApiError.message} of type: ${ebicsApiError.exceptionClass}`
+    return `${apiError.message} of type: ${apiError.exceptionClass}`
   } else {
-    return ebicsApiError.message;
+    return apiError.message;
   }
 }
 
 export function getFormatedErrorCategory(apiError: ApiError | EbicsApiError): string {  
   if (isEbicsApiError(apiError)) {
-    return `HTTP ${apiError.status} ${apiError.error}` 
+    return `HTTP ${apiError.httpStatusCode} ${apiError.httpStatusResonPhrase}` 
   } else {
-    return apiError.error;
+    //Its not from REST API, it comes from the frontend itself, for example backend is available
+    return 'Frontend error';
   }
 }
 

@@ -1,9 +1,8 @@
 /**
- * Generic error (must not be from the REST)
+ * Generic error (not necesarly from the REST API)
  */
 export interface ApiError {
   timestamp: string;
-  error: string;
   message: string;
 }
 
@@ -13,11 +12,12 @@ export interface ApiError {
 export interface EbicsApiError extends ApiError {
   causeMessage?: string;
   exceptionClass: string;
-  status: number;
+  httpStatusCode: number;
+  httpStatusResonPhrase: string;
 }
 
 /**
- * Ebics Server error (either HTTP or EBICS error)
+ * Ebics Server errors (either HTTP or EBICS server error)
  */
 export interface EbicsServerApiError extends EbicsApiError {
   errorCode: string;

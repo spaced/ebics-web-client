@@ -79,7 +79,7 @@ class SimpleHttpClientTest {
         val exception = Assertions.assertThrows(EbicsException::class.java) {
             client.send(URL("http://not.existing.url.com.xx"), ByteArrayContentFactory("aaa".toByteArray()))
         }
-        Assertions.assertEquals("Wrong returned HTTP code: 500 Error 500", exception.message)
+        Assertions.assertEquals("Wrong returned HTTP code: 500 Error 500", exception.cause?.message)
     }
 
     @Test
@@ -103,6 +103,6 @@ class SimpleHttpClientTest {
         val exception = Assertions.assertThrows(EbicsException::class.java) {
             client.send(URL("http://not.existing.url.com.xx"), ByteArrayContentFactory("aaa".toByteArray()))
         }
-        Assertions.assertEquals("Wrong returned HTTP code: 302 Error 302", exception.message)
+        Assertions.assertEquals("Wrong returned HTTP code: 302 Error 302", exception.cause?.message)
     }
 }

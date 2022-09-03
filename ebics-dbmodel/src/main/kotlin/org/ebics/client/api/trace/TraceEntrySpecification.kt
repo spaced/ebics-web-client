@@ -1,6 +1,5 @@
 package org.ebics.client.api.trace
 
-import org.ebics.client.api.trace.orderType.OrderTypeDefinition
 import org.ebics.client.api.bankconnection.BankConnectionEntity
 import org.ebics.client.model.EbicsVersion
 import org.springframework.data.jpa.domain.Specification
@@ -23,6 +22,10 @@ fun <T, X> Predicate.addEqualsIfNotNull(builder: CriteriaBuilder, path: Path<X>,
 
 fun <T, X> CriteriaBuilder.attributeEquals(path: Path<X>, attributeName: String, value: T): Predicate {
     return equal(path.get<SingularAttribute<X, T>>(attributeName), value)
+}
+
+fun <T, X> CriteriaBuilder.attributeIsNull(path: Path<X>, attributeName: String): Predicate {
+    return isNull(path.get<SingularAttribute<X, T>>(attributeName))
 }
 
 fun <T, X> CriteriaBuilder.attributeIsNotNull(path: Path<X>, attributeName: String): Predicate {
@@ -107,6 +110,12 @@ fun traceCategoryEquals(traceCategory: TraceCategory): Specification<TraceEntry>
     }
 }
 
+fun traceCategoryIsNull(): Specification<TraceEntry> {
+    return Specification<TraceEntry> { root, _, builder ->
+        builder.attributeIsNull<String, TraceEntry>(root, "traceCategory")
+    }
+}
+
 fun traceMessageBodyIsNotEmpty(): Specification<TraceEntry> {
     return Specification<TraceEntry> { root, _, builder ->
         builder.attributeIsNotNull<String, TraceEntry>(root,"textMessageBody")
@@ -122,6 +131,6 @@ fun fileDownloadFilter(creator: String, orderType: ITraceOrderTypeDefinition, us
         .and(ebicsVersionEquals(ebicsVersion))
         .and(uploadEquals(false))
         .and(traceTypeEquals(TraceType.Content))
-        .and(traceCategoryEquals(TraceCategory.EbicsResponseOk))
+        .and(traceCategoryIsNull())
         .and(traceMessageBodyIsNotEmpty())
 }
