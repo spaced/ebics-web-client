@@ -1,4 +1,4 @@
-import { ApiError, EbicsApiError } from 'components/models/ebics-api-error';
+import { ApiError, EbicsApiError, EbicsServerApiError } from 'components/models/ebics-api-error';
 import { useQuasar } from 'quasar';
 import { AxiosError } from 'axios';
 import { ConnectionStatus } from './models/connection-status';
@@ -10,6 +10,10 @@ function isAxiosError<T>(error: unknown): error is AxiosError<T> {
 
 export function isEbicsApiError(error: ApiError): error is EbicsApiError {
   return (error as EbicsApiError).timestamp !== undefined;
+}
+
+export function isEbicsServerApiError(error: ApiError): error is EbicsServerApiError {
+  return (error as EbicsServerApiError).errorCode !== undefined;
 }
 
 function arrayBufferToObject<T>(ab: ArrayBuffer): T | undefined {
@@ -44,14 +48,17 @@ function errorResponseToApiError(error: unknown): ApiError {
   }
 }
 
-export function getFormatedErrorMessage(ebicsApiError: ApiError | EbicsApiError): string {
-  console.log('formating error message');
-  if (isEbicsApiError(ebicsApiError)) {
-    const message = ebicsApiError.message;
-    if (ebicsApiError.description && !ebicsApiError.description.includes(ebicsApiError.message))
-      return `message: ${message} description: ${ebicsApiError.description}`;
-    else 
-      return ebicsApiError.message;
+export function getFormatedErrorMessage(ebicsApiError: ApiError | EbicsApiError | EbicsServerApiError): string {
+  if (isEbicsServerApiError(ebicsApiError)) {
+    if (ebicsApiError.causeMessage)
+      return `${ebicsApiError.message} caused by: ${ebicsApiError.causeMessage} of type: ${ebicsApiError.exceptionClass}`
+    else
+    return `${ebicsApiError.message} of type: ${ebicsApiError.exceptionClass}`
+  } else if (isEbicsApiError(ebicsApiError)) {
+    if (ebicsApiError.causeMessage)
+      return `${ebicsApiError.message} caused by: ${ebicsApiError.causeMessage} of type: ${ebicsApiError.exceptionClass}`
+    else
+    return `${ebicsApiError.message} of type: ${ebicsApiError.exceptionClass}`
   } else {
     return ebicsApiError.message;
   }

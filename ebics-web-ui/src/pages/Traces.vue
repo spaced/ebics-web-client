@@ -86,7 +86,7 @@
 <script lang="ts">
 import { defineComponent, ref, Ref, computed } from 'vue';
 import useTracesAPI from 'components/traces';
-import { OrderTypeDefinition, TraceType, TraceEntry } from 'components/models/trace'
+import { OrderTypeDefinition, TraceType, TraceEntry, TraceCategory } from 'components/models/trace'
 import { TransferType } from 'components/models/ebics-order-type'
 import useOrderTypeLabelAPI from 'components/order-type-label';
 import { VAceEditor } from 'vue3-ace-editor';
@@ -318,6 +318,9 @@ export default defineComponent({
       traceTypeOptions,
       customFilterInput,
       customFilterFunction,
+
+      EbicsVersion,
+      TraceCategory,
     };
   },
 });
