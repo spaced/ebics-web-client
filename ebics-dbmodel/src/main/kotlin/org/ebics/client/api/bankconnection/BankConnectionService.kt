@@ -3,16 +3,16 @@ package org.ebics.client.api.bankconnection
 import org.ebics.client.api.bankconnection.permission.BankConnectionAccessType
 
 interface BankConnectionService {
-    fun findUsers(permission: BankConnectionAccessType): List<BankConnectionEntity>
-    fun getUserById(userId: Long, permission: BankConnectionAccessType = BankConnectionAccessType.READ): BankConnectionEntity
-    fun saveUser(bankConnection: BankConnectionEntity): Long
-    fun createUserAndPartner(bankConnection: BankConnection): Long
-    fun updateUserAndPartner(id: Long, bankConnection: BankConnection): Long
-    fun deleteUser(userId: Long)
+    fun findBankConnections(permission: BankConnectionAccessType): List<BankConnectionEntity>
+    fun getBankConnectionById(bankConnectionId: Long, permission: BankConnectionAccessType = BankConnectionAccessType.READ): BankConnectionEntity
+    fun saveBankConnection(bankConnection: BankConnectionEntity): Long
+    fun createBankConnection(bankConnection: BankConnection): Long
+    fun updateBankConnection(bankConnectionId: Long, bankConnection: BankConnection): Long
+    fun deleteBankConnection(bankConnectionId: Long)
 
     /**
      * Resetting user status to default
      * After such reset must be user newly initialized, including creation of user keys
      */
-    fun resetStatus(userId: Long): Unit
+    fun resetStatus(bankConnectionId: Long): Unit
 }

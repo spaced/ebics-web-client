@@ -1,11 +1,11 @@
 package org.ebics.client.api.bankconnection
 
+import org.ebics.client.api.bankconnection.cert.UserKeyStoreService
+import org.ebics.client.api.bankconnection.permission.BankConnectionAccessType
 import org.ebics.client.api.getById
 import org.ebics.client.api.partner.Partner
-import org.ebics.client.api.bankconnection.cert.UserKeyStoreService
 import org.ebics.client.api.partner.PartnerService
 import org.ebics.client.api.security.AuthenticationContext
-import org.ebics.client.api.bankconnection.permission.BankConnectionAccessType
 import org.ebics.client.model.user.EbicsUserAction
 import org.ebics.client.model.user.EbicsUserStatusEnum
 import org.slf4j.LoggerFactory
@@ -19,23 +19,23 @@ class BankConnectionServiceImpl(
     private val userKeyStoreService: UserKeyStoreService,
 ) : BankConnectionService {
 
-    override fun findUsers(permission: BankConnectionAccessType): List<BankConnectionEntity> {
+    override fun findBankConnections(permission: BankConnectionAccessType): List<BankConnectionEntity> {
         return bankConnectionRepository.findAll().filter { it.hasAccess(permission, AuthenticationContext.fromSecurityContext()) }
     }
 
-    override fun getUserById(userId: Long, permission: BankConnectionAccessType): BankConnectionEntity {
-        val bankConnection = bankConnectionRepository.getById(userId, "bankconnection")
+    override fun getBankConnectionById(bankConnectionId: Long, permission: BankConnectionAccessType): BankConnectionEntity {
+        val bankConnection = bankConnectionRepository.getById(bankConnectionId, "bankconnection")
         bankConnection.checkAccess(permission)
         return bankConnection
     }
 
-    override fun saveUser(bankConnection: BankConnectionEntity): Long {
+    override fun saveBankConnection(bankConnection: BankConnectionEntity): Long {
         bankConnection.checkWriteAccess()
         bankConnectionRepository.saveAndFlush(bankConnection)
         return bankConnection.id!!
     }
 
-    override fun createUserAndPartner(bankConnection: BankConnection): Long {
+    override fun createBankConnection(bankConnection: BankConnection): Long {
         with(bankConnection) {
             val partner = partnerService.createOrGetPartner(partnerId, bankId)
             val authCtx = AuthenticationContext.fromSecurityContext()
@@ -58,10 +58,10 @@ class BankConnectionServiceImpl(
         }
     }
 
-    override fun updateUserAndPartner(id: Long, bankConnection: BankConnection): Long {
+    override fun updateBankConnection(bankConnectionId: Long, bankConnection: BankConnection): Long {
         with(bankConnection) {
             val partner = partnerService.createOrGetPartner(partnerId, bankId)
-            val currentUser = bankConnectionRepository.getById(id, "bankconnection")
+            val currentUser = bankConnectionRepository.getById(bankConnectionId, "bankconnection")
             currentUser.checkWriteAccess()
             //Depending on user status only some values are editable
             val updatedUser = when (currentUser.userStatus) {
@@ -72,7 +72,7 @@ class BankConnectionServiceImpl(
                 else -> currentUser.updateFromBankConnectionAfterInitialization(bankConnection)
             }
             bankConnectionRepository.saveAndFlush(updatedUser)
-            return id
+            return bankConnectionId
         }
     }
 
@@ -113,9 +113,9 @@ class BankConnectionServiceImpl(
         traces
     )
 
-    override fun deleteUser(userId: Long) {
-        bankConnectionRepository.getById(userId, "bankconnection").checkWriteAccess()
-        bankConnectionRepository.deleteById(userId)
+    override fun deleteBankConnection(bankConnectionId: Long) {
+        bankConnectionRepository.getById(bankConnectionId, "bankconnection").checkWriteAccess()
+        bankConnectionRepository.deleteById(bankConnectionId)
     }
 
 
@@ -123,8 +123,8 @@ class BankConnectionServiceImpl(
      * Resetting user status to default
      * After such reset must be user newly initialized, including creation of user keys
      */
-    override fun resetStatus(userId: Long): Unit {
-        val user = bankConnectionRepository.getById(userId, "bankconnection")
+    override fun resetStatus(bankConnectionId: Long): Unit {
+        val user = bankConnectionRepository.getById(bankConnectionId, "bankconnection")
         user.checkWriteAccess()
         //Delete user key if available
         user.keyStore?.let { userKeyStoreService.deleteById(it.id!!) }

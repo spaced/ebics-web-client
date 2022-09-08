@@ -3,12 +3,12 @@ package org.ebics.client.api.trace
 import DbTestContext
 import org.ebics.client.api.bank.BankData
 import org.ebics.client.api.bank.BankService
-import org.ebics.client.api.trace.orderType.EbicsMessage
-import org.ebics.client.api.trace.orderType.EbicsService
-import org.ebics.client.api.trace.orderType.OrderTypeDefinition
 import org.ebics.client.api.bankconnection.BankConnection
 import org.ebics.client.api.bankconnection.BankConnectionEntity
 import org.ebics.client.api.bankconnection.BankConnectionServiceImpl
+import org.ebics.client.api.trace.orderType.EbicsMessage
+import org.ebics.client.api.trace.orderType.EbicsService
+import org.ebics.client.api.trace.orderType.OrderTypeDefinition
 import org.ebics.client.model.EbicsVersion
 import org.ebics.client.order.EbicsAdminOrderType
 import org.junit.jupiter.api.Assertions
@@ -41,8 +41,8 @@ class TraceRepositoryTest(
         bankId: Long = getMockBank()
     ): BankConnectionEntity {
         val userInfo = BankConnection(EbicsVersion.H004, userId, "Jan", partnerId, bankId, false, false)
-        val bcId = userService.createUserAndPartner(userInfo)
-        return userService.getUserById(bcId)
+        val bcId = userService.createBankConnection(userInfo)
+        return userService.getBankConnectionById(bcId)
     }
 
     @Test

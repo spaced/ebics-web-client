@@ -26,7 +26,7 @@ class EbicsKeyManagementAPI(
         val traceSession = BankConnectionTraceSession(session, OrderTypeDefinition(EbicsAdminOrderType.INI), true)
         keyManagement.sendINI(session, traceSession)
         //The state of user was changed after INI, must be persisted
-        userService.saveUser(session.user as BankConnectionEntity)
+        userService.saveBankConnection(session.user as BankConnectionEntity)
     }
 
     fun sendHIA(userIdPass: UserIdPass) {
@@ -34,7 +34,7 @@ class EbicsKeyManagementAPI(
         val traceSession = BankConnectionTraceSession(session, OrderTypeDefinition(EbicsAdminOrderType.HIA), true)
         keyManagement.sendHIA(session, traceSession)
         //The state of user was changed after HIA, must be persisted
-        userService.saveUser(session.user as BankConnectionEntity)
+        userService.saveBankConnection(session.user as BankConnectionEntity)
     }
 
     fun sendHPB(userIdPass: UserIdPass) {
@@ -45,6 +45,6 @@ class EbicsKeyManagementAPI(
         val bankKeyStore = BankKeyStore.fromBankCertMgr(bankCertManager, user.partner.bank)
         bankKeyStoreService.save(bankKeyStore) //BankKeyStore must be saved
         bankService.updateKeyStore(user.partner.bank, bankKeyStore) //BankKeyStore must be added to bank
-        userService.saveUser(user) //The state of user was changed after HPB, must be persisted
+        userService.saveBankConnection(user) //The state of user was changed after HPB, must be persisted
     }
 }

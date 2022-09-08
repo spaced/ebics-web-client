@@ -51,8 +51,8 @@ class TraceServiceTest(
         bankId: Long = getMockBank()
     ): BankConnectionEntity {
         val userInfo = BankConnection(EbicsVersion.H004, userId, "Jan", partnerId, bankId, false, false)
-        val bcId = userService.createUserAndPartner(userInfo)
-        return userService.getUserById(bcId)
+        val bcId = userService.createBankConnection(userInfo)
+        return userService.getBankConnectionById(bcId)
     }
 
     @Test

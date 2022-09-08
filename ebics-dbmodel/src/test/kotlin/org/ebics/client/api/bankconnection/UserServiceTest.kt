@@ -27,8 +27,8 @@ class UserServiceTest(
         val bank = BankData(  URL("https://ebics.ubs.com/ebicsweb/ebicsweb"),  "EBXUBSCH", "UBS-PROD-CH")
         val bankId = bankService.createBank(bank)
         val userInfo = BankConnection(EbicsVersion.H004, "CHT10001", "Jan",  "CH100001", bankId, false, false)
-        val userId = userService.createUserAndPartner(userInfo)
-        with( userService.getUserById(userId) ) {
+        val userId = userService.createBankConnection(userInfo)
+        with( userService.getBankConnectionById(userId) ) {
             assertThat( name ).isEqualTo( userInfo.name )
             assertThat( partner.bank.bankURL ).isEqualTo( bank.bankURL )
             assertThat( ebicsVersion ).isEqualTo( userInfo.ebicsVersion )
