@@ -6,6 +6,7 @@ import org.ebics.client.exception.HttpServerException
 enum class TraceCategory {
     Request,
     RequestError,
+    RequestOk,
     HttpResponseOk,
     HttpResponseError,
     EbicsResponseOk,

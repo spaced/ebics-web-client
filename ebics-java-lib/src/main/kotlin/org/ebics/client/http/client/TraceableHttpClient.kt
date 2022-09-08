@@ -10,17 +10,21 @@ import org.ebics.client.http.client.request.HttpClientRequest
 import org.ebics.client.io.ByteArrayContentFactory
 
 class TraceableHttpClient(
-    httpClient: CloseableHttpClient,
-    configuration: HttpClientRequestConfiguration,
-    configurationName: String = "default",
+    private val simpleHttpClient: SimpleHttpClient,
     val traceManager: TraceManager,
-) : SimpleHttpClient(httpClient, configuration, configurationName), ITraceableHttpClient {
+) : HttpClient by simpleHttpClient, ITraceableHttpClient {
+
+    constructor(httpClient: CloseableHttpClient,
+                configuration: HttpClientRequestConfiguration,
+                configurationName: String = "default",
+                traceManager: TraceManager) : this(SimpleHttpClient(httpClient, configuration, configurationName), traceManager)
 
     override fun sendAndTrace(request: HttpClientRequest, traceSession: IBaseTraceSession): ByteArrayContentFactory {
         try {
             traceManager.trace(request.content, traceSession, request = true)
-            val response = send(request)
+            val response = simpleHttpClient.send(request)
             traceManager.trace(response, traceSession, request = false)
+            traceManager.updateLastTrace(traceSession, TraceCategory.RequestOk)
             return response
         } catch (e: HttpClientException) {
             //The request was not sent yet (network issues, connection, dns, ..)
