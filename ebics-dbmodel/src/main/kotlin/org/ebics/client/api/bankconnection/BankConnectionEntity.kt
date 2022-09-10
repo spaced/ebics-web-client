@@ -2,11 +2,10 @@ package org.ebics.client.api.bankconnection
 
 import com.fasterxml.jackson.annotation.JsonFilter
 import com.fasterxml.jackson.annotation.JsonIgnore
-import org.ebics.client.api.EbicsUser
-import org.ebics.client.api.partner.Partner
-import org.ebics.client.api.trace.TraceEntry
 import org.ebics.client.api.bankconnection.cert.UserKeyStore
 import org.ebics.client.api.bankconnection.permission.BankConnectionAccessRightsController
+import org.ebics.client.api.partner.Partner
+import org.ebics.client.api.trace.TraceEntry
 import org.ebics.client.model.EbicsVersion
 import org.ebics.client.model.user.EbicsUserStatusEnum
 import javax.persistence.*
@@ -24,7 +23,7 @@ data class BankConnectionEntity (
     override var dn: String,
     override var userStatus: EbicsUserStatusEnum = EbicsUserStatusEnum.CREATED,
     override val useCertificate: Boolean,
-    var usePassword: Boolean,
+    override var usePassword: Boolean,
 
     @ManyToOne(optional = false)
     @JoinColumn(name="PARTNER_ID")
@@ -34,14 +33,14 @@ data class BankConnectionEntity (
     @OneToOne(optional = true, cascade = [CascadeType.ALL])
     var keyStore: UserKeyStore?,
 
-    val creator: String,
-    val guestAccess: Boolean,
+    override val creator: String,
+    override val guestAccess: Boolean,
 
     @JsonIgnore
     @OneToMany(cascade = [CascadeType.ALL], mappedBy = "bankConnection")
     val traces: List<TraceEntry> = emptyList(),
 
-) : EbicsUser, BankConnectionAccessRightsController {
+    ) : BankConnectionEntityInt, BankConnectionAccessRightsController {
     @JsonIgnore
     override fun getCreatorName(): String = creator
     override fun isGuestAccess(): Boolean = guestAccess
