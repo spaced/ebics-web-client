@@ -41,7 +41,11 @@ The REST backend application use standard spring security, which is using only s
 
 The EBICS user keys are persisted in the DB as java-key-store. User can use additionally the password (2FA) to protect access to his EBICS keys if desired. 
 
-### Ideas for roadmap:
+### Data model
+The REST backend use simple JPA persistence layer. Access to core EBICS data is protected by Write/Read/UseAccessRightController interfaces which provides granular access control for single records in DB.
+![Data Model](ebics-web-client-data-model.drawio.png)
+
+### Ideas for roadmap
 
 - Add sub-module (or separate repository) for E2E testing
 - Add business content indexing in order to enable displaying of PSR status, HAC status in user-friendly way
