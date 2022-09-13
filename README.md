@@ -43,6 +43,7 @@ The EBICS user keys are persisted in the DB as java-key-store. User can use addi
 
 ### Data model
 The REST backend use simple JPA persistence layer. Access to core EBICS data is protected by Write/Read/UseAccessRightController interfaces which provides granular access control for single records in DB.
+
 ![Data Model](ebics-web-client-data-model.drawio.png)
 
 ### Ideas for roadmap
