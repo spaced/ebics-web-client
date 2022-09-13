@@ -21,6 +21,8 @@ import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.net.URL
+import java.time.ZoneId
+import java.time.ZonedDateTime
 
 @ExtendWith(SpringExtension::class)
 @DataJpaTest
@@ -265,5 +267,50 @@ class TraceRepositoryTest(
                 .or(traceCategoryEquals(TraceCategory.HttpResponseError))
                 .or(traceCategoryEquals(TraceCategory.HttpResponseOk)))
         Assertions.assertFalse(negativeResult.isPresent)
+    }
+
+    @Test
+    @WithMockUser(username = "jan", roles = ["USER"])
+    fun testTrRepoGetHealthStatistics() {
+        val mockUser1 = getMockUser()
+        val service = EbicsService("name", "s", "dd", message = EbicsMessage("name1", "ff", "001", "Zip"))
+        traceRepository.save(
+            TraceEntry(
+                null, "test", null, mockUser1,  null,"sessId1", "O5N3", EbicsVersion.H004, false, false, creator = "jan", orderType =
+                OrderTypeDefinition(EbicsAdminOrderType.HTD, service),
+                traceCategory = TraceCategory.EbicsResponseError
+            )
+        )
+
+        traceRepository.save(
+            TraceEntry(
+                null, "test", null, mockUser1,  null,"sessId1", "O5N3", EbicsVersion.H004, false, false, creator = "jan", orderType =
+                OrderTypeDefinition(EbicsAdminOrderType.HTD, service),
+                traceCategory = TraceCategory.HttpResponseError
+            )
+        )
+
+        traceRepository.save(
+            TraceEntry(
+                null, "test", null, mockUser1,  null,"sessId1", "O5N3", EbicsVersion.H004, false, false, creator = "jan", orderType =
+                OrderTypeDefinition(EbicsAdminOrderType.HTD, service),
+                traceCategory = TraceCategory.EbicsResponseOk
+            )
+        )
+
+        val fixTimeInPast = ZonedDateTime.of(2022,2,2,0,0,0,0, ZoneId.systemDefault())
+        val errorCount =
+            traceRepository.getTraceEntryCountByBankConnectionIdAndTraceCategoryIn(mockUser1.id!!, fixTimeInPast, setOf(TraceCategory.EbicsResponseError, TraceCategory.HttpResponseError))
+        val okCount =
+            traceRepository.getTraceEntryCountByBankConnectionIdAndTraceCategoryIn(mockUser1.id!!, fixTimeInPast, setOf(TraceCategory.EbicsResponseOk))
+
+        Assertions.assertEquals(2, errorCount)
+        Assertions.assertEquals(1, okCount)
+
+        val result = traceRepository.getTraceEntryCountForTraceCategoryInGroupedByBankConnectionId(fixTimeInPast, setOf(TraceCategory.EbicsResponseError, TraceCategory.HttpResponseError))
+        Assertions.assertNotNull(result)
+        Assertions.assertEquals(1, result.size)
+        Assertions.assertEquals(2, result[0].traceEntryCount)
+        Assertions.assertEquals(mockUser1.id!!, result[0].bankConnectionId)
     }
 }

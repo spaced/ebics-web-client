@@ -6,8 +6,8 @@ import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import org.springframework.transaction.annotation.Transactional
-import java.time.LocalDateTime
 import java.time.ZonedDateTime
+import java.util.*
 
 @Transactional
 interface TraceRepository : JpaRepository<TraceEntry, Long>, JpaSpecificationExecutor<TraceEntry> {
@@ -51,20 +51,20 @@ interface TraceRepository : JpaRepository<TraceEntry, Long>, JpaSpecificationExe
     @Query("select count(t.id) from TraceEntry t where t.bankConnection.id = :bankConnectionId and t.dateTime > :notOlderThan and t.traceCategory in :traceCategoryIn")
     fun getTraceEntryCountByBankConnectionIdAndTraceCategoryIn(
         @Param("bankConnectionId") bankConnectionId: Long,
-        @Param("notOlderThan") notOlderThan: LocalDateTime,
+        @Param("notOlderThan") notOlderThan: ZonedDateTime,
         @Param("traceCategoryIn") traceCategoryIn: Set<TraceCategory>
     ): Int
 
-    @Query("select count(t.id) from TraceEntry t t.dateTime > :notOlderThan and t.traceCategory in :traceCategoryIn groupBy t.bankConnection.id")
+    @Query("select t.bankConnection.id as bankConnectionId, count(t.id) as traceEntryCount from TraceEntry t where t.dateTime > :notOlderThan and t.traceCategory in :traceCategoryIn group by t.bankConnection.id")
     fun getTraceEntryCountForTraceCategoryInGroupedByBankConnectionId(
-        @Param("notOlderThan") notOlderThan: LocalDateTime,
+        @Param("notOlderThan") notOlderThan: ZonedDateTime,
         @Param("traceCategoryIn") traceCategoryIn: Set<TraceCategory>
-    ): Int
+    ): List<TraceStatistic>
 
-    @Query("select t from TraceEntry t t.dateTime > :notOlderThan and t.traceCategory in :traceCategoryIn and t.bankConnection.id = :bankConnectionId")
+    @Query("select t from TraceEntry t where t.dateTime > :notOlderThan and t.traceCategory in :traceCategoryIn and t.bankConnection.id = :bankConnectionId")
     fun getTraceEntryByBankConnectionAndCategoryIn(
         @Param("bankConnectionId") bankConnectionId: Long,
-        @Param("notOlderThan") notOlderThan: LocalDateTime,
+        @Param("notOlderThan") notOlderThan: ZonedDateTime,
         @Param("traceCategoryIn") traceCategoryIn: Set<TraceCategory>
-    ): TraceEntry
+    ): Optional<TraceEntry>
 }

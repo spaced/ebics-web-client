@@ -1,9 +1,9 @@
 package org.ebics.client.ebicsrestapi.bankconnection
 
 import org.ebics.client.api.bankconnection.BankConnection
-import org.ebics.client.api.bankconnection.BankConnectionEntity
 import org.ebics.client.api.bankconnection.BankConnectionService
 import org.ebics.client.api.bankconnection.permission.BankConnectionAccessType
+import org.ebics.client.api.healthstatus.BankConnectionWithHealthStatus
 import org.ebics.client.api.healthstatus.HealthStatusEnrichmentService
 import org.ebics.client.ebicsrestapi.utils.restfilter.ApplyRestFilter
 import org.ebics.client.ebicsrestapi.utils.restfilter.JsonFilterProviderType
@@ -19,17 +19,17 @@ class EbicsBankConnectionsResource (
 {
     @GetMapping("")
     @ApplyRestFilter(filterType = JsonFilterProviderType.DefaultNoFilter)
-    fun listBankConnections(@RequestParam(required = false) permission: BankConnectionAccessType = BankConnectionAccessType.READ): List<BankConnectionEntity> {
+    fun listBankConnections(@RequestParam(required = false) permission: BankConnectionAccessType = BankConnectionAccessType.READ): List<BankConnectionWithHealthStatus> {
         val bankConnections = bankConnectionService.findBankConnections(permission)
-        return healthStatusEnrichmentService.enrichBankConnectionsWithStatus(bankConnections)
+        return healthStatusEnrichmentService.enrichBankConnectionsWithStatus(bankConnections, null)
     }
 
 
     @GetMapping("{userId}")
     @ApplyRestFilter(filterType = JsonFilterProviderType.DefaultNoFilter)
-    fun getBankConnectionById(@PathVariable userId: Long): BankConnectionEntity {
+    fun getBankConnectionById(@PathVariable userId: Long): BankConnectionWithHealthStatus {
         val bankConnection = bankConnectionService.getBankConnectionById(userId);
-        return healthStatusEnrichmentService.enrichBankConnectionWithStatus(bankConnection)
+        return healthStatusEnrichmentService.enrichBankConnectionWithStatus(bankConnection, null)
     }
 
     @DeleteMapping("{userId}")
