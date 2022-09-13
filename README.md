@@ -12,7 +12,7 @@ Check the following [demo](https://ebics-web-client.herokuapp.com/) to get idea 
 - [Getting started](https://github.com/honza-toegel/ebics-java-client/wiki/Getting-Started)
 
 ### Architecture & Functionality
-[Architecture](ebics-web-client-architecture.drawio.png)
+![Architecture](ebics-web-client-architecture.drawio.png)
 
 The web UI frontend uses REST API backend to execute EBICS orders. The core EBICS API is fork of the Java open source [EBICS java client](https://github.com/uwemaurer/ebics-java-client/) repository.
 Thanks a lot for all contributions, otherwise this repo would not be here :-)
