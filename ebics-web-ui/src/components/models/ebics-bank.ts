@@ -1,5 +1,5 @@
 import { EbicsVersion } from 'components/models/ebics-version';
-import { ConnectionStatus } from './connection-status';
+import { ConnectionStatus } from 'components/models/connection-status';
 
 export interface EbicsVersionSettings {
     version: EbicsVersion;
