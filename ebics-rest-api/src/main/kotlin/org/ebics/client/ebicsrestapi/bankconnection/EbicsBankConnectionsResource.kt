@@ -1,33 +1,35 @@
 package org.ebics.client.ebicsrestapi.bankconnection
 
+import org.ebics.client.api.bankconnection.BankConnection
+import org.ebics.client.api.bankconnection.BankConnectionEntity
+import org.ebics.client.api.bankconnection.BankConnectionService
 import org.ebics.client.api.bankconnection.permission.BankConnectionAccessType
-import org.ebics.client.api.bankconnection.*
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("bankconnections")
 @CrossOrigin(origins = ["http://localhost:8081"])
 class EbicsBankConnectionsResource (
-    private val userService: BankConnectionServiceImpl)
+    private val bankConnectionService: BankConnectionService)
 {
     @GetMapping("")
     fun listBankConnections(@RequestParam(required = false) permission: BankConnectionAccessType = BankConnectionAccessType.READ): List<BankConnectionEntity> =
-        userService.findUsers(permission)
+        bankConnectionService.findUsers(permission)
 
     @GetMapping("{userId}")
-    fun getBankConnectionById(@PathVariable userId: Long): BankConnectionEntity = userService.getUserById(userId)
+    fun getBankConnectionById(@PathVariable userId: Long): BankConnectionEntity = bankConnectionService.getUserById(userId)
 
     @DeleteMapping("{userId}")
-    fun deleteBankConnectionById(@PathVariable userId: Long) = userService.deleteUser(userId)
+    fun deleteBankConnectionById(@PathVariable userId: Long) = bankConnectionService.deleteUser(userId)
 
     @PostMapping("")
     fun createBankConnection(@RequestBody bankConnection: BankConnection):Long =
-        userService.createUserAndPartner(bankConnection)
+        bankConnectionService.createUserAndPartner(bankConnection)
 
     @PutMapping("{userId}")
     fun updateBankConnection(@PathVariable userId:Long, @RequestBody bankConnection: BankConnection) =
-        userService.updateUserAndPartner(userId, bankConnection)
+        bankConnectionService.updateUserAndPartner(userId, bankConnection)
 
     @PostMapping("{userId}/resetStatus")
-    fun resetBankConnectionStatus(@PathVariable userId: Long) = userService.resetStatus(userId)
+    fun resetBankConnectionStatus(@PathVariable userId: Long) = bankConnectionService.resetStatus(userId)
 }

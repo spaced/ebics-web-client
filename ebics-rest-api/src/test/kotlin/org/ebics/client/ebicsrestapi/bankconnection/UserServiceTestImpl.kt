@@ -18,7 +18,7 @@ class UserServiceTestImpl : BankConnectionService {
     )
 
     override fun findUsers(permission: BankConnectionAccessType): List<BankConnectionEntity> {
-        TODO("Not yet implemented")
+        return ArrayList(mockUsers.values)
     }
 
     override fun getUserById(userId: Long, permission: BankConnectionAccessType): BankConnectionEntity {
