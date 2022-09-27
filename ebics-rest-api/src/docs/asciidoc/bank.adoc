@@ -1,21 +1,21 @@
 == Bank API
 
-Bank Connection API is used in order to access & update basic bank connection data.
+Bank Connection API is used in order to access & update basic bank data.
 
 === GET bank
 This method is returning list of available banks, for which the user have right.
 
 .request:
-include::{snippets}/bank/http-request.adoc[]
+include::{snippets}/banks/http-request.adoc[]
 
 .response:
-include::{snippets}/bank/http-response.adoc[]
+include::{snippets}/banks/http-response.adoc[]
 
 === GET bank/{id}
-This method is returning single banks by its id.
+This method is returning single bank by its id.
 
 .request:
-include::{snippets}/bank/{id}/http-request.adoc[]
+include::{snippets}/banks/{id}/http-request.adoc[]
 
 .response:
-include::{snippets}/bank/{id}/http-response.adoc[]
+include::{snippets}/banks/{id}/http-response.adoc[]

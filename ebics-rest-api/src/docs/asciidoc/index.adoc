@@ -5,6 +5,8 @@ Jan Toegel;
 :source-highlighter: highlightjs
 :toc: left
 
+This document describes all available REST API of EBICS Web Client.
+
 include::bank.adoc[]
 
 include::bankconnection.adoc[]
