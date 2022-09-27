@@ -4,24 +4,28 @@ import org.apache.xml.security.Init
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.ebics.client.api.bank.Bank
 import org.ebics.client.api.bank.cert.BankKeyStore
-import org.ebics.client.api.partner.Partner
 import org.ebics.client.api.bankconnection.BankConnectionEntity
 import org.ebics.client.api.bankconnection.cert.UserKeyStore
+import org.ebics.client.api.partner.Partner
 import org.ebics.client.certificate.BankCertificateManager
 import org.ebics.client.certificate.UserCertificateManager
 import org.ebics.client.model.EbicsVersion
 import java.net.URL
 import java.security.Security
 
-class MockUser {
+class MockObjectHelper {
     companion object {
         init {
             Init.init()
             Security.addProvider(BouncyCastleProvider())
         }
 
+        fun createMockBank(bankId: Long? = null, bankName: String): Bank {
+            return Bank(bankId, URL("https://ebics.ubs.com/ebicsweb/ebicsweb"), "EBXUBSCH", bankName, null)
+        }
+
         fun createMockUser(userId: Long, bankCerts: Boolean = true): BankConnectionEntity {
-            val bank = Bank(null, URL("https://ebics.ubs.com/ebicsweb/ebicsweb"), "EBXUBSCH", "UBS-PROD-CH", null)
+            val bank = createMockBank(1, "Test bank 1")
 
             if (bankCerts) {
                 val key = "b3BlbnNzaC1rZXktdjEAAAAACmFlczI1Ni1jdHIAAAAGYmNyeXB0AAAAGAAAABBubT4Zco\n" +

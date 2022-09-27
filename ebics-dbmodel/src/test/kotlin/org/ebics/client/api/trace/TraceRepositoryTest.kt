@@ -2,13 +2,13 @@ package org.ebics.client.api.trace
 
 import DbTestContext
 import org.ebics.client.api.bank.BankData
-import org.ebics.client.api.bank.BankService
-import org.ebics.client.api.trace.orderType.EbicsMessage
-import org.ebics.client.api.trace.orderType.EbicsService
-import org.ebics.client.api.trace.orderType.OrderTypeDefinition
+import org.ebics.client.api.bank.BankServiceImpl
 import org.ebics.client.api.bankconnection.BankConnection
 import org.ebics.client.api.bankconnection.BankConnectionEntity
 import org.ebics.client.api.bankconnection.BankConnectionServiceImpl
+import org.ebics.client.api.trace.orderType.EbicsMessage
+import org.ebics.client.api.trace.orderType.EbicsService
+import org.ebics.client.api.trace.orderType.OrderTypeDefinition
 import org.ebics.client.model.EbicsVersion
 import org.ebics.client.order.EbicsAdminOrderType
 import org.junit.jupiter.api.Assertions
@@ -26,7 +26,7 @@ import java.net.URL
 @ContextConfiguration(classes = [DbTestContext::class])
 class TraceRepositoryTest(
     @Autowired private val userService: BankConnectionServiceImpl,
-    @Autowired private val bankService: BankService,
+    @Autowired private val bankService: BankServiceImpl,
     @Autowired private val traceRepository: TraceRepository,
 ) {
     private fun getMockBank(): Long {

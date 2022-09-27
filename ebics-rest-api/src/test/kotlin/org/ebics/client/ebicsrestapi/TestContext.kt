@@ -2,7 +2,7 @@ package org.ebics.client.ebicsrestapi
 
 import com.ninjasquad.springmockk.MockkBean
 import org.ebics.client.api.trace.IFileService
-import org.ebics.client.ebicsrestapi.bankconnection.UserServiceTestImpl
+import org.ebics.client.ebicsrestapi.bankconnection.BankConnectionServiceTestImpl
 import org.ebics.client.ebicsrestapi.bankconnection.session.EbicsSessionFactory
 import org.ebics.client.ebicsrestapi.bankconnection.session.IEbicsSessionFactory
 import org.ebics.client.ebicsrestapi.configuration.EbicsRestConfiguration
@@ -24,7 +24,7 @@ class TestContext {
 
     @Bean(name = ["testSessionFactory"])
     fun sessionFactory(): IEbicsSessionFactory = EbicsSessionFactory(
-        UserServiceTestImpl(), configuration, EbicsProductConfiguration("testProd", "de", "JTO", "3.5")
+        BankConnectionServiceTestImpl(), configuration, EbicsProductConfiguration("testProd", "de", "JTO", "3.5")
     )
 
     @Bean

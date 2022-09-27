@@ -4,17 +4,17 @@ import org.ebics.client.api.bankconnection.BankConnection
 import org.ebics.client.api.bankconnection.BankConnectionEntity
 import org.ebics.client.api.bankconnection.BankConnectionService
 import org.ebics.client.api.bankconnection.permission.BankConnectionAccessType
-import org.ebics.client.ebicsrestapi.MockUser
+import org.ebics.client.ebicsrestapi.MockObjectHelper
 import org.springframework.context.annotation.Primary
 import org.springframework.stereotype.Service
 
 @Primary
 @Service
-class UserServiceTestImpl : BankConnectionService {
+class BankConnectionServiceTestImpl : BankConnectionService {
 
     private val mockUsers = mapOf(
-        1L to MockUser.createMockUser(1, true),
-        2L to MockUser.createMockUser(2, false)
+        1L to MockObjectHelper.createMockUser(1, true),
+        2L to MockObjectHelper.createMockUser(2, false)
     )
 
     override fun findUsers(permission: BankConnectionAccessType): List<BankConnectionEntity> {

@@ -1,12 +1,13 @@
-package org.ebics.client.ebicsrestapi.bank
+package org.ebics.client.ebicsrestapi.bank.api
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.mockk
 import org.ebics.client.api.bank.Bank
-import org.ebics.client.api.bank.BankService
+import org.ebics.client.api.bank.BankServiceImpl
 import org.ebics.client.api.bank.versions.VersionSupport
 import org.ebics.client.api.bank.versions.VersionSupportService
+import org.ebics.client.ebicsrestapi.bank.EbicsBankAPI
 import org.ebics.client.ebicsrestapi.configuration.EbicsRestConfiguration
 import org.ebics.client.model.EbicsVersion
 import org.springframework.context.annotation.Bean
@@ -24,7 +25,7 @@ class EbicsBankAPITestContext {
     fun versionSupportService() = mockk<VersionSupportService>()
 
     @Bean
-    fun bankService() = mockk<BankService>().also { bankService ->
+    fun bankService() = mockk<BankServiceImpl>().also { bankService ->
         every {
             bankService.getBankById(1)
         } returns

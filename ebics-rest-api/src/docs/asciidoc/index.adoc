@@ -1,0 +1,10 @@
+= EBICS Web Client REST API
+Jan Toegel;
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+
+include::bank.adoc[]
+
+include::bankconnection.adoc[]

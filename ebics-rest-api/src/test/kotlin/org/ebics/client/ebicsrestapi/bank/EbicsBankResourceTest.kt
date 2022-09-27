@@ -1,4 +1,4 @@
-package org.ebics.client.ebicsrestapi.bankconnection
+package org.ebics.client.ebicsrestapi.bank
 
 import org.ebics.client.ebicsrestapi.ApiTestContext
 import org.hamcrest.CoreMatchers.hasItems
@@ -30,7 +30,7 @@ import org.springframework.web.context.WebApplicationContext
 @WebMvcTest
 @ContextConfiguration(classes = [ApiTestContext::class])
 @ExtendWith(RestDocumentationExtension::class, SpringExtension::class)
-class EbicsBankConnectionsResourceTest(@Autowired private val context: WebApplicationContext) {
+class EbicsBankResourceTest(@Autowired private val context: WebApplicationContext) {
 
     private lateinit var mockMvc: MockMvc
 
@@ -41,37 +41,35 @@ class EbicsBankConnectionsResourceTest(@Autowired private val context: WebApplic
     }
 
     @Test
-    fun bankConnectionsGet() {
-        mockMvc.perform(get("/bankconnections/").param("permission", "READ"))
+    fun listBanks() {
+        mockMvc.perform(get("/banks/"))
             .andExpect(status().isOk)
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andDo{ MockMvcResultHandlers.print() }
-            //assert MockUser data
+            //assert MockBank data
             .andExpect(jsonPath("$.length()", `is`(2)))
             .andExpect(jsonPath("$[0].id", `is`(1)))
             .andExpect(jsonPath("$[1].id", `is`(2)))
-            .andExpect(jsonPath("$[*].name", hasItems("UserId:1", "UserId:2")))
-            .andExpect(jsonPath("$[*].userId", hasItems("CHT10001")))
+            .andExpect(jsonPath("$[*].name", hasItems("Test bank 1", "Test bank 2")))
+            .andExpect(jsonPath("$[*].bankURL", hasItems("https://ebics.ubs.com/ebicsweb/ebicsweb")))
             .andExpect(jsonPath("$[0]", hasKey("name")))
-            .andExpect(jsonPath("$[*].partner.partnerId", hasItems("CH100001")))
-            .andExpect(jsonPath("$[*].partner.bank.hostId", hasItems("EBXUBSCH")))
-            .andDo(document("bankconnections"))
+            .andExpect(jsonPath("$[*].hostId", hasItems("EBXUBSCH")))
+            .andDo(document("banks"))
     }
 
     @Test
-    fun bankConnectionGet() {
-        mockMvc.perform(get("/bankconnections/1/").param("permission", "READ"))
+    fun getBankById() {
+        mockMvc.perform(get("/banks/1/"))
             .andExpect(status().isOk)
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andDo{ MockMvcResultHandlers.print() }
-            //assert MockUser data
+            //assert MockBank data
             .andExpect(jsonPath("$.id", `is`(1)))
-            .andExpect(jsonPath("$.name", `is`("UserId:1")))
-            .andExpect(jsonPath("$.userId", `is`("CHT10001")))
+            .andExpect(jsonPath("$.name", `is`("Test bank 1")))
+            .andExpect(jsonPath("$.bankURL", `is`("https://ebics.ubs.com/ebicsweb/ebicsweb")))
             .andExpect(jsonPath("$", hasKey("name")))
-            .andExpect(jsonPath("$.partner.partnerId", `is`("CH100001")))
-            .andExpect(jsonPath("$.partner.bank.hostId", `is`("EBXUBSCH")))
-            .andDo(document("bankconnections/{id}"))
+            .andExpect(jsonPath("$.hostId", `is`("EBXUBSCH")))
+            .andDo(document("banks/{id}"))
     }
 
 }

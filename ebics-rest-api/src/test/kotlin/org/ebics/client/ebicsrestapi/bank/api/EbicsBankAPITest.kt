@@ -1,10 +1,11 @@
-package org.ebics.client.ebicsrestapi.bank
+package org.ebics.client.ebicsrestapi.bank.api
 
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockkConstructor
 import org.ebics.client.bank.BankOperations
 import org.ebics.client.ebicsrestapi.EbicsAccessMode
+import org.ebics.client.ebicsrestapi.bank.EbicsBankAPI
 import org.ebics.client.model.EbicsVersion
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

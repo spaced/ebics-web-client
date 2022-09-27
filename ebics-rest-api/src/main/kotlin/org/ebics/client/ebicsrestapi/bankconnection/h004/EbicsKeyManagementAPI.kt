@@ -4,7 +4,7 @@ import org.ebics.client.api.bank.BankService
 import org.ebics.client.api.bank.cert.BankKeyStore
 import org.ebics.client.api.bank.cert.BankKeyStoreService
 import org.ebics.client.api.bankconnection.BankConnectionEntity
-import org.ebics.client.api.bankconnection.BankConnectionServiceImpl
+import org.ebics.client.api.bankconnection.BankConnectionService
 import org.ebics.client.ebicsrestapi.bankconnection.UserIdPass
 import org.ebics.client.ebicsrestapi.bankconnection.session.IEbicsSessionFactory
 import org.ebics.client.keymgmt.h004.KeyManagementImpl
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component
 
 @Component("EbicsKeyManagementAPIH004")
 class EbicsKeyManagementAPI(
-    private val userService: BankConnectionServiceImpl,
+    private val userService: BankConnectionService,
     private val bankService: BankService,
     private val bankKeyStoreService: BankKeyStoreService,
     private val sessionFactory: IEbicsSessionFactory
