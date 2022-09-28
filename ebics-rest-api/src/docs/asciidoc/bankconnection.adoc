@@ -1,0 +1,20 @@
+== BankConnections API
+
+Bank Connection API is used in order to access & update basic bank connection data.
+
+=== GET bankconnections
+This method is returning list of available bank connections, for which the user have right.
+
+.request:
+include::{snippets}/bankconnections/http-request.adoc[]
+
+.response:
+include::{snippets}/bankconnections/http-response.adoc[]
+
+=== GET bankconnections/{id}
+
+.request:
+include::{snippets}/bankconnections/{id}/http-request.adoc[]
+
+.response:
+include::{snippets}/bankconnections/{id}/http-response.adoc[]

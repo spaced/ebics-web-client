@@ -1,14 +1,14 @@
 import org.ebics.client.api.bank.BankRepository
-import org.ebics.client.api.bank.BankService
+import org.ebics.client.api.bank.BankServiceImpl
+import org.ebics.client.api.bankconnection.BankConnectionRepository
+import org.ebics.client.api.bankconnection.BankConnectionServiceImpl
+import org.ebics.client.api.bankconnection.cert.UserKeyStoreRepository
+import org.ebics.client.api.bankconnection.cert.UserKeyStoreService
 import org.ebics.client.api.partner.PartnerRepository
 import org.ebics.client.api.partner.PartnerService
 import org.ebics.client.api.trace.FileService
 import org.ebics.client.api.trace.IFileService
 import org.ebics.client.api.trace.TraceRepository
-import org.ebics.client.api.bankconnection.BankConnectionRepository
-import org.ebics.client.api.bankconnection.BankConnectionServiceImpl
-import org.ebics.client.api.bankconnection.cert.UserKeyStoreRepository
-import org.ebics.client.api.bankconnection.cert.UserKeyStoreService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.context.annotation.Bean
@@ -28,7 +28,7 @@ open class DbTestContext(
     @Autowired val traceRepository: TraceRepository,
 ) {
     @Bean
-    open fun bankService() = BankService(bankRepository)
+    open fun bankService() = BankServiceImpl(bankRepository)
 
     @Bean
     open fun partnerService() = PartnerService(partnerRepository, bankService())

@@ -3,7 +3,7 @@ package org.ebics.client.api.bankconnection.cert
 import DbTestContext
 import org.assertj.core.api.Assertions.assertThat
 import org.ebics.client.api.bank.BankData
-import org.ebics.client.api.bank.BankService
+import org.ebics.client.api.bank.BankServiceImpl
 import org.ebics.client.api.bankconnection.BankConnection
 import org.ebics.client.api.bankconnection.BankConnectionServiceImpl
 import org.ebics.client.certificate.UserCertificateManager
@@ -22,7 +22,7 @@ import java.net.URL
 @ContextConfiguration(classes = [DbTestContext::class])
 open class UserKeyStoreServiceTest (
     @Autowired private val userService: BankConnectionServiceImpl,
-    @Autowired private val bankService: BankService,
+    @Autowired private val bankService: BankServiceImpl,
     @Autowired private val keyStoreService: UserKeyStoreService)
 {
     @Test

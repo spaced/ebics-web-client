@@ -1,0 +1,12 @@
+= EBICS Web Client REST API
+Jan Toegel;
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+
+This document describes all available REST API of EBICS Web Client.
+
+include::bank.adoc[]
+
+include::bankconnection.adoc[]

@@ -1,4 +1,4 @@
-package org.ebics.client.ebicsrestapi.bank
+package org.ebics.client.ebicsrestapi.bank.api
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
@@ -8,6 +8,7 @@ import org.ebics.client.api.bank.BankService
 import org.ebics.client.api.bank.versions.VersionSupport
 import org.ebics.client.api.bank.versions.VersionSupportService
 import org.ebics.client.bank.BankOperations
+import org.ebics.client.ebicsrestapi.bank.EbicsBankAPI
 import org.ebics.client.ebicsrestapi.configuration.EbicsRestConfiguration
 import org.ebics.client.model.EbicsVersion
 import org.springframework.context.annotation.Bean

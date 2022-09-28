@@ -2,7 +2,7 @@ package org.ebics.client.api.partner
 
 import DbTestContext
 import org.ebics.client.api.bank.BankData
-import org.ebics.client.api.bank.BankService
+import org.ebics.client.api.bank.BankServiceImpl
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -16,7 +16,7 @@ import java.net.URL
 @DataJpaTest
 @ContextConfiguration(classes = [DbTestContext::class])
 class PartnerRepositoryTest(
-    @Autowired private val bankService: BankService,
+    @Autowired private val bankService: BankServiceImpl,
     @Autowired private val partnerService: PartnerService
 ) {
     @Test

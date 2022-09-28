@@ -12,6 +12,10 @@
 	<packaging>war</packaging>
 	<name>EBICS REST api</name>
 	<description>EBICS client exposed over REST API</description>
+	<properties>
+		<spring.restdocs.version>2.0.5.RELEASE</spring.restdocs.version>
+		<asciidoctor-maven-plugin-version>2.2.2</asciidoctor-maven-plugin-version>
+	</properties>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -109,6 +113,12 @@
 			<version>${spring.mockk.version}</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.restdocs</groupId>
+			<artifactId>spring-restdocs-mockmvc</artifactId>
+			<version>${spring.restdocs.version}</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -171,6 +181,21 @@
 										<include>index.html</include>
 										<include>favicon.ico</include>
 									</includes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>Copy ASCII docs generated resources</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.outputDirectory}/static/docs</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${project.build.directory}/generated-docs</directory>
 								</resource>
 							</resources>
 						</configuration>
@@ -244,6 +269,36 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>${maven.surefire.plugin.version}</version>
+			</plugin>
+			<plugin>
+				<groupId>org.asciidoctor</groupId>
+				<artifactId>asciidoctor-maven-plugin</artifactId>
+				<version>${asciidoctor-maven-plugin-version}</version>
+				<executions>
+					<execution>
+						<id>convert-to-html</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>process-asciidoc</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/html</outputDirectory>
+							<attributes>
+								<source-highlighter>coderay</source-highlighter>
+								<imagesdir>./images</imagesdir>
+								<toc>left</toc>
+								<icons>font</icons>
+							</attributes>
+						</configuration>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.springframework.restdocs</groupId>
+						<artifactId>spring-restdocs-asciidoctor</artifactId>
+						<version>${spring.restdocs.version}</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 		</plugins>
 	</build>

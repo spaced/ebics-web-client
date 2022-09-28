@@ -1,13 +1,13 @@
 package org.ebics.client.api.partner
 
-import org.ebics.client.api.bank.BankService
+import org.ebics.client.api.bank.BankServiceImpl
 import org.ebics.client.api.getById
 import org.springframework.stereotype.Service
 
 @Service
 class PartnerService(
     private val partnerRepository: PartnerRepository,
-    private val bankService: BankService
+    private val bankService: BankServiceImpl
 ) {
     fun createOrGetPartner(ebicsPartnerId: String, bankId: Long): Partner {
         val existingPartner = partnerRepository.getPartnerByEbicsPartnerId(ebicsPartnerId, bankId)

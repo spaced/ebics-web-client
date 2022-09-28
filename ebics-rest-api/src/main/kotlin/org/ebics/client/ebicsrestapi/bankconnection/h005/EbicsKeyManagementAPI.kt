@@ -4,7 +4,7 @@ import org.ebics.client.api.bank.BankService
 import org.ebics.client.api.bank.cert.BankKeyStore
 import org.ebics.client.api.bank.cert.BankKeyStoreService
 import org.ebics.client.api.bankconnection.BankConnectionEntity
-import org.ebics.client.api.bankconnection.BankConnectionServiceImpl
+import org.ebics.client.api.bankconnection.BankConnectionService
 import org.ebics.client.api.trace.BankConnectionTraceSession
 import org.ebics.client.api.trace.orderType.OrderTypeDefinition
 import org.ebics.client.ebicsrestapi.bankconnection.UserIdPass
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component
 
 @Component("EbicsKeyManagementAPIH005")
 class EbicsKeyManagementAPI(
-    private val userService: BankConnectionServiceImpl,
+    private val bankConnectionService: BankConnectionService,
     private val bankService: BankService,
     private val bankKeyStoreService: BankKeyStoreService,
     private val sessionFactory: IEbicsSessionFactory,
@@ -27,7 +27,7 @@ class EbicsKeyManagementAPI(
         val traceSession = BankConnectionTraceSession(session, OrderTypeDefinition(EbicsAdminOrderType.INI), true)
         keyManagement.sendINI(session, traceSession)
         //The state of user was changed after INI, must be persisted
-        userService.saveBankConnection(session.user as BankConnectionEntity)
+        bankConnectionService.saveBankConnection(session.user as BankConnectionEntity)
     }
 
     fun sendHIA(userIdPass: UserIdPass) {
@@ -35,7 +35,7 @@ class EbicsKeyManagementAPI(
         val traceSession = BankConnectionTraceSession(session, OrderTypeDefinition(EbicsAdminOrderType.HIA), true)
         keyManagement.sendHIA(session, traceSession)
         //The state of user was changed after HIA, must be persisted
-        userService.saveBankConnection(session.user as BankConnectionEntity)
+        bankConnectionService.saveBankConnection(session.user as BankConnectionEntity)
     }
 
     fun sendHPB(userIdPass: UserIdPass) {
@@ -46,6 +46,6 @@ class EbicsKeyManagementAPI(
         val bankKeyStore = BankKeyStore.fromBankCertMgr(bankCertManager, user.partner.bank)
         bankKeyStoreService.save(bankKeyStore) //BankKeyStore must be saved
         bankService.updateKeyStore(user.partner.bank, bankKeyStore) //BankKeyStore must be added to bank
-        userService.saveBankConnection(user) //The state of user was changed after HPB, must be persisted
+        bankConnectionService.saveBankConnection(user) //The state of user was changed after HPB, must be persisted
     }
 }
