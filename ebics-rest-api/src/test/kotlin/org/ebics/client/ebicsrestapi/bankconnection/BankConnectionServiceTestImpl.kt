@@ -13,8 +13,8 @@ import org.springframework.stereotype.Service
 class BankConnectionServiceTestImpl : BankConnectionService {
 
     private val mockUsers = mapOf(
-        1L to MockObjectHelper.createMockUser(1, true),
-        2L to MockObjectHelper.createMockUser(2, false)
+        1L to MockObjectHelper.createMockBankConnection(1, true),
+        2L to MockObjectHelper.createMockBankConnection(2, false)
     )
 
     override fun findBankConnections(permission: BankConnectionAccessType): List<BankConnectionEntity> {
