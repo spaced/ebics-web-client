@@ -61,10 +61,21 @@ interface TraceRepository : JpaRepository<TraceEntry, Long>, JpaSpecificationExe
         @Param("traceCategoryIn") traceCategoryIn: Set<TraceCategory>
     ): List<TraceStatistic>
 
-    @Query("select t from TraceEntry t where t.dateTime > :notOlderThan and t.traceCategory in :traceCategoryIn and t.bankConnection.id = :bankConnectionId")
-    fun getTraceEntryByBankConnectionAndCategoryIn(
-        @Param("bankConnectionId") bankConnectionId: Long,
-        @Param("notOlderThan") notOlderThan: ZonedDateTime,
-        @Param("traceCategoryIn") traceCategoryIn: Set<TraceCategory>
+    //JPA Query doesn't support top/limit therefore must be used method name
+    fun findTopTraceEntryByBankConnectionIdAndTraceCategoryInAndDateTimeGreaterThanOrderByDateTimeDesc(
+        bankConnectionId: Long,
+        categoryIn: Set<TraceCategory>,
+        notOlderThan: ZonedDateTime
     ): Optional<TraceEntry>
+
+    @Query("select t from TraceEntry t where t.id in (select max(te.id) from TraceEntry te " +
+            " where te.dateTime > :notOlderThan " +
+            "       and te.traceCategory in :traceCategoryIn " +
+            " group by te.bankConnection.id)")
+    fun findTopTraceEntriesAndGroupByBankConnection(
+        @Param("traceCategoryIn") traceCategoryIn: Set<TraceCategory>,
+        @Param("notOlderThan") notOlderThan: ZonedDateTime
+    ): List<TraceEntry>
+
+
 }

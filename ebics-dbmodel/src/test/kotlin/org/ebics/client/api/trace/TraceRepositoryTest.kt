@@ -32,15 +32,15 @@ class TraceRepositoryTest(
     @Autowired private val bankService: BankService,
     @Autowired private val traceRepository: TraceRepository,
 ) {
-    private fun getMockBank(): Long {
+    private fun getMockBank(hostId: String): Long {
         val bank = BankData(URL("https://ebics.ubs.com/ebicsweb/ebicsweb"), "EBXUBSCH", "UBS-PROD-CH")
         return bankService.createBank(bank)
     }
 
-    private fun getMockUser(
+    private fun getMockBankConnection(
         userId: String = "CHT10001",
         partnerId: String = "CH100001",
-        bankId: Long = getMockBank()
+        bankId: Long = getMockBank("HID$userId")
     ): BankConnectionEntity {
         val userInfo = BankConnection(EbicsVersion.H004, userId, "Jan", partnerId, bankId, false, false)
         val bcId = userService.createBankConnection(userInfo)
@@ -50,7 +50,7 @@ class TraceRepositoryTest(
     @Test
     @WithMockUser(username = "jan", roles = ["USER"])
     fun testTrRepoSearchByCreator() {
-        val mockUser1 = getMockUser()
+        val mockUser1 = getMockBankConnection()
 
         traceRepository.save(
             TraceEntry(
@@ -75,10 +75,10 @@ class TraceRepositoryTest(
     @Test
     @WithMockUser(username = "jan", roles = ["USER"])
     fun testTrRepoSearchByUser() {
-        val bankId = getMockBank()
-        val mockUser1 = getMockUser("CHT001", "CH1", bankId)
-        val mockUser2 = getMockUser("CHT002", "CH1", bankId)
-        val mockUser3 = getMockUser("CHT002", "XXXXX", bankId)
+        val bankId = getMockBank("HOSTID1")
+        val mockUser1 = getMockBankConnection("CHT001", "CH1", bankId)
+        val mockUser2 = getMockBankConnection("CHT002", "CH1", bankId)
+        val mockUser3 = getMockBankConnection("CHT002", "XXXXX", bankId)
 
         traceRepository.save(
             TraceEntry(
@@ -107,7 +107,7 @@ class TraceRepositoryTest(
     @Test
     @WithMockUser(username = "jan", roles = ["USER"])
     fun testTrRepoSearchByCreatorAndOrderType() {
-        val mockUser1 = getMockUser()
+        val mockUser1 = getMockBankConnection()
         traceRepository.save(
             TraceEntry(
                 null,
@@ -132,10 +132,21 @@ class TraceRepositoryTest(
     @Test
     @WithMockUser(username = "jan", roles = ["USER"])
     fun testTrRepoSearchByCreatorAndOrderTypeExt() {
-        val mockUser1 = getMockUser()
+        val mockUser1 = getMockBankConnection()
         traceRepository.save(
             TraceEntry(
-                null, "test", null, mockUser1, null, "sessId1", "O5N3", EbicsVersion.H004, false, false, creator = "jan", orderType =
+                null,
+                "test",
+                null,
+                mockUser1,
+                null,
+                "sessId1",
+                "O5N3",
+                EbicsVersion.H004,
+                false,
+                false,
+                creator = "jan",
+                orderType =
                 OrderTypeDefinition(EbicsAdminOrderType.HTD, null, "XE2")
             )
         )
@@ -160,11 +171,22 @@ class TraceRepositoryTest(
     @Test
     @WithMockUser(username = "jan", roles = ["USER"])
     fun testTrRepoSearchByCreatorAndBtf() {
-        val mockUser1 = getMockUser()
+        val mockUser1 = getMockBankConnection()
         val service = EbicsService("name", "s", "dd", message = EbicsMessage("name1", "ff", "001", "Zip"))
         traceRepository.save(
             TraceEntry(
-                null, "test", null, mockUser1, null, "sessId1", "O5N3", EbicsVersion.H004, false, false, creator = "jan", orderType =
+                null,
+                "test",
+                null,
+                mockUser1,
+                null,
+                "sessId1",
+                "O5N3",
+                EbicsVersion.H004,
+                false,
+                false,
+                creator = "jan",
+                orderType =
                 OrderTypeDefinition(EbicsAdminOrderType.HTD, service)
             )
         )
@@ -189,11 +211,22 @@ class TraceRepositoryTest(
     @Test
     @WithMockUser(username = "jan", roles = ["USER"])
     fun testTrRepoSearchByEbicsVersionBtf() {
-        val mockUser1 = getMockUser()
+        val mockUser1 = getMockBankConnection()
         val service = EbicsService("name", "s", "dd", message = EbicsMessage("name1", "ff", "001", "Zip"))
         traceRepository.save(
             TraceEntry(
-                null, "test", null, mockUser1,  null,"sessId1", "O5N3", EbicsVersion.H004, false, false, creator = "jan", orderType =
+                null,
+                "test",
+                null,
+                mockUser1,
+                null,
+                "sessId1",
+                "O5N3",
+                EbicsVersion.H004,
+                false,
+                false,
+                creator = "jan",
+                orderType =
                 OrderTypeDefinition(EbicsAdminOrderType.HTD, service)
             )
         )
@@ -210,11 +243,22 @@ class TraceRepositoryTest(
     @Test
     @WithMockUser(username = "jan", roles = ["USER"])
     fun testTrRepoSearchByMessageBody() {
-        val mockUser1 = getMockUser()
+        val mockUser1 = getMockBankConnection()
         val service = EbicsService("name", "s", "dd", message = EbicsMessage("name1", "ff", "001", "Zip"))
         traceRepository.save(
             TraceEntry(
-                null, "test", null, mockUser1,  null,"sessId1", "O5N3", EbicsVersion.H004, false, false, creator = "jan", orderType =
+                null,
+                "test",
+                null,
+                mockUser1,
+                null,
+                "sessId1",
+                "O5N3",
+                EbicsVersion.H004,
+                false,
+                false,
+                creator = "jan",
+                orderType =
                 OrderTypeDefinition(EbicsAdminOrderType.HTD, service)
             )
         )
@@ -231,11 +275,22 @@ class TraceRepositoryTest(
     @Test
     @WithMockUser(username = "jan", roles = ["USER"])
     fun testTrRepoSearchByMessageBodyNull() {
-        val mockUser1 = getMockUser()
+        val mockUser1 = getMockBankConnection()
         val service = EbicsService("name", "s", "dd", message = EbicsMessage("name1", "ff", "001", "Zip"))
         traceRepository.save(
             TraceEntry(
-                null, null, null, mockUser1,  null,"sessId1", "O5N3", EbicsVersion.H004, false, false, creator = "jan", orderType =
+                null,
+                null,
+                null,
+                mockUser1,
+                null,
+                "sessId1",
+                "O5N3",
+                EbicsVersion.H004,
+                false,
+                false,
+                creator = "jan",
+                orderType =
                 OrderTypeDefinition(EbicsAdminOrderType.HTD, service)
             )
         )
@@ -248,11 +303,22 @@ class TraceRepositoryTest(
     @Test
     @WithMockUser(username = "jan", roles = ["USER"])
     fun testTrRepoSearchByTraceCategory() {
-        val mockUser1 = getMockUser()
+        val mockUser1 = getMockBankConnection()
         val service = EbicsService("name", "s", "dd", message = EbicsMessage("name1", "ff", "001", "Zip"))
         traceRepository.save(
             TraceEntry(
-                null, "test", null, mockUser1,  null,"sessId1", "O5N3", EbicsVersion.H004, false, false, creator = "jan", orderType =
+                null,
+                "test",
+                null,
+                mockUser1,
+                null,
+                "sessId1",
+                "O5N3",
+                EbicsVersion.H004,
+                false,
+                false,
+                creator = "jan",
+                orderType =
                 OrderTypeDefinition(EbicsAdminOrderType.HTD, service),
                 traceCategory = TraceCategory.EbicsResponseError
             )
@@ -263,20 +329,33 @@ class TraceRepositoryTest(
         Assertions.assertTrue(positiveResult.isPresent)
 
         val negativeResult =
-            traceRepository.findOne(traceCategoryEquals(TraceCategory.EbicsResponseOk)
-                .or(traceCategoryEquals(TraceCategory.HttpResponseError))
-                .or(traceCategoryEquals(TraceCategory.HttpResponseOk)))
+            traceRepository.findOne(
+                traceCategoryEquals(TraceCategory.EbicsResponseOk)
+                    .or(traceCategoryEquals(TraceCategory.HttpResponseError))
+                    .or(traceCategoryEquals(TraceCategory.HttpResponseOk))
+            )
         Assertions.assertFalse(negativeResult.isPresent)
     }
 
     @Test
     @WithMockUser(username = "jan", roles = ["USER"])
     fun testTrRepoGetHealthStatistics() {
-        val mockUser1 = getMockUser()
+        val mockBankConnection = getMockBankConnection()
         val service = EbicsService("name", "s", "dd", message = EbicsMessage("name1", "ff", "001", "Zip"))
         traceRepository.save(
             TraceEntry(
-                null, "test", null, mockUser1,  null,"sessId1", "O5N3", EbicsVersion.H004, false, false, creator = "jan", orderType =
+                null,
+                "test",
+                null,
+                mockBankConnection,
+                null,
+                "sessId1",
+                "O5N1",
+                EbicsVersion.H004,
+                false,
+                false,
+                creator = "jan",
+                orderType =
                 OrderTypeDefinition(EbicsAdminOrderType.HTD, service),
                 traceCategory = TraceCategory.EbicsResponseError
             )
@@ -284,7 +363,18 @@ class TraceRepositoryTest(
 
         traceRepository.save(
             TraceEntry(
-                null, "test", null, mockUser1,  null,"sessId1", "O5N3", EbicsVersion.H004, false, false, creator = "jan", orderType =
+                null,
+                "test",
+                null,
+                mockBankConnection,
+                null,
+                "sessId1",
+                "O5N2",
+                EbicsVersion.H004,
+                false,
+                false,
+                creator = "jan",
+                orderType =
                 OrderTypeDefinition(EbicsAdminOrderType.HTD, service),
                 traceCategory = TraceCategory.HttpResponseError
             )
@@ -292,25 +382,244 @@ class TraceRepositoryTest(
 
         traceRepository.save(
             TraceEntry(
-                null, "test", null, mockUser1,  null,"sessId1", "O5N3", EbicsVersion.H004, false, false, creator = "jan", orderType =
+                null,
+                "test",
+                null,
+                mockBankConnection,
+                null,
+                "sessId1",
+                "O5N3",
+                EbicsVersion.H004,
+                false,
+                false,
+                creator = "jan",
+                orderType =
                 OrderTypeDefinition(EbicsAdminOrderType.HTD, service),
                 traceCategory = TraceCategory.EbicsResponseOk
             )
         )
 
-        val fixTimeInPast = ZonedDateTime.of(2022,2,2,0,0,0,0, ZoneId.systemDefault())
+        val fixTimeInPast = ZonedDateTime.of(2022, 2, 2, 0, 0, 0, 0, ZoneId.systemDefault())
         val errorCount =
-            traceRepository.getTraceEntryCountByBankConnectionIdAndTraceCategoryIn(mockUser1.id!!, fixTimeInPast, setOf(TraceCategory.EbicsResponseError, TraceCategory.HttpResponseError))
+            traceRepository.getTraceEntryCountByBankConnectionIdAndTraceCategoryIn(
+                mockBankConnection.id!!,
+                fixTimeInPast,
+                setOf(TraceCategory.EbicsResponseError, TraceCategory.HttpResponseError)
+            )
         val okCount =
-            traceRepository.getTraceEntryCountByBankConnectionIdAndTraceCategoryIn(mockUser1.id!!, fixTimeInPast, setOf(TraceCategory.EbicsResponseOk))
+            traceRepository.getTraceEntryCountByBankConnectionIdAndTraceCategoryIn(
+                mockBankConnection.id!!,
+                fixTimeInPast,
+                setOf(TraceCategory.EbicsResponseOk)
+            )
 
         Assertions.assertEquals(2, errorCount)
         Assertions.assertEquals(1, okCount)
 
-        val result = traceRepository.getTraceEntryCountForTraceCategoryInGroupedByBankConnectionId(fixTimeInPast, setOf(TraceCategory.EbicsResponseError, TraceCategory.HttpResponseError))
+        val result = traceRepository.getTraceEntryCountForTraceCategoryInGroupedByBankConnectionId(
+            fixTimeInPast,
+            setOf(TraceCategory.EbicsResponseError, TraceCategory.HttpResponseError)
+        )
         Assertions.assertNotNull(result)
         Assertions.assertEquals(1, result.size)
         Assertions.assertEquals(2, result[0].traceEntryCount)
-        Assertions.assertEquals(mockUser1.id!!, result[0].bankConnectionId)
+        Assertions.assertEquals(mockBankConnection.id!!, result[0].bankConnectionId)
     }
+
+    @Test
+    @WithMockUser(username = "jan", roles = ["USER"])
+    fun testTrRepoGetEntryByBankConnection() {
+        val mockBankConnection = getMockBankConnection()
+        val entryTimeStamp = ZonedDateTime.now()
+        val service = EbicsService("name", "s", "dd", message = EbicsMessage("name1", "ff", "001", "Zip"))
+        traceRepository.save(
+            TraceEntry(
+                null,
+                "test",
+                null,
+                mockBankConnection,
+                null,
+                "sessId1",
+                "O5N1",
+                EbicsVersion.H004,
+                false,
+                false,
+                creator = "jan",
+                orderType =
+                OrderTypeDefinition(EbicsAdminOrderType.HTD, service),
+                traceCategory = TraceCategory.EbicsResponseError
+            )
+        )
+
+        traceRepository.save(
+            TraceEntry(
+                null,
+                "test",
+                null,
+                mockBankConnection,
+                null,
+                "sessId1",
+                "O5N2",
+                EbicsVersion.H004,
+                false,
+                false,
+                creator = "jan",
+                orderType =
+                OrderTypeDefinition(EbicsAdminOrderType.HTD, service),
+                traceCategory = TraceCategory.HttpResponseError
+            )
+        )
+
+        traceRepository.save(
+            TraceEntry(
+                null,
+                "test",
+                null,
+                mockBankConnection,
+                null,
+                "sessId1",
+                "O5N3",
+                EbicsVersion.H004,
+                false,
+                false,
+                creator = "jan",
+                orderType =
+                OrderTypeDefinition(EbicsAdminOrderType.HTD, service),
+                traceCategory = TraceCategory.EbicsResponseOk
+            )
+        )
+
+        val result =
+            traceRepository.findTopTraceEntryByBankConnectionIdAndTraceCategoryInAndDateTimeGreaterThanOrderByDateTimeDesc(
+                mockBankConnection.id!!,
+                setOf(
+                    TraceCategory.EbicsResponseOk,
+                    TraceCategory.HttpResponseOk,
+                    TraceCategory.HttpResponseError,
+                    TraceCategory.EbicsResponseError
+                ),
+                entryTimeStamp
+            )
+        Assertions.assertNotNull(result)
+        Assertions.assertTrue(result.isPresent)
+        Assertions.assertEquals("O5N3", result.get().orderNumber)
+    }
+
+    @Test
+    @WithMockUser(username = "jan", roles = ["USER"])
+    fun testTrRepoFindTopEntriesGroupByBankConnection() {
+        val mockBank = getMockBank("BANK1HID")
+        val mockBankConnection1 = getMockBankConnection("CHT10011", "CH101", mockBank)
+        val entryTimeStamp = ZonedDateTime.now()
+        val service = EbicsService("name", "s", "dd", message = EbicsMessage("name1", "ff", "001", "Zip"))
+        traceRepository.save(
+            TraceEntry(
+                null,
+                "test",
+                null,
+                mockBankConnection1,
+                null,
+                "sessId1",
+                "O5N1",
+                EbicsVersion.H004,
+                false,
+                false,
+                creator = "jan",
+                orderType =
+                OrderTypeDefinition(EbicsAdminOrderType.HTD, service),
+                traceCategory = TraceCategory.EbicsResponseError
+            )
+        )
+
+        traceRepository.save(
+            TraceEntry(
+                null,
+                "test",
+                null,
+                mockBankConnection1,
+                null,
+                "sessId1",
+                "O5N2",
+                EbicsVersion.H004,
+                false,
+                false,
+                creator = "jan",
+                orderType =
+                OrderTypeDefinition(EbicsAdminOrderType.HTD, service),
+                traceCategory = TraceCategory.HttpResponseError
+            )
+        )
+
+        traceRepository.save(
+            TraceEntry(
+                null,
+                "test",
+                null,
+                mockBankConnection1,
+                null,
+                "sessId1",
+                "O5N3",
+                EbicsVersion.H004,
+                false,
+                false,
+                creator = "jan",
+                orderType =
+                OrderTypeDefinition(EbicsAdminOrderType.HTD, service),
+                traceCategory = TraceCategory.EbicsResponseOk
+            )
+        )
+
+        val mockBankConnection2 = getMockBankConnection("CHT10022", "DE2002", mockBank)
+        traceRepository.save(
+            TraceEntry(
+                null,
+                "test",
+                null,
+                mockBankConnection2,
+                null,
+                "sessId1",
+                "X5A2",
+                EbicsVersion.H004,
+                false,
+                false,
+                creator = "jan",
+                orderType =
+                OrderTypeDefinition(EbicsAdminOrderType.HTD, service),
+                traceCategory = TraceCategory.HttpResponseError
+            )
+        )
+
+        traceRepository.save(
+            TraceEntry(
+                null,
+                "test",
+                null,
+                mockBankConnection2,
+                null,
+                "sessId1",
+                "X5A3",
+                EbicsVersion.H004,
+                false,
+                false,
+                creator = "jan",
+                orderType =
+                OrderTypeDefinition(EbicsAdminOrderType.HTD, service),
+                traceCategory = TraceCategory.EbicsResponseOk
+            )
+        )
+
+        val result = traceRepository.findTopTraceEntriesAndGroupByBankConnection(
+            setOf(
+                TraceCategory.EbicsResponseOk,
+                TraceCategory.HttpResponseOk,
+                TraceCategory.HttpResponseError,
+                TraceCategory.EbicsResponseError
+            ),
+            entryTimeStamp
+        )
+        Assertions.assertNotNull(result)
+        Assertions.assertEquals("O5N3", result.find { te -> te.bankConnection!!.id == mockBankConnection1.id }!!.orderNumber)
+        Assertions.assertEquals("X5A3", result.find { te -> te.bankConnection!!.id == mockBankConnection2.id }!!.orderNumber)
+    }
+
 }
