@@ -34,24 +34,29 @@ class HealthStatusEnrichmentServiceImpl(
         bankConnections: List<BankConnectionEntity>,
         actualStatisticsNotOlderThan: ZonedDateTime?
     ): List<BankConnectionWithHealthStatus> {
-        logger.debug("Enriching bank connection with statistics started")
+        val bankConnectionIds = bankConnections.map { bc -> bc.id!! }.toSet()
+
+        logger.debug("Enriching bank connection ids: $bankConnectionIds with statistics started")
         val actualStatisticsNotOlderThan =
             actualStatisticsNotOlderThan ?: ZonedDateTime.now().minusMinutes(actualStatisticsNotOlderThanMinutes)
 
         val lastErrorOkNotOlderThan = ZonedDateTime.now().minusMinutes(lastErrorOkNotOlderThanMinutest)
 
+
         val lastErrorTraces =
-            traceRepository.findTopTraceEntriesAndGroupByBankConnection(errorCategories, lastErrorOkNotOlderThan)
+            traceRepository.findTopTraceEntriesAndGroupByBankConnection(errorCategories, lastErrorOkNotOlderThan, bankConnectionIds)
         val lastOkTraces =
-            traceRepository.findTopTraceEntriesAndGroupByBankConnection(okCategories, lastErrorOkNotOlderThan)
+            traceRepository.findTopTraceEntriesAndGroupByBankConnection(okCategories, lastErrorOkNotOlderThan, bankConnectionIds)
 
         val errorCounts = traceRepository.getTraceEntryCountForTraceCategoryInGroupedByBankConnectionId(
             actualStatisticsNotOlderThan,
-            errorCategories
+            errorCategories,
+            bankConnectionIds
         )
         val okCounts = traceRepository.getTraceEntryCountForTraceCategoryInGroupedByBankConnectionId(
             actualStatisticsNotOlderThan,
-            okCategories
+            okCategories,
+            bankConnectionIds
         )
 
         return bankConnections.map { bankConnection ->
@@ -69,7 +74,7 @@ class HealthStatusEnrichmentServiceImpl(
                 lastErrorTrace
             )
         }.also {
-            logger.debug("Enriching bank connection with statistics finished")
+            logger.debug("Enriching bank connection ids: $bankConnectionIds with statistics finished")
         }
     }
 
@@ -124,75 +129,7 @@ class HealthStatusEnrichmentServiceImpl(
         bankConnection: BankConnectionEntity,
         actualStatisticsNotOlderThan: ZonedDateTime?
     ): BankConnectionWithHealthStatus {
-        val actualStatisticsNotOlderThan =
-            actualStatisticsNotOlderThan ?: ZonedDateTime.now().minusMinutes(actualStatisticsNotOlderThanMinutes)
-
-        val bankConnectionId =
-            requireNotNull(bankConnection.id) { "enrichBankConnectionWithStatus expect saved bankConnection with non null id" }
-        val lastErrorOkNotOlderThan = ZonedDateTime.now().minusMinutes(lastErrorOkNotOlderThanMinutest)
-
-        val lastOkTimestamp =
-            traceRepository.findTopTraceEntryByBankConnectionIdAndTraceCategoryInAndDateTimeGreaterThanOrderByDateTimeDesc(
-                bankConnectionId,
-                okCategories,
-                lastErrorOkNotOlderThan
-            ).map { traceEntry -> traceEntry.dateTime }.orElse(null)
-
-        val lastErrorTrace =
-            traceRepository.findTopTraceEntryByBankConnectionIdAndTraceCategoryInAndDateTimeGreaterThanOrderByDateTimeDesc(
-                bankConnectionId,
-                errorCategories,
-                lastErrorOkNotOlderThan
-            )
-        val lastException = lastErrorTrace.map { errorTrace -> EbicsException(errorTrace.errorMessage) }.orElse(null)
-        val lastErrorTimestamp = lastErrorTrace.map { errorTrace -> errorTrace.dateTime }.orElse(null)
-
-        val errorCount = traceRepository.getTraceEntryCountByBankConnectionIdAndTraceCategoryIn(
-            bankConnectionId,
-            actualStatisticsNotOlderThan,
-            errorCategories,
-        )
-        val okCount = traceRepository.getTraceEntryCountByBankConnectionIdAndTraceCategoryIn(
-            bankConnectionId,
-            actualStatisticsNotOlderThan,
-            okCategories,
-        )
-        val totalCount = errorCount + okCount
-        val connectionStatusDetail = if (totalCount == 0) {
-            ConnectionStatusDetailImpl(
-                0,
-                0,
-                0,
-                HealthStatusType.Unknown,
-                0,
-                0,
-                lastException,
-                lastErrorTimestamp,
-                lastOkTimestamp
-            )
-        } else {
-            val errorRate = errorCount / totalCount
-            val okRate = okCount / totalCount
-            val healthStatusType = if (okRate > minimalErrorRate)
-                HealthStatusType.Ok
-            else if (errorRate > minimalErrorRate)
-                HealthStatusType.Error
-            else
-                HealthStatusType.Warning
-            ConnectionStatusDetailImpl(
-                totalCount,
-                okCount,
-                errorCount,
-                healthStatusType,
-                errorRate,
-                okRate,
-                lastException,
-                lastErrorTimestamp,
-                lastOkTimestamp
-            )
-        }
-
-        return BankConnectionWithHealthStatus(bankConnection, ConnectionStatusImpl(connectionStatusDetail))
+        return enrichBankConnectionsWithStatus(listOf(bankConnection), actualStatisticsNotOlderThan)[0]
     }
 
     companion object {

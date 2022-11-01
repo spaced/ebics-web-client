@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import org.springframework.transaction.annotation.Transactional
 import java.time.ZonedDateTime
-import java.util.*
 
 @Transactional
 interface TraceRepository : JpaRepository<TraceEntry, Long>, JpaSpecificationExecutor<TraceEntry> {
@@ -48,34 +47,26 @@ interface TraceRepository : JpaRepository<TraceEntry, Long>, JpaSpecificationExe
         @Param("newOrderNumber") newOrderNumber: String
     ): Int
 
-    @Query("select count(t.id) from TraceEntry t where t.bankConnection.id = :bankConnectionId and t.dateTime > :notOlderThan and t.traceCategory in :traceCategoryIn")
-    fun getTraceEntryCountByBankConnectionIdAndTraceCategoryIn(
-        @Param("bankConnectionId") bankConnectionId: Long,
-        @Param("notOlderThan") notOlderThan: ZonedDateTime,
-        @Param("traceCategoryIn") traceCategoryIn: Set<TraceCategory>
-    ): Int
-
-    @Query("select t.bankConnection.id as bankConnectionId, count(t.id) as traceEntryCount from TraceEntry t where t.dateTime > :notOlderThan and t.traceCategory in :traceCategoryIn group by t.bankConnection.id")
+    @Query("select t.bankConnection.id as bankConnectionId, count(t.id) as traceEntryCount from TraceEntry t " +
+            " where t.dateTime > :notOlderThan " +
+            "   and t.traceCategory in :traceCategoryIn " +
+            "   and t.bankConnection.id in :bankConnectionIdIn " +
+            " group by t.bankConnection.id")
     fun getTraceEntryCountForTraceCategoryInGroupedByBankConnectionId(
         @Param("notOlderThan") notOlderThan: ZonedDateTime,
-        @Param("traceCategoryIn") traceCategoryIn: Set<TraceCategory>
+        @Param("traceCategoryIn") traceCategoryIn: Set<TraceCategory>,
+        @Param("bankConnectionIdIn") bankConnectionIdIn: Set<Long>
     ): List<TraceStatistic>
-
-    //JPA Query doesn't support top/limit therefore must be used method name
-    fun findTopTraceEntryByBankConnectionIdAndTraceCategoryInAndDateTimeGreaterThanOrderByDateTimeDesc(
-        bankConnectionId: Long,
-        categoryIn: Set<TraceCategory>,
-        notOlderThan: ZonedDateTime
-    ): Optional<TraceEntry>
 
     @Query("select t from TraceEntry t where t.id in (select max(te.id) from TraceEntry te " +
             " where te.dateTime > :notOlderThan " +
             "       and te.traceCategory in :traceCategoryIn " +
+            "       and t.bankConnection.id in :bankConnectionIdIn " +
             " group by te.bankConnection.id)")
     fun findTopTraceEntriesAndGroupByBankConnection(
         @Param("traceCategoryIn") traceCategoryIn: Set<TraceCategory>,
-        @Param("notOlderThan") notOlderThan: ZonedDateTime
+        @Param("notOlderThan") notOlderThan: ZonedDateTime,
+        @Param("bankConnectionIdIn") bankConnectionIdIn: Set<Long>
     ): List<TraceEntry>
-
 
 }

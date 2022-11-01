@@ -400,109 +400,16 @@ class TraceRepositoryTest(
         )
 
         val fixTimeInPast = ZonedDateTime.of(2022, 2, 2, 0, 0, 0, 0, ZoneId.systemDefault())
-        val errorCount =
-            traceRepository.getTraceEntryCountByBankConnectionIdAndTraceCategoryIn(
-                mockBankConnection.id!!,
-                fixTimeInPast,
-                setOf(TraceCategory.EbicsResponseError, TraceCategory.HttpResponseError)
-            )
-        val okCount =
-            traceRepository.getTraceEntryCountByBankConnectionIdAndTraceCategoryIn(
-                mockBankConnection.id!!,
-                fixTimeInPast,
-                setOf(TraceCategory.EbicsResponseOk)
-            )
-
-        Assertions.assertEquals(2, errorCount)
-        Assertions.assertEquals(1, okCount)
 
         val result = traceRepository.getTraceEntryCountForTraceCategoryInGroupedByBankConnectionId(
             fixTimeInPast,
-            setOf(TraceCategory.EbicsResponseError, TraceCategory.HttpResponseError)
+            setOf(TraceCategory.EbicsResponseError, TraceCategory.HttpResponseError),
+            setOf(mockBankConnection.id!!)
         )
         Assertions.assertNotNull(result)
         Assertions.assertEquals(1, result.size)
         Assertions.assertEquals(2, result[0].traceEntryCount)
         Assertions.assertEquals(mockBankConnection.id!!, result[0].bankConnectionId)
-    }
-
-    @Test
-    @WithMockUser(username = "jan", roles = ["USER"])
-    fun testTrRepoGetEntryByBankConnection() {
-        val mockBankConnection = getMockBankConnection()
-        val entryTimeStamp = ZonedDateTime.now()
-        val service = EbicsService("name", "s", "dd", message = EbicsMessage("name1", "ff", "001", "Zip"))
-        traceRepository.save(
-            TraceEntry(
-                null,
-                "test",
-                null,
-                mockBankConnection,
-                null,
-                "sessId1",
-                "O5N1",
-                EbicsVersion.H004,
-                false,
-                false,
-                creator = "jan",
-                orderType =
-                OrderTypeDefinition(EbicsAdminOrderType.HTD, service),
-                traceCategory = TraceCategory.EbicsResponseError
-            )
-        )
-
-        traceRepository.save(
-            TraceEntry(
-                null,
-                "test",
-                null,
-                mockBankConnection,
-                null,
-                "sessId1",
-                "O5N2",
-                EbicsVersion.H004,
-                false,
-                false,
-                creator = "jan",
-                orderType =
-                OrderTypeDefinition(EbicsAdminOrderType.HTD, service),
-                traceCategory = TraceCategory.HttpResponseError
-            )
-        )
-
-        traceRepository.save(
-            TraceEntry(
-                null,
-                "test",
-                null,
-                mockBankConnection,
-                null,
-                "sessId1",
-                "O5N3",
-                EbicsVersion.H004,
-                false,
-                false,
-                creator = "jan",
-                orderType =
-                OrderTypeDefinition(EbicsAdminOrderType.HTD, service),
-                traceCategory = TraceCategory.EbicsResponseOk
-            )
-        )
-
-        val result =
-            traceRepository.findTopTraceEntryByBankConnectionIdAndTraceCategoryInAndDateTimeGreaterThanOrderByDateTimeDesc(
-                mockBankConnection.id!!,
-                setOf(
-                    TraceCategory.EbicsResponseOk,
-                    TraceCategory.HttpResponseOk,
-                    TraceCategory.HttpResponseError,
-                    TraceCategory.EbicsResponseError
-                ),
-                entryTimeStamp
-            )
-        Assertions.assertNotNull(result)
-        Assertions.assertTrue(result.isPresent)
-        Assertions.assertEquals("O5N3", result.get().orderNumber)
     }
 
     @Test
@@ -615,11 +522,18 @@ class TraceRepositoryTest(
                 TraceCategory.HttpResponseError,
                 TraceCategory.EbicsResponseError
             ),
-            entryTimeStamp
+            entryTimeStamp,
+            setOf(mockBankConnection1.id!!, mockBankConnection2.id!!)
         )
         Assertions.assertNotNull(result)
-        Assertions.assertEquals("O5N3", result.find { te -> te.bankConnection!!.id == mockBankConnection1.id }!!.orderNumber)
-        Assertions.assertEquals("X5A3", result.find { te -> te.bankConnection!!.id == mockBankConnection2.id }!!.orderNumber)
+        Assertions.assertEquals(
+            "O5N3",
+            result.find { te -> te.bankConnection!!.id == mockBankConnection1.id }!!.orderNumber
+        )
+        Assertions.assertEquals(
+            "X5A3",
+            result.find { te -> te.bankConnection!!.id == mockBankConnection2.id }!!.orderNumber
+        )
     }
 
 }
