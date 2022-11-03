@@ -116,8 +116,8 @@ class HealthStatusEnrichmentServiceImpl(
                 lastErrorOkNotOlderThan,
             )
         } else {
-            val errorRate = errorCount / totalCount
-            val okRate = okCount / totalCount
+            val errorRate: Int = (errorCount.toFloat()  / totalCount * 100).toInt()
+            val okRate = (okCount.toFloat() / totalCount * 100).toInt()
             val healthStatusType = if (okRate > minimalErrorRate)
                 HealthStatusType.Ok
             else if (errorRate > minimalErrorRate)

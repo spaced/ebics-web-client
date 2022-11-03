@@ -28,7 +28,7 @@ class EbicsBankConnectionsResource (
     @GetMapping("{userId}")
     @ApplyRestFilter(filterType = JsonFilterProviderType.DefaultNoFilter)
     fun getBankConnectionById(@PathVariable userId: Long): BankConnectionWithHealthStatus {
-        val bankConnection = bankConnectionService.getBankConnectionById(userId);
+        val bankConnection = bankConnectionService.getBankConnectionById(userId)
         return healthStatusEnrichmentService.enrichBankConnectionWithStatus(bankConnection, null)
     }
 
