@@ -10,7 +10,21 @@ class HealthStatusEnrichmentServiceTestImpl : HealthStatusEnrichmentService {
         bankConnection: BankConnectionEntity,
         actualStatisticsNotOlderThan: ZonedDateTime?
     ): BankConnectionWithHealthStatus {
-        val connectionStatus = ConnectionStatusImpl(ConnectionStatusDetailImpl(10, 5, 5, HealthStatusType.Warning, 50, 50, EbicsException("Test exception"), ZonedDateTime.now(), ZonedDateTime.now()))
+        val connectionStatus = ConnectionStatus(
+            ConnectionStatusDetail(
+                10,
+                5,
+                5,
+                HealthStatusType.Warning,
+                50,
+                50,
+                EbicsException("Test exception"),
+                ZonedDateTime.now(),
+                ZonedDateTime.now(),
+                ZonedDateTime.now().minusHours(1),
+                ZonedDateTime.now().minusHours(1)
+            )
+        )
         return BankConnectionWithHealthStatus(bankConnection, connectionStatus)
     }
 
@@ -18,7 +32,26 @@ class HealthStatusEnrichmentServiceTestImpl : HealthStatusEnrichmentService {
         bankConnections: List<BankConnectionEntity>,
         actualStatisticsNotOlderThan: ZonedDateTime?
     ): List<BankConnectionWithHealthStatus> {
-        val connectionStatus = ConnectionStatusImpl(ConnectionStatusDetailImpl(10, 5, 5, HealthStatusType.Warning, 50, 50, EbicsException("Test exception"), ZonedDateTime.now(), ZonedDateTime.now()))
-        return bankConnections.map { bankConnection -> BankConnectionWithHealthStatus(bankConnection, connectionStatus) }
+        val connectionStatus = ConnectionStatus(
+            ConnectionStatusDetail(
+                10,
+                5,
+                5,
+                HealthStatusType.Warning,
+                50,
+                50,
+                EbicsException("Test exception"),
+                ZonedDateTime.now(),
+                ZonedDateTime.now(),
+                ZonedDateTime.now().minusHours(1),
+                ZonedDateTime.now().minusHours(1)
+            )
+        )
+        return bankConnections.map { bankConnection ->
+            BankConnectionWithHealthStatus(
+                bankConnection,
+                connectionStatus
+            )
+        }
     }
 }

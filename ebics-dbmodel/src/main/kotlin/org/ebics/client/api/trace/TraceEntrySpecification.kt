@@ -1,5 +1,6 @@
 package org.ebics.client.api.trace
 
+import org.ebics.client.api.bank.Bank
 import org.ebics.client.api.bankconnection.BankConnectionEntity
 import org.ebics.client.model.EbicsVersion
 import org.springframework.data.jpa.domain.Specification
@@ -41,6 +42,15 @@ fun bankConnectionEquals(bankConnection: BankConnectionEntity, useSharedPartnerD
             val partnerAttr = userAttr.get<SingularAttribute<TraceEntry, String>>("partner")
             p.addEqualsIfNotNull(builder, partnerAttr, "id", bankConnection.partner.id)
         }
+        p
+    }
+}
+
+fun bankEquals(bank: Bank): Specification<TraceEntry> {
+    return Specification<TraceEntry> { root, _, builder ->
+        val p = builder.disjunction()
+        val userAttr = root.get<SingularAttribute<TraceEntry, String>>("bank")
+        p.addEqualsIfNotNull(builder, userAttr, "id", bank.id)
         p
     }
 }

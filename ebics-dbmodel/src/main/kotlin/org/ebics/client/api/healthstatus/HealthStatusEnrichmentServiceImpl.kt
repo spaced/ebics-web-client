@@ -16,8 +16,8 @@ class HealthStatusEnrichmentServiceImpl(
     private val traceRepository: TraceRepository,
     @Value("\${health.statistics.minimalOkRate:90}") val minimalOkRate: Int,
     @Value("\${health.statistics.minimalErrorRate:50}") val minimalErrorRate: Int,
-    @Value("\${health.statistics.lastOkErrorNotOlderThanMinutes:120}") val lastErrorOkNotOlderThanMinutest: Long,
-    @Value("\${health.statistics.actualStatisticsOlderThanMinutes:120}") val actualStatisticsNotOlderThanMinutes: Long,
+    @Value("\${health.statistics.lastErrorOkNotOlderThanMinutest:120}") val lastErrorOkNotOlderThanMinutest: Long,
+    @Value("\${health.statistics.actualStatisticsNotOlderThanMinutes:120}") val actualStatisticsNotOlderThanMinutes: Long,
 ) : HealthStatusEnrichmentService {
     //We consider all kind of errors which can happen during the whole EBICS request/response flow
     private val errorCategories = setOf(
@@ -44,9 +44,17 @@ class HealthStatusEnrichmentServiceImpl(
 
 
         val lastErrorTraces =
-            traceRepository.findTopTraceEntriesAndGroupByBankConnection(errorCategories, lastErrorOkNotOlderThan, bankConnectionIds)
+            traceRepository.findTopTraceEntriesAndGroupByBankConnection(
+                errorCategories,
+                lastErrorOkNotOlderThan,
+                bankConnectionIds
+            )
         val lastOkTraces =
-            traceRepository.findTopTraceEntriesAndGroupByBankConnection(okCategories, lastErrorOkNotOlderThan, bankConnectionIds)
+            traceRepository.findTopTraceEntriesAndGroupByBankConnection(
+                okCategories,
+                lastErrorOkNotOlderThan,
+                bankConnectionIds
+            )
 
         val errorCounts = traceRepository.getTraceEntryCountForTraceCategoryInGroupedByBankConnectionId(
             actualStatisticsNotOlderThan,
@@ -71,7 +79,9 @@ class HealthStatusEnrichmentServiceImpl(
                 okCount?.traceEntryCount ?: 0,
                 errorCount?.traceEntryCount ?: 0,
                 lastOkTrace,
-                lastErrorTrace
+                lastErrorTrace,
+                actualStatisticsNotOlderThan,
+                lastErrorOkNotOlderThan
             )
         }.also {
             logger.debug("Enriching bank connection ids: $bankConnectionIds with statistics finished")
@@ -83,14 +93,16 @@ class HealthStatusEnrichmentServiceImpl(
         okCount: Int,
         errorCount: Int,
         lastOkTrace: Optional<TraceEntry>,
-        lastErrorTrace: Optional<TraceEntry>
+        lastErrorTrace: Optional<TraceEntry>,
+        actualStatisticsNotOlderThan: ZonedDateTime,
+        lastErrorOkNotOlderThan: ZonedDateTime,
     ): BankConnectionWithHealthStatus {
         val totalCount = errorCount + okCount
         val lastException = lastErrorTrace.map { errorTrace -> EbicsException(errorTrace.errorMessage) }.orElse(null)
         val lastErrorTimestamp = lastErrorTrace.map { errorTrace -> errorTrace.dateTime }.orElse(null)
         val lastOkTimestamp = lastErrorTrace.map { okTrace -> okTrace.dateTime }.orElse(null)
         val connectionStatusDetail = if (totalCount == 0) {
-            ConnectionStatusDetailImpl(
+            ConnectionStatusDetail(
                 0,
                 0,
                 0,
@@ -99,7 +111,9 @@ class HealthStatusEnrichmentServiceImpl(
                 0,
                 lastException,
                 lastErrorTimestamp,
-                lastOkTimestamp
+                lastOkTimestamp,
+                actualStatisticsNotOlderThan,
+                lastErrorOkNotOlderThan,
             )
         } else {
             val errorRate = errorCount / totalCount
@@ -110,7 +124,7 @@ class HealthStatusEnrichmentServiceImpl(
                 HealthStatusType.Error
             else
                 HealthStatusType.Warning
-            ConnectionStatusDetailImpl(
+            ConnectionStatusDetail(
                 totalCount,
                 okCount,
                 errorCount,
@@ -119,10 +133,12 @@ class HealthStatusEnrichmentServiceImpl(
                 okRate,
                 lastException,
                 lastErrorTimestamp,
-                lastOkTimestamp
+                lastOkTimestamp,
+                actualStatisticsNotOlderThan,
+                lastErrorOkNotOlderThan,
             )
         }
-        return BankConnectionWithHealthStatus(bankConnection, ConnectionStatusImpl(connectionStatusDetail))
+        return BankConnectionWithHealthStatus(bankConnection, ConnectionStatus(connectionStatusDetail))
     }
 
     override fun enrichBankConnectionWithStatus(

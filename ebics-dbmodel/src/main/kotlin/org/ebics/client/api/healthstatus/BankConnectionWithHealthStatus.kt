@@ -17,8 +17,8 @@ class BankConnectionWithHealthStatus(
     override val usePassword: Boolean,
     override val creator: String,
     override val guestAccess: Boolean,
-    override val status: ConnectionStatusDetail,
-) : BankConnectionEntityInt, ConnectionStatus {
+    val status: ConnectionStatusDetail,
+) : BankConnectionEntityInt {
     constructor(bankEntity: BankConnectionEntity, connectionStatus: ConnectionStatus) :
             this(
                 bankEntity.partner,

@@ -829,3 +829,11 @@ databaseChangeLog:
     - dropForeignKeyConstraint:
         baseTableName: TRACEENTRY
         constraintName: FKTBXDXNB92Q9XBPBTWNVOS7K8W
+- changeSet:
+    id:  TraceEntry-dropNotNullConstraint-on-bankConnection_id
+    author:  honza
+    changes:
+        -  dropNotNullConstraint:
+               columnDataType:  BIGINT
+               columnName:  bankConnection_id
+               tableName:  TraceEntry

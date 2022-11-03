@@ -536,4 +536,27 @@ class TraceRepositoryTest(
         )
     }
 
+    @Test
+    @WithMockUser(username = "jan", roles = ["USER"])
+    fun testTrRepoCreateWithoutBankConnection() {
+        val mockUser1 = getMockBankConnection()
+
+        traceRepository.save(
+            TraceEntry(
+                null,
+                "test",
+                null,
+                null,
+                mockUser1.partner.bank,
+                "sessId1",
+                "O5N3",
+                EbicsVersion.H004,
+                false, false,
+                creator = "jan"
+            )
+        )
+        val result = traceRepository.findOne(bankEquals(mockUser1.partner.bank))
+        Assertions.assertTrue(result.isPresent)
+    }
+
 }
