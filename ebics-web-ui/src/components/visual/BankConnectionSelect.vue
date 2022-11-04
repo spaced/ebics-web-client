@@ -24,8 +24,8 @@
           }}</q-item-label>
           <q-item-label
             v-if="
-              bankConnectionVal.opt?.status &&
-              bankConnectionVal.opt?.status?.health == HealthStatusType.Error
+              bankConnectionVal.opt?.frontendStatus &&
+              bankConnectionVal.opt?.frontendStatus?.healthStatus == HealthStatusType.Error
             "
             caption
             class="text-negative"
@@ -34,14 +34,14 @@
           </q-item-label>
           <q-item-label
             v-if="
-              bankConnectionVal.opt?.status &&
-              bankConnectionVal.opt?.status?.health == HealthStatusType.Warning
+              bankConnectionVal.opt?.frontendStatus &&
+              bankConnectionVal.opt?.frontendStatus?.healthStatus == HealthStatusType.Warning
             "
             caption
             class="text-warning"
           >
             Status: The connection has some issues -
-            {{ bankConnectionVal.opt.status.okRate }}% OK rate.
+            {{ bankConnectionVal.opt.frontendStatus.okRate }}% OK rate.
           </q-item-label>
         </q-item-section>
       </q-item>

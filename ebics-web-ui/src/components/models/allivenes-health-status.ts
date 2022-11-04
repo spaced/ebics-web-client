@@ -1,4 +1,3 @@
-
 export enum AllivenesStatusType {
     Unknown,
     RespondingImmediatelly,
@@ -13,20 +12,25 @@ export enum HealthStatusType {
     Error
 }
 
-export enum HealthStatusErrorType {
-    HTTP,
-    EBICS
+export interface EbicsException {
+    message: string,
+    cause: EbicsException,
+    localizedMessage: string,
 }
 
 export interface ConnectionStatusObject {
     allivenes: AllivenesStatusType,
-    health: HealthStatusType,
-    healthErrorType: HealthStatusErrorType,
+    healthStatus: HealthStatusType,
     errorCount: number,
     errorRate: number,
     okCount: number,
     okRate: number,
     totalCount: number,
+    lastError: EbicsException,
+    lastOkTimestamp: string,
+    lastErrorTimestamp: string,
+    actualStatisticsFrom: string,
+    lastErrorOkStatisticsFrom: string,
 }
 
 

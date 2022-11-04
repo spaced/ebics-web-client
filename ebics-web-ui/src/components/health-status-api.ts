@@ -55,33 +55,43 @@ function connectionStatusToRelatedObjectReference(
   }
 }
 
-function calculateConnectionStatus(
+/**
+ * This method is updating the the backend statistics with the fresh frontend errors and OKs
+ * @param relatedObjectReference 
+ * @param minOkRate 
+ * @param minErrorRate 
+ * @param backendStatus 
+ * @returns 
+ */
+function createFrontendConnectionStatus(
   relatedObjectReference: RelatedObjectReference,
+  backendStatus: ConnectionStatusObject,
   minOkRate = 90,
   minErrorRate = 50,
-  notOlderThanMinutes = 30
 ): ConnectionStatusObject {
   const apiResponses = apiResponsesCache.get(
     referenceToKey(relatedObjectReference)
   );
   if (apiResponses) {
-    const notOlderThanMilis = notOlderThanMinutes * 60 * 1000;
-    const actualTimeStampMilis = new Date().getTime();
+    const backendStatusTimestampMilis = new Date(backendStatus.actualStatisticsFrom).getTime();
+    //Filter out the frontent events with the higher timestamps than backend (only those would be considered for update)
     const latestResponses = apiResponses.filter(
       (apiResponse) =>
-        Math.abs(apiResponse.timeStamp.getTime() - actualTimeStampMilis) <
-        notOlderThanMilis
+        apiResponse.timeStamp.getTime() > backendStatusTimestampMilis
     );
+
+    //Add the frontent numbers to backend numbers
     const okCount = latestResponses.filter(
       (apiResponse) => apiResponse.status == ApiResponseType.Ok
-    ).length;
+    ).length + backendStatus.okCount;
     const errorCount = latestResponses.filter(
       (apiResponse) => apiResponse.status == ApiResponseType.Error
-    ).length;
+    ).length + backendStatus.errorCount;
+
     const totalCount = okCount + errorCount;
     let healthStatus = HealthStatusType.Unknown;
     if (totalCount == 0) {
-      return { health: HealthStatusType.Unknown } as ConnectionStatusObject;
+      return { healthStatus: HealthStatusType.Unknown } as ConnectionStatusObject;
     } else {
       const okRate = (okCount / totalCount) * 100;
       const errorRate = (errorCount / totalCount) * 100;
@@ -93,18 +103,19 @@ function calculateConnectionStatus(
         healthStatus = HealthStatusType.Warning;
       }
       const status = {
-        health: healthStatus,
+        healthStatus: healthStatus,
         okCount: okCount,
         okRate: okRate,
         errorCount: errorCount,
         errorRate: errorRate,
         totalCount: totalCount,
       } as ConnectionStatusObject;
-      console.log(JSON.stringify(status));
+      console.log('Original backend status: ' + JSON.stringify(backendStatus))
+      console.log('Updated frontend status: ' + JSON.stringify(status));
       return status;
     }
   } else {
-    return { health: HealthStatusType.Unknown } as ConnectionStatusObject;
+    return { healthStatus: HealthStatusType.Unknown } as ConnectionStatusObject;
   }
 }
 
@@ -154,11 +165,11 @@ export default function useHealthAllivenessStatusAPI() {
           );
         }
         apiResponseList.push(apiResponse);
-        const newConnectionStatus = calculateConnectionStatus(
-          relatedObjectReference
-        );
         if (connectionStatus) {
-          connectionStatus.status = newConnectionStatus;
+          const newConnectionStatus = createFrontendConnectionStatus(
+            relatedObjectReference, connectionStatus.backendStatus
+          );
+          connectionStatus.frontendStatus = newConnectionStatus;
           connectionStatus.lastError = apiError;
         }
       }

@@ -1,38 +1,38 @@
 <template>
   <q-banner
-    v-if="value.status &&
-      (value.status.health == HealthStatusType.Error ||
-        value.status.health == HealthStatusType.Warning)
+    v-if="value.frontendStatus &&
+      (value.frontendStatus.healthStatus == HealthStatusType.Error ||
+        value.frontendStatus.healthStatus == HealthStatusType.Warning)
     "
     inline-actions
     class="bg-grey-3"
   >
     <template v-slot:avatar>
       <q-icon
-        v-if="value.status.health == HealthStatusType.Error"
+        v-if="value.frontendStatus.healthStatus == HealthStatusType.Error"
         name="error"
         color="red"
       />
       <q-icon
-        v-if="value.status.health == HealthStatusType.Warning"
+        v-if="value.frontendStatus.healthStatus == HealthStatusType.Warning"
         name="warning"
         color="warning"
       />
     </template>
     <q-item-section>
-      <q-item-label v-if="value.status.health == HealthStatusType.Warning"
+      <q-item-label v-if="value.frontendStatus.healthStatus == HealthStatusType.Warning"
         >The selected bank connection has some issues</q-item-label
       >
-      <q-item-label v-if="value.status.health == HealthStatusType.Error"
+      <q-item-label v-if="value.frontendStatus.healthStatus == HealthStatusType.Error"
         >The selected bank connection is erroneus</q-item-label
       >
-      <q-item-label caption v-if="value.status.totalCount < 10">
-        Out of {{ value.status.totalCount }} request(s) have
-        {{ value.status.errorCount }} failed, and {{ value.status.okCount }} was OK.
+      <q-item-label caption v-if="value.frontendStatus.totalCount < 10">
+        Out of {{ value.frontendStatus.totalCount }} request(s) have
+        {{ value.frontendStatus.errorCount }} failed, and {{ value.frontendStatus.okCount }} was OK.
       </q-item-label>
       <q-item-label caption v-else>
-        Out of {{ value.status.totalCount }} request(s) have {{ value.status.errorRate }}%
-        failed, and {{ value.status.okRate }}% was OK.
+        Out of {{ value.frontendStatus.totalCount }} request(s) have {{ value.frontendStatus.errorRate }}%
+        failed, and {{ value.frontendStatus.okRate }}% was OK.
       </q-item-label>
       <error-message-label v-if="value.lastError" v-model="value.lastError" />
     </q-item-section>

@@ -3,6 +3,7 @@ import { ConnectionStatusObject } from './allivenes-health-status';
 
 
 export interface ConnectionStatus {
-    status: ConnectionStatusObject;
+    backendStatus: ConnectionStatusObject;
+    frontendStatus: ConnectionStatusObject;
     lastError?: ApiError;
 }
