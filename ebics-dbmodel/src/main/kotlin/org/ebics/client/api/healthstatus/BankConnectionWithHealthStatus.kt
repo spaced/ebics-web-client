@@ -9,7 +9,7 @@ import org.ebics.client.model.EbicsVersion
 import org.ebics.client.model.user.EbicsUserStatusEnum
 
 class BankConnectionWithHealthStatus(
-    id: Long? = null,
+    val id: Long? = null,
     override val partner: Partner,
     override val ebicsVersion: EbicsVersion,
     override val userId: String,
@@ -22,7 +22,7 @@ class BankConnectionWithHealthStatus(
     override val guestAccess: Boolean,
     keyStore: UserKeyStore?,
     traces: List<TraceEntry> = emptyList(),
-    val status: ConnectionStatusDetail,
+    val backendStatus: ConnectionStatusDetail,
 ) : BankConnectionEntityInt {
     constructor(bankEntity: BankConnectionEntity, connectionStatus: ConnectionStatus) :
             this(
