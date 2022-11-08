@@ -22,7 +22,9 @@ class HealthStatusEnrichmentServiceTestImpl : HealthStatusEnrichmentService {
                 ZonedDateTime.now(),
                 ZonedDateTime.now(),
                 ZonedDateTime.now().minusHours(1),
-                ZonedDateTime.now().minusHours(1)
+                ZonedDateTime.now(),
+                ZonedDateTime.now().minusHours(1),
+                ZonedDateTime.now(),
             )
         )
         return BankConnectionWithHealthStatus(bankConnection, connectionStatus)
@@ -44,7 +46,9 @@ class HealthStatusEnrichmentServiceTestImpl : HealthStatusEnrichmentService {
                 ZonedDateTime.now(),
                 ZonedDateTime.now(),
                 ZonedDateTime.now().minusHours(1),
-                ZonedDateTime.now().minusHours(1)
+                ZonedDateTime.now(),
+                ZonedDateTime.now().minusHours(1),
+                ZonedDateTime.now(),
             )
         )
         return bankConnections.map { bankConnection ->

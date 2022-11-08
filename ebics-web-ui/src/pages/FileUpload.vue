@@ -20,8 +20,7 @@
 
             <connection-status-banner
               v-if="bankConnection"
-              label="testr"
-              :modelValue="bankConnection"
+              :connectionStatus="bankConnection"
               :bankConnectionId="bankConnection.id"
             />
 
@@ -36,8 +35,25 @@
               <q-item-section>
                 <q-item-label>Display shared bank connections</q-item-label>
                 <q-item-label caption>
-                  If enabled, the shared connection are listed as well, If
+                  If enabled, the shared connections are listed as well, If
                   disabled, only your private connections are listed.
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+
+            <q-item
+              tag="label"
+              v-ripple
+              v-if="hasErrorneousConnections"
+            >
+              <q-item-section avatar>
+                <q-checkbox v-model="displayErrorneousConnections" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>Display errorneous bank connections</q-item-label>
+                <q-item-label caption>
+                  If enabled, the errorneous bank connections are listed as well, If
+                  disabled, only OK connections are listed.
                 </q-item-label>
               </q-item-section>
             </q-item>
@@ -50,7 +66,7 @@
               :bankConnection="bankConnection"
               @click:refreshOrderTypes="refreshOrderTypes(bankConnection)"
             />
-            <btf-type-select
+            <btf-select
               v-model:btfType="orderType"
               :btfTypes="orderTypes"
               :bankConnection="bankConnection"
@@ -221,6 +237,7 @@ import UserPreferences from 'components/visual/UserPreferences.vue';
 import ConnectionStatusBanner from 'components/visual/ConnectionStatusBanner.vue';
 import BankConnectionSelect from 'components/visual/BankConnectionSelect.vue';
 import OrderTypeSelect from 'components/visual/OrderTypeSelect.vue';
+import BtfSelect from 'components/visual/BtfSelect.vue';
 import EbicsVersionRadios from 'components/visual/EbicsVersionRadios.vue';
 
 //Composition APIs
@@ -240,6 +257,7 @@ export default defineComponent({
     ConnectionStatusBanner,
     BankConnectionSelect,
     OrderTypeSelect,
+    BtfSelect,
     EbicsVersionRadios,
   },
   props: {
@@ -260,6 +278,8 @@ export default defineComponent({
       hasActivePrivateConnections,
       hasActiveSharedConnections,
       displaySharedBankConnections,
+      hasErrorneousConnections,
+      displayErrorneousConnections,
       bankConnectionLabel,
       loading: loadingBankConnections,
     } = useBankConnectionsAPI(BankConnectionAccess.USE);
@@ -488,6 +508,8 @@ export default defineComponent({
       hasActivePrivateConnections,
       hasActiveSharedConnections,
       displaySharedBankConnections,
+      hasErrorneousConnections,
+      displayErrorneousConnections,
       bankConnectionLabel,
       isEbicsVersionAllowedForUse,
       EbicsVersion,

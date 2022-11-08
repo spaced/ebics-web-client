@@ -1,13 +1,19 @@
 import { ref, onMounted, computed, watch } from 'vue';
-import { BankConnection, BankConnectionAccess } from 'src/components/models/ebics-bank-connection';
+import {
+  BankConnection,
+  BankConnectionAccess,
+} from 'src/components/models/ebics-bank-connection';
 import { api } from 'boot/axios';
 import useBaseAPI from './base-api';
 import { useQuasar } from 'quasar';
+import { HealthStatusType } from './models/allivenes-health-status';
 
 /**
  * Display label of the bankConnection
  */
-export function bankConnectionLabel(bankConnection: BankConnection | undefined): string {
+export function bankConnectionLabel(
+  bankConnection: BankConnection | undefined
+): string {
   if (
     bankConnection &&
     bankConnection.userId.trim().length > 0 &&
@@ -17,7 +23,7 @@ export function bankConnectionLabel(bankConnection: BankConnection | undefined):
   } else {
     return '';
   }
-};
+}
 
 /**
  * Bank Connections composition API for bank connection list operations with backend REST API
@@ -26,7 +32,9 @@ export function bankConnectionLabel(bankConnection: BankConnection | undefined):
  *  loadBankConnections function to trigger refreshing of bank connections
  *  deleteBankConnection function to delete bank connection
  */
-export default function useBankConnectionsAPI(accessRight: BankConnectionAccess = BankConnectionAccess.READ) {
+export default function useBankConnectionsAPI(
+  accessRight: BankConnectionAccess = BankConnectionAccess.READ
+) {
   const { apiErrorHandler } = useBaseAPI();
   const q = useQuasar();
 
@@ -36,7 +44,9 @@ export default function useBankConnectionsAPI(accessRight: BankConnectionAccess 
   const loadBankConnections = async (): Promise<void> => {
     try {
       loading.value = true;
-      const response = await api.get<BankConnection[]>(`bankconnections?permission=${accessRight}`);
+      const response = await api.get<BankConnection[]>(
+        `bankconnections?permission=${accessRight}`
+      );
       bankConnections.value = response.data;
     } catch (error) {
       apiErrorHandler('Loading of bank data failed', error);
@@ -98,24 +108,51 @@ export default function useBankConnectionsAPI(accessRight: BankConnectionAccess 
   };
 
   const hasActivePrivateConnections = computed((): boolean => {
-    return activeBankConnections.value?.some(bc => !bc.guestAccess) ?? false
+    return activeBankConnections.value?.some((bc) => !bc.guestAccess) ?? false;
   });
 
   const hasActiveSharedConnections = computed((): boolean => {
-    return activeBankConnections.value?.some(bc => bc.guestAccess) ?? false
+    return activeBankConnections.value?.some((bc) => bc.guestAccess) ?? false;
   });
 
   const displaySharedBankConnections = ref(true);
-  watch(hasActivePrivateConnections, (hasActivePrivateConnectionsValue: boolean) => {
-    if (hasActivePrivateConnectionsValue)
-      displaySharedBankConnections.value = false
-    else
-      displaySharedBankConnections.value = true
-  })
+  watch(
+    hasActivePrivateConnections,
+    (hasActivePrivateConnectionsValue: boolean) => {
+      if (hasActivePrivateConnectionsValue)
+        displaySharedBankConnections.value = false;
+      else displaySharedBankConnections.value = true;
+    }
+  );
 
-  const activeDisplayedBankConnections = computed<BankConnection[] | undefined>(() => {
-    return activeBankConnections.value?.filter((bc) => !bc.guestAccess || displaySharedBankConnections.value);
+  const isConnectionErrorneous = (bankConnection: BankConnection): boolean => {
+    return (
+      bankConnection.backendStatus?.healthStatus == HealthStatusType.Error ||
+      bankConnection.frontendStatus?.healthStatus == HealthStatusType.Error
+    );
+  };
+
+  const hasErrorneousConnections = computed((): boolean => {
+    return (
+      activeBankConnections.value?.some((bc) => isConnectionErrorneous(bc)) ??
+      false
+    );
   });
+  const displayErrorneousConnections = ref(false);
+
+  /**
+   * This method returns only the connections which should be displayed
+   * The shared & errorneous connection are filtered out if relevant
+   */
+  const activeDisplayedBankConnections = computed<BankConnection[] | undefined>(
+    () => {
+      return activeBankConnections.value?.filter(
+        (bc) =>
+          (!bc.guestAccess || displaySharedBankConnections.value) &&
+          (!isConnectionErrorneous(bc) || displayErrorneousConnections.value)
+      );
+    }
+  );
 
   onMounted(loadBankConnections);
 
@@ -127,6 +164,8 @@ export default function useBankConnectionsAPI(accessRight: BankConnectionAccess 
     hasActivePrivateConnections,
     hasActiveSharedConnections,
     displaySharedBankConnections,
+    hasErrorneousConnections,
+    displayErrorneousConnections,
     loadBankConnections,
     deleteBankConnection,
     bankConnectionLabel,

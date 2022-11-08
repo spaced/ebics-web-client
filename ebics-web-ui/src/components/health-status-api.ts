@@ -73,7 +73,8 @@ function createFrontendConnectionStatus(
     referenceToKey(relatedObjectReference)
   );
   if (apiResponses) {
-    const backendStatusTimestampMilis = new Date(backendStatus.actualStatisticsFrom).getTime();
+    const actualStatisticsToTimestamp = backendStatus.actualStatisticsTo;
+    const backendStatusTimestampMilis = actualStatisticsToTimestamp ? new Date(actualStatisticsToTimestamp).getTime() : new Date().getTime();
     //Filter out the frontent events with the higher timestamps than backend (only those would be considered for update)
     const latestResponses = apiResponses.filter(
       (apiResponse) =>
@@ -110,8 +111,9 @@ function createFrontendConnectionStatus(
         errorRate: errorRate,
         totalCount: totalCount,
       } as ConnectionStatusObject;
-      console.log('Original backend status: ' + JSON.stringify(backendStatus))
-      console.log('Updated frontend status: ' + JSON.stringify(status));
+      //const relatedIdString = relatedObjectReference.id ? relatedObjectReference.id.toString() : 'unk_id';
+      //console.log(`Original backend status: ${relatedIdString} ${JSON.stringify(backendStatus)}`)
+      //console.log(`Original frontent status: ${relatedIdString} ${JSON.stringify(status)}`)
       return status;
     }
   } else {
@@ -166,10 +168,9 @@ export default function useHealthAllivenessStatusAPI() {
         }
         apiResponseList.push(apiResponse);
         if (connectionStatus) {
-          const newConnectionStatus = createFrontendConnectionStatus(
+          connectionStatus.frontendStatus = createFrontendConnectionStatus(
             relatedObjectReference, connectionStatus.backendStatus
           );
-          connectionStatus.frontendStatus = newConnectionStatus;
           connectionStatus.lastError = apiError;
         }
       }

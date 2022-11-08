@@ -37,11 +37,12 @@ class HealthStatusEnrichmentServiceImpl(
         val bankConnectionIds = bankConnections.map { bc -> bc.id!! }.toSet()
 
         logger.debug("Enriching bank connection ids: $bankConnectionIds with statistics started")
+        val actualTimeStamp = ZonedDateTime.now()
+
         val actualStatisticsNotOlderThan =
-            actualStatisticsNotOlderThan ?: ZonedDateTime.now().minusMinutes(actualStatisticsNotOlderThanMinutes)
+            actualStatisticsNotOlderThan ?: actualTimeStamp.minusMinutes(actualStatisticsNotOlderThanMinutes)
 
-        val lastErrorOkNotOlderThan = ZonedDateTime.now().minusMinutes(lastErrorOkNotOlderThanMinutest)
-
+        val lastErrorOkNotOlderThan = actualTimeStamp.minusMinutes(lastErrorOkNotOlderThanMinutest)
 
         val lastErrorTraces =
             traceRepository.findTopTraceEntriesAndGroupByBankConnection(
@@ -81,7 +82,8 @@ class HealthStatusEnrichmentServiceImpl(
                 lastOkTrace,
                 lastErrorTrace,
                 actualStatisticsNotOlderThan,
-                lastErrorOkNotOlderThan
+                lastErrorOkNotOlderThan,
+                actualTimeStamp
             )
         }.also {
             logger.debug("Enriching bank connection ids: $bankConnectionIds with statistics finished")
@@ -96,6 +98,7 @@ class HealthStatusEnrichmentServiceImpl(
         lastErrorTrace: Optional<TraceEntry>,
         actualStatisticsNotOlderThan: ZonedDateTime,
         lastErrorOkNotOlderThan: ZonedDateTime,
+        actualTimeStamp: ZonedDateTime,
     ): BankConnectionWithHealthStatus {
         val totalCount = errorCount + okCount
         val lastException = lastErrorTrace.map { errorTrace -> EbicsException(errorTrace.errorMessage) }.orElse(null)
@@ -113,7 +116,9 @@ class HealthStatusEnrichmentServiceImpl(
                 lastErrorTimestamp,
                 lastOkTimestamp,
                 actualStatisticsNotOlderThan,
+                actualTimeStamp,
                 lastErrorOkNotOlderThan,
+                actualTimeStamp,
             )
         } else {
             val errorRate: Int = (errorCount.toFloat()  / totalCount * 100).toInt()
@@ -135,7 +140,9 @@ class HealthStatusEnrichmentServiceImpl(
                 lastErrorTimestamp,
                 lastOkTimestamp,
                 actualStatisticsNotOlderThan,
+                actualTimeStamp,
                 lastErrorOkNotOlderThan,
+                actualTimeStamp
             )
         }
         return BankConnectionWithHealthStatus(bankConnection, ConnectionStatus(connectionStatusDetail))

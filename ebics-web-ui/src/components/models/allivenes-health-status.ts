@@ -6,10 +6,10 @@ export enum AllivenesStatusType {
 }
 
 export enum HealthStatusType {
-    Unknown,
-    Ok,
-    Warning,
-    Error
+    Unknown = 'Unknown',
+    Ok = 'Ok',
+    Warning = 'Warning',
+    Error = 'Error',
 }
 
 export interface EbicsException {
@@ -30,7 +30,9 @@ export interface ConnectionStatusObject {
     lastOkTimestamp: string,
     lastErrorTimestamp: string,
     actualStatisticsFrom: string,
+    actualStatisticsTo: string,
     lastErrorOkStatisticsFrom: string,
+    lastErrorOkStatisticsTo: string,
 }
 
 

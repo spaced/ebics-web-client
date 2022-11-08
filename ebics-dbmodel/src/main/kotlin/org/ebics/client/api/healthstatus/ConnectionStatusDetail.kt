@@ -14,5 +14,7 @@ class ConnectionStatusDetail(
     val lastErrorTimestamp: ZonedDateTime?,
     val lastOkTimestamp: ZonedDateTime?,
     val actualStatisticsFrom: ZonedDateTime,
+    val actualStatisticsTo: ZonedDateTime,
     val lastErrorOkStatisticsFrom: ZonedDateTime,
+    val lastErrorOkStatisticsTo: ZonedDateTime,
 )

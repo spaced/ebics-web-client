@@ -1,40 +1,40 @@
 <template>
   <q-banner
-    v-if="value.frontendStatus &&
-      (value.frontendStatus.healthStatus == HealthStatusType.Error ||
-        value.frontendStatus.healthStatus == HealthStatusType.Warning)
+    v-if="connectionStatusObject &&
+      (connectionStatusObject.healthStatus == HealthStatusType.Error ||
+        connectionStatusObject.healthStatus == HealthStatusType.Warning)
     "
     inline-actions
     class="bg-grey-3"
   >
     <template v-slot:avatar>
       <q-icon
-        v-if="value.frontendStatus.healthStatus == HealthStatusType.Error"
+        v-if="connectionStatusObject.healthStatus == HealthStatusType.Error"
         name="error"
         color="red"
       />
       <q-icon
-        v-if="value.frontendStatus.healthStatus == HealthStatusType.Warning"
+        v-if="connectionStatusObject.healthStatus == HealthStatusType.Warning"
         name="warning"
         color="warning"
       />
     </template>
     <q-item-section>
-      <q-item-label v-if="value.frontendStatus.healthStatus == HealthStatusType.Warning"
+      <q-item-label v-if="connectionStatusObject.healthStatus == HealthStatusType.Warning"
         >The selected bank connection has some issues</q-item-label
       >
-      <q-item-label v-if="value.frontendStatus.healthStatus == HealthStatusType.Error"
+      <q-item-label v-if="connectionStatusObject.healthStatus == HealthStatusType.Error"
         >The selected bank connection is erroneus</q-item-label
       >
-      <q-item-label caption v-if="value.frontendStatus.totalCount < 10">
-        Out of {{ value.frontendStatus.totalCount }} request(s) have
-        {{ value.frontendStatus.errorCount }} failed, and {{ value.frontendStatus.okCount }} was OK.
+      <q-item-label caption v-if="connectionStatusObject.totalCount < 10">
+        Out of {{ connectionStatusObject.totalCount }} request(s) have
+        {{ connectionStatusObject.errorCount }} failed, and {{ connectionStatusObject.okCount }} was OK.
       </q-item-label>
       <q-item-label caption v-else>
-        Out of {{ value.frontendStatus.totalCount }} request(s) have {{ value.frontendStatus.errorRate }}%
-        failed, and {{ value.frontendStatus.okRate }}% was OK.
+        Out of {{ connectionStatusObject.totalCount }} request(s) have {{ connectionStatusObject.errorRate }}%
+        failed, and {{ connectionStatusObject.okRate }}% was OK.
       </q-item-label>
-      <error-message-label v-if="value.lastError" v-model="value.lastError" />
+      <error-message-label v-if="connectionStatusObject.lastError" v-model="connectionStatusObject.lastError" />
     </q-item-section>
     <!-- template v-slot:action>
       <q-btn flat color="primary" label="Latest errors" @click="showLatestErrors = true"/>
@@ -49,14 +49,14 @@
 import { defineComponent, computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { ConnectionStatus } from 'components/models/connection-status';
-import { HealthStatusType } from 'components/models/allivenes-health-status';
+import { HealthStatusType, ConnectionStatusObject } from 'components/models/allivenes-health-status';
 import ErrorMessageLabel from 'components/visual/ErrorMessageLabel.vue';
 
 export default defineComponent({
   name: 'ConnectionStatus',
   components: { ErrorMessageLabel },
   props: {
-    modelValue: {
+    connectionStatus: {
       type: Object,
       required: true,
     },
@@ -65,19 +65,18 @@ export default defineComponent({
       required: true,
     },
   },
-  emits: ['update:modelValue'],
-  computed: {
-    value: {
-      get(): ConnectionStatus {
-        return this.modelValue as ConnectionStatus;
-      },
-      set(value: ConnectionStatus) {
-        this.$emit('update:modelValue', value);
-      },
-    },
-  },
-  setup(props) {
+  emits: ['update:modelValue', 'update:connectionStatus'],
+  setup(props, { emit }) {
     const router = useRouter();
+
+    const bankConnectionStatusVal = computed<ConnectionStatus>({
+      get() {
+        return props.connectionStatus as ConnectionStatus;
+      },
+      set(value) {
+        emit('update:connectionStatus', value);
+      },
+    });
 
     const bankConnectionId = computed(() => { 
       return props.bankConnectionId; 
@@ -101,10 +100,13 @@ export default defineComponent({
     const showLatestErrors = ref(false);
     const togleShowLatestErrors = ():void => { 
       showLatestErrors.value = true; 
-      console.log('0'); 
-      }
+    }
 
-    return { HealthStatusType, routeToResponseStatisticsPage, showLatestErrors, togleShowLatestErrors };
+    const connectionStatusObject = computed((): ConnectionStatusObject => {
+      return bankConnectionStatusVal.value?.frontendStatus ? bankConnectionStatusVal.value?.frontendStatus : bankConnectionStatusVal.value?.backendStatus;
+    }); 
+
+    return { HealthStatusType, routeToResponseStatisticsPage, showLatestErrors, togleShowLatestErrors, bankConnectionStatusVal, connectionStatusObject };
   },
 });
 </script>

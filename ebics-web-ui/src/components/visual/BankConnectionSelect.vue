@@ -11,37 +11,23 @@
       (val) => bankConnectionVal || 'Please select valid EBICS bank connection',
     ]"
   >
-    <template v-slot:option="bankConnectionVal">
-      <q-item v-bind="bankConnectionVal.itemProps">
+    <template v-slot:option="bankConnectionItem">
+      <q-item v-bind="bankConnectionItem.itemProps">
         <q-item-section avatar>
-          <q-icon v-if="bankConnectionVal.opt.guestAccess" name="lock_open" />
+          <q-icon v-if="bankConnectionItem.opt.guestAccess" name="lock_open" />
           <q-icon v-else name="lock" />
         </q-item-section>
         <q-item-section>
-          <q-item-label>{{ bankConnectionVal.opt.name }}</q-item-label>
+          <q-item-label>{{ bankConnectionItem.opt.name }}</q-item-label>
           <q-item-label caption>{{
-            `${bankConnectionVal.opt.userId} | ${bankConnectionVal.opt.partner?.partnerId}`
+            `${bankConnectionItem.opt.userId} | ${bankConnectionItem.opt.partner?.partnerId}`
           }}</q-item-label>
           <q-item-label
-            v-if="
-              bankConnectionVal.opt?.frontendStatus &&
-              bankConnectionVal.opt?.frontendStatus?.healthStatus == HealthStatusType.Error
-            "
+            v-if="bankConnectionItem.opt?.frontendStatus || bankConnectionItem.opt?.backendStatus"
             caption
-            class="text-negative"
+            :class="getBankConnectionStatusLabel(bankConnectionItem.opt).labelClass"
           >
-            Status: The connection is erroneous.
-          </q-item-label>
-          <q-item-label
-            v-if="
-              bankConnectionVal.opt?.frontendStatus &&
-              bankConnectionVal.opt?.frontendStatus?.healthStatus == HealthStatusType.Warning
-            "
-            caption
-            class="text-warning"
-          >
-            Status: The connection has some issues -
-            {{ bankConnectionVal.opt.frontendStatus.okRate }}% OK rate.
+            {{ getBankConnectionStatusLabel(bankConnectionItem.opt).labelText }}
           </q-item-label>
         </q-item-section>
       </q-item>
@@ -53,7 +39,12 @@
 import { defineComponent, computed } from 'vue';
 import { BankConnection } from 'components/models/ebics-bank-connection';
 import { bankConnectionLabel } from 'components/bankconnections';
-import { HealthStatusType } from 'components/models/allivenes-health-status';
+import { ConnectionStatusObject, HealthStatusType } from 'components/models/allivenes-health-status';
+
+interface LabelTextAndClass {
+  labelText: string,
+  labelClass: string,
+}
 
 export default defineComponent({
   name: 'BankConnectionSelect',
@@ -77,7 +68,28 @@ export default defineComponent({
         emit('update:bankConnection', value);
       },
     });
-    return { bankConnectionLabel, bankConnectionVal, HealthStatusType };
+
+    const getBankConnectionStatus = (bankConnection: BankConnection): ConnectionStatusObject => {
+      return bankConnection.frontendStatus ? bankConnection.frontendStatus : bankConnection.backendStatus;
+    } 
+    const getBankConnectionStatusLabel = (bankConnection: BankConnection | undefined): LabelTextAndClass => {
+      if (bankConnection) {
+        const connectionStatus = getBankConnectionStatus(bankConnection);
+        switch(connectionStatus.healthStatus) {
+          case HealthStatusType.Ok:
+            return {labelText: 'Status: The connection is OK.', labelClass: 'text-positive' };
+          case HealthStatusType.Error:
+            return {labelText: 'Status: The connection is erroneous.', labelClass: 'text-negative' };
+          case HealthStatusType.Warning:
+            return {labelText: `Status: The connection has some issues - ${connectionStatus.okRate}% OK rate.`, labelClass: 'text-warning' };
+          default:
+            return {labelText: 'Status: The connection is Unknown!!.', labelClass: 'text-warning' };
+        }
+      } else {
+        return {labelText: 'Bank connection not given', labelClass: 'text-warning' };
+      }
+    } 
+    return { bankConnectionLabel, bankConnectionVal, HealthStatusType, getBankConnectionStatusLabel };
   },
 });
 </script>
