@@ -34,7 +34,7 @@
             />
             <btf-select
               v-model:btfType="orderType"
-              :btfTypes="orderTypes"
+              :btfTypes="btfTypes"
               :bankConnection="bankConnection"
               @click:refreshOrderTypes="refreshBtfTypes(bankConnection)"
             />

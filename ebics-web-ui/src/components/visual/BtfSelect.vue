@@ -19,12 +19,12 @@
         @click.stop="emit('click:refreshBtfTypes')"
       />
     </template>
-    <template v-slot:option="scope">
-      <q-item v-bind="scope.itemProps">
+    <template v-slot:option="btfTypeOpt">
+      <q-item v-bind="btfTypeOpt.itemProps">
         <q-item-section>
-          <q-item-label v-html="btfTypeLabel(scope.opt)" />
+          <q-item-label v-html="btfTypeLabel(btfTypeOpt.opt)" />
           <q-item-label caption>{{
-            scope.opt.description
+            btfTypeOpt.opt.description
           }}</q-item-label>
         </q-item-section>
       </q-item>
