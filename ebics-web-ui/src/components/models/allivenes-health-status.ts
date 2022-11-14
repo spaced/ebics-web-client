@@ -1,3 +1,5 @@
+import { ApiError } from 'components/models/ebics-api-error';
+
 export enum AllivenesStatusType {
     Unknown,
     RespondingImmediatelly,
@@ -26,7 +28,7 @@ export interface ConnectionStatusObject {
     okCount: number,
     okRate: number,
     totalCount: number,
-    lastError: EbicsException,
+    lastError: ApiError,
     lastOkTimestamp: string,
     lastErrorTimestamp: string,
     actualStatisticsFrom: string,

@@ -28,40 +28,6 @@
               :bankConnectionId="bankConnection.id"
             />
 
-            <q-item
-              tag="label"
-              v-ripple
-              v-if="hasActivePrivateConnections && hasActiveSharedConnections"
-            >
-              <q-item-section avatar>
-                <q-checkbox v-model="displaySharedBankConnections" />
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>Display shared bank connections</q-item-label>
-                <q-item-label caption>
-                  If enabled, the shared connection are listed as well, If
-                  disabled, only your private connections are listed
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-
-            <q-item
-              tag="label"
-              v-ripple
-              v-if="hasErrorneousConnections"
-            >
-              <q-item-section avatar>
-                <q-checkbox v-model="displayErrorneousConnections" />
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>Display errorneous bank connections</q-item-label>
-                <q-item-label caption>
-                  If enabled, the errorneous bank connections are listed as well, If
-                  disabled, only OK connections are listed.
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-
             <ebics-version-radios v-model:bankConnection="bankConnection" />
 
             <order-type-select
@@ -182,9 +148,7 @@ export default defineComponent({
       hasActiveConnections,
       hasActivePrivateConnections,
       hasActiveSharedConnections,
-      displaySharedBankConnections,
       hasErrorneousConnections,
-      displayErrorneousConnections,
       bankConnectionLabel,
       loading: loadingBankConnections,
     } = useBankConnectionsAPI(BankConnectionAccess.USE);
@@ -271,9 +235,6 @@ export default defineComponent({
         }
       }
     };
-    const test = (): void => {
-      console.log('test');
-    };
 
     return {
       bankConnection,
@@ -282,9 +243,7 @@ export default defineComponent({
       hasActiveConnections,
       hasActivePrivateConnections,
       hasActiveSharedConnections,
-      displaySharedBankConnections,
       hasErrorneousConnections,
-      displayErrorneousConnections,
       bankConnectionLabel,
 
       isEbicsVersionAllowedForUse,
@@ -318,7 +277,6 @@ export default defineComponent({
       HealthStatusType,
       FileFormat,
       processDownload,
-      test,
     };
   },
 });

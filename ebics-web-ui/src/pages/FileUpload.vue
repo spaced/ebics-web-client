@@ -24,40 +24,6 @@
               :bankConnectionId="bankConnection.id"
             />
 
-            <q-item
-              tag="label"
-              v-ripple
-              v-if="hasActivePrivateConnections && hasActiveSharedConnections"
-            >
-              <q-item-section avatar>
-                <q-checkbox v-model="displaySharedBankConnections" />
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>Display shared bank connections</q-item-label>
-                <q-item-label caption>
-                  If enabled, the shared connections are listed as well, If
-                  disabled, only your private connections are listed.
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-
-            <q-item
-              tag="label"
-              v-ripple
-              v-if="hasErrorneousConnections"
-            >
-              <q-item-section avatar>
-                <q-checkbox v-model="displayErrorneousConnections" />
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>Display errorneous bank connections</q-item-label>
-                <q-item-label caption>
-                  If enabled, the errorneous bank connections are listed as well, If
-                  disabled, only OK connections are listed.
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-
             <ebics-version-radios v-model:bankConnection="bankConnection"/>
 
             <order-type-select
@@ -226,7 +192,7 @@ import {
   UploadRequestH005,
 } from 'components/models/ebics-request-response';
 import { defineComponent } from 'vue';
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 
 //Components
 import { QForm, useQuasar } from 'quasar';
@@ -277,16 +243,14 @@ export default defineComponent({
       hasActiveConnections,
       hasActivePrivateConnections,
       hasActiveSharedConnections,
-      displaySharedBankConnections,
       hasErrorneousConnections,
-      displayErrorneousConnections,
       bankConnectionLabel,
       loading: loadingBankConnections,
     } = useBankConnectionsAPI(BankConnectionAccess.USE);
     const { ebicsUploadRequest } = useFileTransferAPI();
     const { applySmartAdjustments, detectFileFormat } = useTextUtils();
     const { isEbicsVersionAllowedForUse } = useBanksAPI(true);
-    const { userSettings } = useUserSettings();
+    const { userSettings, loadUserSettings } = useUserSettings();
     const { orderTypeLabel, btfTypeLabel } = useOrderTypeLabelAPI();
     const {
       btfTypes,
@@ -471,6 +435,8 @@ export default defineComponent({
       }
     };
 
+    onMounted(loadUserSettings);
+
     const onUpdateInputFiles = async (inputFiles: File[]) => {
       console.log(inputFiles);
       files.value = inputFiles;
@@ -507,9 +473,7 @@ export default defineComponent({
       hasActiveConnections,
       hasActivePrivateConnections,
       hasActiveSharedConnections,
-      displaySharedBankConnections,
       hasErrorneousConnections,
-      displayErrorneousConnections,
       bankConnectionLabel,
       isEbicsVersionAllowedForUse,
       EbicsVersion,

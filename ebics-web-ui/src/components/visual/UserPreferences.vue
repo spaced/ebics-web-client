@@ -3,12 +3,6 @@
     <q-list bordered padding>
       <div v-if="displaySection('General')">
         <q-item-label header>General Settings</q-item-label>
-        <!--boolean-option
-        :disable="true"
-        label="Upload on drop"
-        hint="Enable uploading of files after dropping for 'Simple file upload'"
-        v-model="userSettings.uploadOnDrop"
-      /-->
         <boolean-option
           label="Tester settings"
           hint="Enable smart adjustments of uploaded files"
@@ -125,16 +119,29 @@
         spaced
         v-if="
           displaySection('ContentOptions.Swift') &&
-          displaySection('Download')
+          displaySection('Download') 
         "
       />
-      <div v-if="displaySection('Download')">
-        <q-item-label header>Download Settings</q-item-label>
-        <boolean-option
+      <div v-if="displaySection('Download') || displaySection('BankConnectionsSettings')">
+        <q-item-label v-if="displaySection('Download')" header>Upload and download Settings</q-item-label>
+        <boolean-option v-if="displaySection('Download')"
           :disable="!userSettings.testerSettings"
           label="Display administrative order types"
           hint="Admin order types like HTD, HAA,.. will be included into list of downloadable order types"
           v-model="userSettings.displayAdminTypes"
+        />
+        <q-item-label v-if="displaySection('BankConnectionsSettings')" header>Bank Connections Settings</q-item-label>
+        <boolean-option v-if="displaySection('BankConnectionsSettings')"
+          label="Display shared bank connections"
+          hint="If enabled, the shared connections are listed as well, If
+                  disabled, only your private connections are listed."
+          v-model="userSettings.displaySharedBankConnections"
+        />
+        <boolean-option v-if="displaySection('BankConnectionsSettings')"
+          label="Display errorneous bank connections"
+          hint="If enabled, the errorneous bank connections are listed as well, If
+                  disabled, only OK connections are listed."
+          v-model="userSettings.displayErroneousConnections"
         />
       </div>
     </q-list>
@@ -171,20 +178,18 @@ export default defineComponent({
       default: false,
     },
   },
-  methods: {
-    displaySection(sectionName: string): boolean {
-      return (
-        this.sectionFilter == '' || sectionName.includes(this.sectionFilter)
-      );
-    },
-    uetr(): string {
+  setup(props) {
+    const uetr = (): string => {
       return uuid.v4();
-    },
-  },
-  setup() {
+    }
+    const displaySection = (sectionName: string): boolean => {
+      return (
+        props.sectionFilter == '' || sectionName.includes(props.sectionFilter)
+      );
+    }
     const { saveUserSettings, userSettings } = useUserSettingsAPI();
     const { currentDate, makeUniqueId } = useTextUtils();
-    return { currentDate, makeUniqueId, userSettings, saveUserSettings };
+    return { currentDate, makeUniqueId, userSettings, saveUserSettings, uetr, displaySection };
   },
 });
 </script>

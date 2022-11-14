@@ -110,6 +110,8 @@ function createFrontendConnectionStatus(
         errorCount: errorCount,
         errorRate: errorRate,
         totalCount: totalCount,
+        lastError: backendStatus.lastError,
+        lastErrorTimestamp: backendStatus.lastErrorTimestamp,
       } as ConnectionStatusObject;
       //const relatedIdString = relatedObjectReference.id ? relatedObjectReference.id.toString() : 'unk_id';
       //console.log(`Original backend status: ${relatedIdString} ${JSON.stringify(backendStatus)}`)

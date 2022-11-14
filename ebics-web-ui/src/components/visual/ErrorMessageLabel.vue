@@ -1,46 +1,52 @@
 <template>
   <div>
-    <q-item-label caption v-if="ebicsApiError">
-      Last API error: {{ formatedErrorMessage }} (HTTP {{ebicsApiError.status}} {{ value.error }})
+    <q-item-label caption v-if="ebicsApiErrorVal">
+      Last API error: {{ formatedErrorMessage }} (HTTP {{ebicsApiErrorVal.httpStatusCode}} {{ ebicsApiErrorVal.message }})
     </q-item-label>
     <q-item-label caption v-else>
-      Last error: {{ formatedErrorMessage }} ({{ value.error }})
+      Last error: {{ formatedErrorMessage }} ({{ apiError.message }})
     </q-item-label>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, computed } from 'vue';
 import { ApiError, EbicsApiError } from 'components/models/ebics-api-error';
 import { isEbicsApiError, getFormatedErrorMessage } from 'components/base-api'
 
 export default defineComponent({
   name: 'ErrorMessageLabel',
   props: {
-    modelValue: {
+    apiError: {
       type: Object,
       required: true,
     },
   },
-  emits: ['update:modelValue'],
-  computed: {
-    value: {
-      get(): ApiError {
-        return this.modelValue as ApiError;
+  emits: ['update:apiError'],
+  setup(props, { emit }) {
+
+    const apiErrorVal = computed<ApiError>({
+      get() {
+        return props.apiError as ApiError;
       },
-      set(value: ApiError) {
-        this.$emit('update:modelValue', value);
+      set(value) {
+        emit('update:apiError', value);
       },
-    },
-    ebicsApiError(): EbicsApiError | undefined {
-        if (isEbicsApiError(this.value))
-          return this.value;
-        else 
-          return undefined;
-    },
-    formatedErrorMessage(): string {
-      return getFormatedErrorMessage(this.value);
-    }
-  },
+    });
+
+    const ebicsApiErrorVal = computed<EbicsApiError | undefined>(() => {
+      if (isEbicsApiError(apiErrorVal.value))
+        return apiErrorVal.value;
+      else
+        return undefined;
+    })
+
+    const formatedErrorMessage = computed<string>(() => {
+      console.log('Api error :' + JSON.stringify(apiErrorVal));
+      return getFormatedErrorMessage(apiErrorVal.value);
+    })
+
+    return {apiErrorVal, ebicsApiErrorVal, formatedErrorMessage};
+  }
 });
 </script>

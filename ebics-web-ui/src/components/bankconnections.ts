@@ -1,4 +1,4 @@
-import { ref, onMounted, computed, watch } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import {
   BankConnection,
   BankConnectionAccess,
@@ -7,6 +7,7 @@ import { api } from 'boot/axios';
 import useBaseAPI from './base-api';
 import { useQuasar } from 'quasar';
 import { HealthStatusType } from './models/allivenes-health-status';
+import useUserSettingsAPI from './user-settings';
 
 /**
  * Display label of the bankConnection
@@ -37,6 +38,7 @@ export default function useBankConnectionsAPI(
 ) {
   const { apiErrorHandler } = useBaseAPI();
   const q = useQuasar();
+  const { userSettings } = useUserSettingsAPI();
 
   const bankConnections = ref<BankConnection[]>();
   const loading = ref<boolean>(false);
@@ -115,16 +117,6 @@ export default function useBankConnectionsAPI(
     return activeBankConnections.value?.some((bc) => bc.guestAccess) ?? false;
   });
 
-  const displaySharedBankConnections = ref(true);
-  watch(
-    hasActivePrivateConnections,
-    (hasActivePrivateConnectionsValue: boolean) => {
-      if (hasActivePrivateConnectionsValue)
-        displaySharedBankConnections.value = false;
-      else displaySharedBankConnections.value = true;
-    }
-  );
-
   const isConnectionErrorneous = (bankConnection: BankConnection): boolean => {
     return (
       bankConnection.backendStatus?.healthStatus == HealthStatusType.Error ||
@@ -138,8 +130,7 @@ export default function useBankConnectionsAPI(
       false
     );
   });
-  const displayErrorneousConnections = ref(false);
-
+  
   /**
    * This method returns only the connections which should be displayed
    * The shared & errorneous connection are filtered out if relevant
@@ -148,8 +139,8 @@ export default function useBankConnectionsAPI(
     () => {
       return activeBankConnections.value?.filter(
         (bc) =>
-          (!bc.guestAccess || displaySharedBankConnections.value) &&
-          (!isConnectionErrorneous(bc) || displayErrorneousConnections.value)
+          (!bc.guestAccess || userSettings.value.displaySharedBankConnections) &&
+          (!isConnectionErrorneous(bc) || userSettings.value.displayErroneousConnections)
       );
     }
   );
@@ -163,9 +154,7 @@ export default function useBankConnectionsAPI(
     hasActiveConnections,
     hasActivePrivateConnections,
     hasActiveSharedConnections,
-    displaySharedBankConnections,
     hasErrorneousConnections,
-    displayErrorneousConnections,
     loadBankConnections,
     deleteBankConnection,
     bankConnectionLabel,

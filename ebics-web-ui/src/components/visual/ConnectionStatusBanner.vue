@@ -34,7 +34,7 @@
         Out of {{ connectionStatusObject.totalCount }} request(s) have {{ connectionStatusObject.errorRate }}%
         failed, and {{ connectionStatusObject.okRate }}% was OK.
       </q-item-label>
-      <error-message-label v-if="connectionStatusObject.lastError" v-model="connectionStatusObject.lastError" />
+      <error-message-label v-if="connectionStatusObject.lastError" :apiError="connectionStatusObject.lastError" />
     </q-item-section>
     <!-- template v-slot:action>
       <q-btn flat color="primary" label="Latest errors" @click="showLatestErrors = true"/>
