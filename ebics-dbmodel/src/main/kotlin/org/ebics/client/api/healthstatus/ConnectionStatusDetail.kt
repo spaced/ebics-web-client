@@ -1,6 +1,5 @@
 package org.ebics.client.api.healthstatus
 
-import org.ebics.client.exception.EbicsException
 import java.time.ZonedDateTime
 
 class ConnectionStatusDetail(
@@ -10,7 +9,7 @@ class ConnectionStatusDetail(
     val healthStatus: HealthStatusType,
     val errorRate: Int,
     val okRate: Int,
-    val lastError: EbicsException?,
+    val lastError: ApiError?,
     val lastErrorTimestamp: ZonedDateTime?,
     val lastOkTimestamp: ZonedDateTime?,
     val actualStatisticsFrom: ZonedDateTime,

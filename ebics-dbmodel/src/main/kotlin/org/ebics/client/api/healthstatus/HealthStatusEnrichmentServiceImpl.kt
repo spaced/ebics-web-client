@@ -4,7 +4,6 @@ import org.ebics.client.api.bankconnection.BankConnectionEntity
 import org.ebics.client.api.trace.TraceCategory
 import org.ebics.client.api.trace.TraceEntry
 import org.ebics.client.api.trace.TraceRepository
-import org.ebics.client.exception.EbicsException
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -101,9 +100,9 @@ class HealthStatusEnrichmentServiceImpl(
         actualTimeStamp: ZonedDateTime,
     ): BankConnectionWithHealthStatus {
         val totalCount = errorCount + okCount
-        val lastException = lastErrorTrace.map { errorTrace -> EbicsException(errorTrace.errorMessage) }.orElse(null)
+        val lastException = lastErrorTrace.map { errorTrace -> ApiError.fromTraceEntry(errorTrace) }.orElse(null)
         val lastErrorTimestamp = lastErrorTrace.map { errorTrace -> errorTrace.dateTime }.orElse(null)
-        val lastOkTimestamp = lastErrorTrace.map { okTrace -> okTrace.dateTime }.orElse(null)
+        val lastOkTimestamp = lastOkTrace.map { okTrace -> okTrace.dateTime }.orElse(null)
         val connectionStatusDetail = if (totalCount == 0) {
             ConnectionStatusDetail(
                 0,

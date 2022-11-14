@@ -1,11 +1,17 @@
 package org.ebics.client.api.bankconnection.settings
 
-import javax.persistence.*
+import javax.persistence.Embeddable
+import javax.persistence.Embedded
+import javax.persistence.Entity
+import javax.persistence.Id
 
 data class UserSettingsData(
     val uploadOnDrop: Boolean,
     val testerSettings: Boolean,
     val adjustmentOptions: AdjustmentOptions,
+    val displayAdminTypes: Boolean,
+    val displaySharedBankConnections: Boolean,
+    val displayErroneousConnections: Boolean,
 )
 
 /**
@@ -21,6 +27,10 @@ class UserSettings(
 
     @Embedded
     val adjustmentOptions: AdjustmentOptions,
+
+    val displayAdminTypes: Boolean,
+    val displaySharedBankConnections: Boolean,
+    val displayErroneousConnections: Boolean,
 ) : UserSettingsAccessRightsController {
     override fun getOwnerName(): String = userId
     override fun getObjectName(): String = "User settings of '$userId'"

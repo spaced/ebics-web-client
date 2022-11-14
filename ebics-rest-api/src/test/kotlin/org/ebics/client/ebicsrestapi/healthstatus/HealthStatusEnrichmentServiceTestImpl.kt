@@ -2,7 +2,6 @@ package org.ebics.client.ebicsrestapi.healthstatus
 
 import org.ebics.client.api.bankconnection.BankConnectionEntity
 import org.ebics.client.api.healthstatus.*
-import org.ebics.client.exception.EbicsException
 import java.time.ZonedDateTime
 
 class HealthStatusEnrichmentServiceTestImpl : HealthStatusEnrichmentService {
@@ -18,7 +17,7 @@ class HealthStatusEnrichmentServiceTestImpl : HealthStatusEnrichmentService {
                 HealthStatusType.Warning,
                 50,
                 50,
-                EbicsException("Test exception"),
+                ApiError(ZonedDateTime.now(), "Test exception"),
                 ZonedDateTime.now(),
                 ZonedDateTime.now(),
                 ZonedDateTime.now().minusHours(1),
@@ -42,7 +41,7 @@ class HealthStatusEnrichmentServiceTestImpl : HealthStatusEnrichmentService {
                 HealthStatusType.Warning,
                 50,
                 50,
-                EbicsException("Test exception"),
+                ApiError(ZonedDateTime.now(), "Test exception"),
                 ZonedDateTime.now(),
                 ZonedDateTime.now(),
                 ZonedDateTime.now().minusHours(1),

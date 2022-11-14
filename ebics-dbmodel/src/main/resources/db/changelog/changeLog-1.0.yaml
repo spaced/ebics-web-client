@@ -837,3 +837,27 @@ databaseChangeLog:
                columnDataType:  BIGINT
                columnName:  bankConnection_id
                tableName:  TraceEntry
+- changeSet:
+      id: additional-user-settings
+      author: honza
+      changes:
+          - addColumn:
+                columns:
+                    - column:
+                          name: displayAdminTypes
+                          type: BOOLEAN
+                          defaultValueBoolean: FALSE
+                    - column:
+                          name: displaySharedBankConnections
+                          type: BOOLEAN
+                          defaultValueBoolean: FALSE
+                    - column:
+                          name: displayErroneousConnections
+                          type: BOOLEAN
+                          defaultValueBoolean: FALSE
+                tableName: UserSettings
+- changeSet:
+      id: user-settings-default-shared-true
+      author: honza (generated)
+      changes:
+          - sql: update UserSettings set displaySharedBankConnections=TRUE
