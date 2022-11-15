@@ -119,15 +119,15 @@
         spaced
         v-if="
           displaySection('ContentOptions.Swift') &&
-          displaySection('Download') 
+          displaySection('OrderTypesSettings') 
         "
       />
-      <div v-if="displaySection('Download') || displaySection('BankConnectionsSettings')">
-        <q-item-label v-if="displaySection('Download')" header>Upload and download Settings</q-item-label>
-        <boolean-option v-if="displaySection('Download')"
+      <div v-if="displaySection('OrderTypesSettings') || displaySection('BankConnectionsSettings')">
+        <q-item-label v-if="displaySection('OrderTypesSettings')" header>Order type settings</q-item-label>
+        <boolean-option v-if="displaySection('OrderTypesSettings')"
           :disable="!userSettings.testerSettings"
-          label="Display administrative order types"
-          hint="Admin order types like HTD, HAA,.. will be included into list of downloadable order types"
+          label="Display administrative order types for Download"
+          hint="Admin order types like HTD, HAA, HKD,.. will be included into list of downloadable order types"
           v-model="userSettings.displayAdminTypes"
         />
         <q-item-label v-if="displaySection('BankConnectionsSettings')" header>Bank Connections Settings</q-item-label>

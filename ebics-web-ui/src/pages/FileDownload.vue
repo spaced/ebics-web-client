@@ -35,12 +35,14 @@
               :orderTypes="orderTypes"
               :bankConnection="bankConnection"
               @click:refreshOrderTypes="refreshOrderTypes(bankConnection)"
+              :showSettingsButton="true"
             />
             <btf-select
               v-model:btfType="orderType"
               :btfTypes="btfTypes"
               :bankConnection="bankConnection"
               @click:refreshOrderTypes="refreshBtfTypes(bankConnection)"
+              :showSettingsButton="true"
             />
 
             <!--div v-if="bankConnection" class="q-gutter-sm">
@@ -107,8 +109,8 @@ import {
   OrderTypeFilter,
   OrderType,
 } from 'components/models/ebics-order-type';
-import { defineComponent } from 'vue';
-import { ref, toRef } from 'vue';
+import { defineComponent, onMounted } from 'vue';
+import { ref } from 'vue';
 import { exportFile } from 'quasar';
 
 //Composition APIs
@@ -160,7 +162,7 @@ export default defineComponent({
       currentDate,
     } = useTextUtils();
     const { isEbicsVersionAllowedForUse } = useBanksAPI(true);
-    const { userSettings } = useUserSettings();
+    const { userSettings, loadUserSettings } = useUserSettings();
     const { orderTypeLabel, btfTypeLabel } = useOrderTypeLabelAPI();
     const {
       btfTypes,
@@ -171,8 +173,7 @@ export default defineComponent({
     } = useOrderTypesAPI(
       bankConnection,
       activeBankConnections,
-      ref(OrderTypeFilter.DownloadOnly),
-      toRef(userSettings.value, 'displayAdminTypes')
+      ref(OrderTypeFilter.DownloadOnly)
     );
 
     const historicDownload = ref(false);
@@ -235,6 +236,8 @@ export default defineComponent({
         }
       }
     };
+
+    onMounted(loadUserSettings);
 
     return {
       bankConnection,

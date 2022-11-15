@@ -53,7 +53,7 @@ describe('OrderTypes', () => {
   });
 
   it('should produce empty list of ordertypes for empty input', () => {
-    const { btfTypes, orderTypes } = useOrderTypesAPI(ref(undefined), ref(undefined), ref(OrderTypeFilter.DownloadOnly), ref(true));
+    const { btfTypes, orderTypes } = useOrderTypesAPI(ref(undefined), ref(undefined), ref(OrderTypeFilter.DownloadOnly));
     
     expect(btfTypes.value.length).toBe(0);
     expect(orderTypes.value.length).toBe(0);
@@ -62,7 +62,7 @@ describe('OrderTypes', () => {
 
   it('should produce non empty btfTypes list for non empty input', () => {
     const { bankConnections } = useBankConnectionsAPI()
-    const { btfTypes, orderTypes } = useOrderTypesAPI(ref(undefined), bankConnections, ref(OrderTypeFilter.DownloadOnly), ref(true));
+    const { btfTypes, orderTypes } = useOrderTypesAPI(ref(undefined), bankConnections, ref(OrderTypeFilter.DownloadOnly));
     
     expect(btfTypes.value.length).toBe(0);
     expect(orderTypes.value.length).toBe(0);

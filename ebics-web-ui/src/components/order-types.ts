@@ -15,6 +15,7 @@ import useFileTransferAPI from './filetransfer';
 import { CustomMap } from './utils';
 import usePasswordAPI from './password-api';
 import useBanksAPI from './banks';
+import useUserSettingsAPI from './user-settings';
 
 //Global internal cache of all OrderTypes for all active bank connections..
 const orderTypeCache: CustomMap<number, OrderType[]> = new CustomMap<
@@ -32,7 +33,6 @@ export default function useOrderTypesAPI(
   selectedBankConnection: Ref<BankConnection | undefined>,
   activeBankConnections: Ref<BankConnection[] | undefined>,
   filterType: Ref<OrderTypeFilter>,
-  displayAdminTypes: Ref<boolean> = ref(false),
 ) {
   //BTF   types of selectedBankConnection filtered by filterType
   const outputBtfTypes: Ref<BTFType[]> = ref([]);
@@ -41,6 +41,8 @@ export default function useOrderTypesAPI(
 
   const loading = ref<boolean>(false);
 
+  //Used for the displayAdminTypes filter
+  const { userSettings } = useUserSettingsAPI(); 
   const { ebicsOrderTypes } = useFileTransferAPI();
   const { promptCertPassword } = usePasswordAPI();
   const { isEbicsVersionAllowedForUse } = useBanksAPI(true);
@@ -195,7 +197,7 @@ export default function useOrderTypesAPI(
         outputBtfTypes.value = selectedTypes.filter(
           (btf) =>
             btf.adminOrderType == 'BTD' ||
-            (displayAdminTypes.value &&
+            (userSettings.value.displayAdminTypes &&
               downloadableAdminOrderTypes.includes(btf.adminOrderType))
         );
       }
@@ -221,7 +223,7 @@ export default function useOrderTypesAPI(
           (ot) =>
             ot.adminOrderType == 'DNL' ||
             ot.adminOrderType == 'FDL' ||
-            (displayAdminTypes.value &&
+            (userSettings.value.displayAdminTypes &&
               downloadableAdminOrderTypes.includes(ot.adminOrderType)) ||
             ot.transferType == TransferType.Download
         );
@@ -236,6 +238,11 @@ export default function useOrderTypesAPI(
 
   watch(
     selectedBankConnection,
+    refreshOutputOrdertypesForSelectedBankConnection
+  );
+
+  watch(
+    () => userSettings.value.displayAdminTypes,
     refreshOutputOrdertypesForSelectedBankConnection
   );
   watch(activeBankConnections, updateOrderTypesCacheForAllActiveConnections);
