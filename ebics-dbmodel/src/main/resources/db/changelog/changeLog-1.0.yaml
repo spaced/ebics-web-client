@@ -846,18 +846,85 @@ databaseChangeLog:
                     - column:
                           name: displayAdminTypes
                           type: BOOLEAN
-                          defaultValueBoolean: FALSE
                     - column:
                           name: displaySharedBankConnections
                           type: BOOLEAN
-                          defaultValueBoolean: FALSE
                     - column:
                           name: displayErroneousConnections
                           type: BOOLEAN
-                          defaultValueBoolean: FALSE
                 tableName: UserSettings
 - changeSet:
-      id: user-settings-default-shared-true
+      id: user-settings-defaults
       author: honza (generated)
       changes:
+          - sql: update UserSettings set displayAdminTypes=FALSE
           - sql: update UserSettings set displaySharedBankConnections=TRUE
+          - sql: update UserSettings set displayErroneousConnections=FALSE
+- changeSet:
+    id: 1668544016855-5
+    author: honza (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: FileTemplatePK
+            name: id
+            type: BIGINT
+        - column:
+            name: creatorUserId
+            type: VARCHAR(255)
+        - column:
+            name: fileContentText
+            type: CLOB
+        - column:
+            constraints:
+              nullable: false
+            name: shared
+            type: BOOLEAN
+        - column:
+            name: templateName
+            type: VARCHAR(255)
+        - column:
+            name: templateTags
+            type: VARCHAR(255)
+        tableName: FileTemplate
+- changeSet:
+    id: 1668544016855-1
+    author: honza (generated)
+    changes:
+    - addNotNullConstraint:
+        columnDataType: boolean
+        columnName: displayAdminTypes
+        tableName: UserSettings
+        validate: true
+- changeSet:
+    id: 1668544016855-2
+    author: honza (generated)
+    changes:
+    - addNotNullConstraint:
+        columnDataType: boolean
+        columnName: displayErroneousConnections
+        tableName: UserSettings
+        validate: true
+- changeSet:
+    id: 1668544016855-3
+    author: honza (generated)
+    changes:
+    - addNotNullConstraint:
+        columnDataType: boolean
+        columnName: displaySharedBankConnections
+        tableName: UserSettings
+        validate: true
+- changeSet:
+    id: 1668544016855-4
+    author: honza (generated)
+    changes:
+    - dropDefaultValue:
+        columnDataType: boolean
+        columnName: request
+        tableName: TraceEntry
+
