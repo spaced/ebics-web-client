@@ -102,6 +102,8 @@
               </template>
             </q-file>
 
+            <file-template-select v-if="fileEditor" v-model:fileTemplate="fileTemplate" />
+
             <v-ace-editor
               ref="contentEditor"
               v-if="fileEditor && fileFormat != FileFormat.BINARY"
@@ -178,6 +180,7 @@ import {
   BankConnection,
   BankConnectionAccess,
 } from 'components/models/ebics-bank-connection';
+import { FileTemplate } from 'components/models/file-template';
 import { EbicsVersion } from 'components/models/ebics-version';
 import { HealthStatusType } from 'components/models/allivenes-health-status';
 import { FileFormat } from 'components/models/file-format';
@@ -192,7 +195,7 @@ import {
   UploadRequestH005,
 } from 'components/models/ebics-request-response';
 import { defineComponent } from 'vue';
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 
 //Components
 import { QForm, useQuasar } from 'quasar';
@@ -205,6 +208,7 @@ import BankConnectionSelect from 'components/visual/BankConnectionSelect.vue';
 import OrderTypeSelect from 'components/visual/OrderTypeSelect.vue';
 import BtfSelect from 'components/visual/BtfSelect.vue';
 import EbicsVersionRadios from 'components/visual/EbicsVersionRadios.vue';
+import FileTemplateSelect from 'components/visual/FileTemplateSelect.vue';
 
 //Composition APIs
 import useBankConnectionsAPI from 'components/bankconnections';
@@ -225,6 +229,7 @@ export default defineComponent({
     OrderTypeSelect,
     BtfSelect,
     EbicsVersionRadios,
+    FileTemplateSelect,
   },
   props: {
     fileEditor: {
@@ -263,6 +268,7 @@ export default defineComponent({
       activeBankConnections,
       ref(OrderTypeFilter.UploadOnly)
     );
+    const fileTemplate = ref<FileTemplate>();
 
     //Single file setup
     const testInput = ref(null);
@@ -272,6 +278,14 @@ export default defineComponent({
     const fileName = ref('');
     const orderType = ref<OrderType>();
     const btfType = ref<BTFType>();
+
+    const refreshFileTextOnTeplateChange = (): void => {
+      if (fileTemplate.value) {
+        fileText.value = fileTemplate.value?.fileContentText;
+      }
+    }
+
+    watch(fileTemplate, refreshFileTextOnTeplateChange)
 
     const signatureFlag = ref(true);
     const requestEDS = ref(true);
@@ -526,6 +540,8 @@ export default defineComponent({
       FileFormat,
       processUpload,
       HealthStatusType,
+
+      fileTemplate,
     };
   },
 });
