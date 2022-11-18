@@ -56,10 +56,6 @@ interface FileTemplateAccessRightController : ReadAccessRightsController, WriteA
                     logger.debug("Write permission for '{}' granted through user access for '{}'", getObjectName(), authCtx.name)
                     true
                 }
-                authCtx.hasRole(BusinessRole.ROLE_GUEST) && isShared() -> {
-                    logger.debug("Write permission for '{}' granted through guest access for '{}'", getObjectName(), authCtx.name)
-                    true
-                }
                 else -> {
                     logger.debug(
                         "Write permission for '{}' denied, no role available '{}' for '{}'",

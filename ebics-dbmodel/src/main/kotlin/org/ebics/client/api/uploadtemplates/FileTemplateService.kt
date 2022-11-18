@@ -13,7 +13,7 @@ class FileTemplateService(private val fileTemplateRepository: FileTemplateReposi
             .map { template ->
                 template.custom = true
                 template
-            } + listOwnTemplates()
+            }.filter { it.hasReadAccess(AuthenticationContext.fromSecurityContext()) } + listOwnTemplates()
     }
 
     fun updateTemplate(fileTemplateId: Long, fileTemplateRequest: CreateOrUpdateFileTemplateRequest): Long {
@@ -66,11 +66,11 @@ class FileTemplateService(private val fileTemplateRepository: FileTemplateReposi
     private fun listOwnTemplates(): List<FileTemplate> {
         return listOf(
             FileTemplate(
-                -100L, "test template content SEPA", "Pain.001.001.09.ch.02.xml SPS SEPA Payment",
+                -100L, "test template content SEPA <IBAN>%%debit-account%%</IBAN> <IBAN>%%credit-account%%</IBAN>", "Pain.001.001.09.ch.02.xml SPS SEPA Payment",
                 "Payment,SEPA,SPS,CH", false, systemUserId, true
             ),
             FileTemplate(
-                -101L, "test template content2 QRR", "Pain.001.001.09.ch.02.xml SPS Domestic QRR Payment",
+                -101L, "test template content2 QRR <IBAN>%%debit-account%%</IBAN> <IBAN>%%credit-account%%</IBAN>", "Pain.001.001.09.ch.02.xml SPS Domestic QRR Payment",
                 "Payment,QRR,SPS,CH", false, systemUserId, true
             )
         )
