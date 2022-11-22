@@ -135,7 +135,9 @@
             </q-item-section>
           </q-item>
 
-          <bank-connection-properties :bankConnectionId="bankConnection.id" :properties="bankConnectionProperties"/>
+          <bank-connection-properties
+            :properties="bankConnectionProperties"
+          />
 
           <div>
             <q-btn
@@ -161,12 +163,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref, onMounted } from 'vue';
+import { defineComponent, computed, ref, onMounted, watch } from 'vue';
 import useBankConnectionAPI from 'components/bankconnection';
 import useBanksDataAPI from 'src/components/banks';
 import { EbicsVersion } from 'src/components/models/ebics-version';
 import BankConnectionProperties from 'src/components/visual/BankConnectionProperties.vue';
-import useBankConnectionPropertiesAPI from 'src/components/bankconnection-properties';
 import { useRouter } from 'vue-router';
 
 export default defineComponent({
@@ -180,13 +181,13 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const { bankConnection, createOrUpdateUserData } = useBankConnectionAPI(
-      props.id
-    );
+    const {
+      bankConnection,
+      bankConnectionProperties,
+      saveBankConnectionWithProperties,
+    } = useBankConnectionAPI(props.id);
     const router = useRouter();
     const { banks, isEbicsVersionAllowedForUse } = useBanksDataAPI();
-    const { bankConnectionProperties, loadBankConnectionProperties, saveBankConnectionProperties } =
-      useBankConnectionPropertiesAPI(ref(props.id));
     const userStatusInitializing = computed((): boolean => {
       return (
         bankConnection.value.userStatus != 'CREATED' &&
@@ -200,25 +201,23 @@ export default defineComponent({
         bankConnection.value.useCertificate = false;
     };
     const onSubmit = async (): Promise<void> => {
-      console.log('Save properties');
-      await createOrUpdateUserData();
-      await saveBankConnectionProperties();
+      await saveBankConnectionWithProperties();
+      //router.go(-1);
     };
     const onCancel = (): void => {
       router.go(-1);
     };
-    onMounted(loadBankConnectionProperties);
+    
     return {
       banks,
       bankConnection,
-      createOrUpdateUserData,
       userStatusInitializing,
       isEbicsVersionAllowedForUse,
       EbicsVersion,
       refreshUseCertificates,
       onSubmit,
       onCancel,
-      bankConnectionProperties
+      bankConnectionProperties,
     };
   },
 });

@@ -345,7 +345,7 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const { bankConnection, refreshUserData } = useBankConnectionAPI(props.id);
+    const { bankConnection, loadBankConnectionWithProperties } = useBankConnectionAPI(props.id);
     const { confirmDialog } = useDialogs();
     const { promptCertPassword, resetCertPassword } = usePasswordAPI();
 
@@ -363,7 +363,7 @@ export default defineComponent({
         //Download bank keys using HPB order type
         await ebicsAdminTypeRequest(AdminOrderType.HPB);
         //Refresshing user status on success
-        await refreshUserData();
+        await loadBankConnectionWithProperties();
       } catch (error) {
         console.log(error);
       }
@@ -381,7 +381,7 @@ export default defineComponent({
           //Reset the password for certificates
           resetCertPassword(bankConnection.value);
           //Refresshing user status on success
-          await refreshUserData();
+          await loadBankConnectionWithProperties();
         }
       } catch (error) {
         console.log(error);
@@ -396,7 +396,7 @@ export default defineComponent({
         //Upload user keys (INI and/or HIA) depending on user status
         await createUserKeysRequest();
         //Refresshing user status on success
-        await refreshUserData();
+        await loadBankConnectionWithProperties();
       } catch (error) {
         console.log(error);
       }
@@ -415,7 +415,7 @@ export default defineComponent({
         //Execute HIA request
         await ebicsAdminTypeRequest(AdminOrderType.HIA);
         //Refresh user data
-        await refreshUserData();
+        await loadBankConnectionWithProperties();
       } catch (error) {
         console.log(error);
       }
@@ -429,7 +429,7 @@ export default defineComponent({
 
     return {
       bankConnection,
-      refreshUserData,
+      loadBankConnectionWithProperties,
       actualWizardStep,
       isStepDone,
       createUserKeysRequest,
