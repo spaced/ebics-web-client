@@ -17,21 +17,21 @@ import java.net.URL
 @ExtendWith(SpringExtension::class)
 @DataJpaTest
 @ContextConfiguration(classes = [DbTestContext::class])
-class UserServiceTest(
-    @Autowired private val userService: BankConnectionServiceImpl,
+class BankConnectionServiceTest(
+    @Autowired private val bankConnectionService: BankConnectionService,
     @Autowired private val bankService: BankServiceImpl,
 ) {
     @Test
     @WithMockUser(username = "user_xxx", roles = ["USER"])
-    fun createAndGetUser() {
+    fun createAndGetBankConnection() {
         val bank = BankData(  URL("https://ebics.ubs.com/ebicsweb/ebicsweb"),  "EBXUBSCH", "UBS-PROD-CH")
         val bankId = bankService.createBank(bank)
-        val userInfo = BankConnection(EbicsVersion.H004, "CHT10001", "Jan",  "CH100001", bankId, false, false)
-        val userId = userService.createBankConnection(userInfo)
-        with( userService.getBankConnectionById(userId) ) {
-            assertThat( name ).isEqualTo( userInfo.name )
+        val bankConnection = BankConnection(EbicsVersion.H004, "CHT10001", "Jan",  "CH100001", bankId, false, false)
+        val bankConnectionId = bankConnectionService.createBankConnection(bankConnection)
+        with( bankConnectionService.getBankConnectionById(bankConnectionId) ) {
+            assertThat( name ).isEqualTo( bankConnection.name )
             assertThat( partner.bank.bankURL ).isEqualTo( bank.bankURL )
-            assertThat( ebicsVersion ).isEqualTo( userInfo.ebicsVersion )
+            assertThat( ebicsVersion ).isEqualTo( bankConnection.ebicsVersion )
             assertThat( partner.partnerId ).isEqualTo("CH100001")
         }
     }

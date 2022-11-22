@@ -67,14 +67,24 @@
                 v-model="bankConnection.ebicsVersion"
                 val="H004"
                 label="EBICS 2.5 (H004)"
-                :disable="!isEbicsVersionAllowedForUse(bankConnection.partner.bank, EbicsVersion.H004)"
+                :disable="
+                  !isEbicsVersionAllowedForUse(
+                    bankConnection.partner.bank,
+                    EbicsVersion.H004
+                  )
+                "
                 @change="refreshUseCertificates"
               />
               <q-radio
                 v-model="bankConnection.ebicsVersion"
                 val="H005"
                 label="EBICS 3.0 (H005)"
-                :disable="!isEbicsVersionAllowedForUse(bankConnection.partner.bank, EbicsVersion.H005)"
+                :disable="
+                  !isEbicsVersionAllowedForUse(
+                    bankConnection.partner.bank,
+                    EbicsVersion.H005
+                  )
+                "
                 @change="refreshUseCertificates"
               />
             </template>
@@ -82,18 +92,32 @@
 
           <q-item tag="label" v-ripple :disable="userStatusInitializing">
             <q-item-section avatar>
-              <q-checkbox :disable="userStatusInitializing || (bankConnection.ebicsVersion == EbicsVersion.H005)"
+              <q-checkbox
+                :disable="
+                  userStatusInitializing ||
+                  bankConnection.ebicsVersion == EbicsVersion.H005
+                "
                 v-model="bankConnection.useCertificate"
               />
             </q-item-section>
             <q-item-section>
-              <q-item-label>Use client certificates for EBICS initialization</q-item-label>
-              <q-item-label v-if="bankConnection.ebicsVersion == EbicsVersion.H005" caption>
-                X509 Certificates will be used for initialization, as per EBICS 3.0 standard.
+              <q-item-label
+                >Use client certificates for EBICS initialization</q-item-label
+              >
+              <q-item-label
+                v-if="bankConnection.ebicsVersion == EbicsVersion.H005"
+                caption
+              >
+                X509 Certificates will be used for initialization, as per EBICS
+                3.0 standard.
               </q-item-label>
-              <q-item-label v-if="bankConnection.ebicsVersion == EbicsVersion.H004" caption>
-                If enabled, X509 Certificates will be used for initialization instead of clasical keys. 
-                X509 Certificates are rarelly supported by EBICS 2.5 Servers.
+              <q-item-label
+                v-if="bankConnection.ebicsVersion == EbicsVersion.H004"
+                caption
+              >
+                If enabled, X509 Certificates will be used for initialization
+                instead of clasical keys. X509 Certificates are rarelly
+                supported by EBICS 2.5 Servers.
               </q-item-label>
             </q-item-section>
           </q-item>
@@ -110,6 +134,8 @@
               >
             </q-item-section>
           </q-item>
+
+          <bank-connection-properties :bankConnectionId="bankConnection.id" :properties="bankConnectionProperties"/>
 
           <div>
             <q-btn
@@ -135,14 +161,17 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from 'vue';
+import { defineComponent, computed, ref, onMounted } from 'vue';
 import useBankConnectionAPI from 'components/bankconnection';
 import useBanksDataAPI from 'src/components/banks';
-import {EbicsVersion} from 'src/components/models/ebics-version'
+import { EbicsVersion } from 'src/components/models/ebics-version';
+import BankConnectionProperties from 'src/components/visual/BankConnectionProperties.vue';
+import useBankConnectionPropertiesAPI from 'src/components/bankconnection-properties';
+import { useRouter } from 'vue-router';
 
 export default defineComponent({
-  name: 'User',
-  components: {},
+  name: 'BankConnectionCreateOrEdit',
+  components: { BankConnectionProperties },
   props: {
     id: {
       type: Number,
@@ -150,29 +179,47 @@ export default defineComponent({
       default: undefined,
     },
   },
-  methods: {
-    async onSubmit() {
-      await this.createOrUpdateUserData();
-    },
-    onCancel() {
-      this.$router.go(-1);
-    },
-  },
   setup(props) {
-    const { bankConnection, createOrUpdateUserData } = useBankConnectionAPI(props.id);
+    const { bankConnection, createOrUpdateUserData } = useBankConnectionAPI(
+      props.id
+    );
+    const router = useRouter();
     const { banks, isEbicsVersionAllowedForUse } = useBanksDataAPI();
+    const { bankConnectionProperties, loadBankConnectionProperties, saveBankConnectionProperties } =
+      useBankConnectionPropertiesAPI(ref(props.id));
     const userStatusInitializing = computed((): boolean => {
       return (
-        bankConnection.value.userStatus != 'CREATED' && bankConnection.value.userStatus != 'NEW'
+        bankConnection.value.userStatus != 'CREATED' &&
+        bankConnection.value.userStatus != 'NEW'
       );
     });
-    const refreshUseCertificates = ():void => {
+    const refreshUseCertificates = (): void => {
       if (bankConnection.value?.ebicsVersion == EbicsVersion.H005)
-        bankConnection.value.useCertificate = true
+        bankConnection.value.useCertificate = true;
       else if (bankConnection.value?.ebicsVersion == EbicsVersion.H004)
-        bankConnection.value.useCertificate = false
-    }
-    return { banks, bankConnection, createOrUpdateUserData, userStatusInitializing, isEbicsVersionAllowedForUse, EbicsVersion, refreshUseCertificates };
+        bankConnection.value.useCertificate = false;
+    };
+    const onSubmit = async (): Promise<void> => {
+      console.log('Save properties');
+      await createOrUpdateUserData();
+      await saveBankConnectionProperties();
+    };
+    const onCancel = (): void => {
+      router.go(-1);
+    };
+    onMounted(loadBankConnectionProperties);
+    return {
+      banks,
+      bankConnection,
+      createOrUpdateUserData,
+      userStatusInitializing,
+      isEbicsVersionAllowedForUse,
+      EbicsVersion,
+      refreshUseCertificates,
+      onSubmit,
+      onCancel,
+      bankConnectionProperties
+    };
   },
 });
 </script>

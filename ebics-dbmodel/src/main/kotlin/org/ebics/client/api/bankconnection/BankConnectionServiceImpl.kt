@@ -91,7 +91,8 @@ class BankConnectionServiceImpl(
         keyStore,
         creator,
         bankConnection.guestAccess,
-        traces
+        traces,
+        properties
     )
 
     private fun BankConnectionEntity.updateFromBankConnectionBeforeInitialization(
@@ -110,7 +111,8 @@ class BankConnectionServiceImpl(
         keyStore,
         creator,
         bankConnection.guestAccess,
-        traces
+        traces,
+        properties
     )
 
     override fun deleteBankConnection(bankConnectionId: Long) {

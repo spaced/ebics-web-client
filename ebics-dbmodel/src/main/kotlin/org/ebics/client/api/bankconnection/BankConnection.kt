@@ -13,4 +13,6 @@ data class BankConnection(
     val bankId: Long,
     val guestAccess: Boolean,
     val useCertificate: Boolean,
+    //val properties: List<BankConnectionPropertyUpdateRequest> = emptyList(),
+    //val properties: Map<String, String> = emptyMap()
 )

@@ -4,6 +4,8 @@ import org.ebics.client.api.bankconnection.BankConnectionRepository
 import org.ebics.client.api.bankconnection.BankConnectionServiceImpl
 import org.ebics.client.api.bankconnection.cert.UserKeyStoreRepository
 import org.ebics.client.api.bankconnection.cert.UserKeyStoreService
+import org.ebics.client.api.bankconnection.properties.BankConnectionPropertyRepository
+import org.ebics.client.api.bankconnection.properties.BankConnectionPropertyService
 import org.ebics.client.api.partner.PartnerRepository
 import org.ebics.client.api.partner.PartnerService
 import org.ebics.client.api.trace.FileService
@@ -24,8 +26,9 @@ open class DbTestContext(
     @Autowired val bankRepository: BankRepository,
     @Autowired val partnerRepository: PartnerRepository,
     @Autowired val userKeyStoreRepository: UserKeyStoreRepository,
-    @Autowired val userRepository: BankConnectionRepository,
+    @Autowired val bankConnectionRepository: BankConnectionRepository,
     @Autowired val traceRepository: TraceRepository,
+    @Autowired val bankConnectionPropertyRepository: BankConnectionPropertyRepository,
 ) {
     @Bean
     open fun bankService() = BankServiceImpl(bankRepository)
@@ -37,7 +40,10 @@ open class DbTestContext(
     open fun userKeyStoreService() = UserKeyStoreService(userKeyStoreRepository)
 
     @Bean
-    open fun userService() = BankConnectionServiceImpl(userRepository, partnerService(), userKeyStoreService())
+    open fun bankConnectionService() = BankConnectionServiceImpl(bankConnectionRepository, partnerService(), userKeyStoreService())
+
+    @Bean
+    open fun bankConnectionPropertiesService() = BankConnectionPropertyService(bankConnectionPropertyRepository, bankConnectionRepository)
 
     @Bean
     open fun fileService(): IFileService = FileService(traceRepository)

@@ -927,4 +927,50 @@ databaseChangeLog:
         columnDataType: boolean
         columnName: request
         tableName: TraceEntry
-
+- changeSet:
+    id: 1669107139385-1
+    author: honza (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: BankConnectionPropertyEntityPK
+            name: id
+            type: BIGINT
+        - column:
+            name: key
+            type: VARCHAR(100)
+        - column:
+            name: value
+            type: VARCHAR(500)
+        - column:
+            constraints:
+              nullable: false
+            name: bankConnection_id
+            type: BIGINT
+        tableName: BankConnectionPropertyEntity
+- changeSet:
+    id: 1669107139385-2
+    author: honza (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: key, bankConnection_id
+        constraintName: uniqueKeyToBankConnection
+        tableName: BankConnectionPropertyEntity
+- changeSet:
+    id: 1669107139385-3
+    author: honza (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: bankConnection_id
+        baseTableName: BankConnectionPropertyEntity
+        constraintName: FKcaflw6897wv9n41gjy29rwgb3
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: EbicsUser
+        validate: true

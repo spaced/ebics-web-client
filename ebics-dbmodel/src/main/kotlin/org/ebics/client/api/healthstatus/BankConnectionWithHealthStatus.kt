@@ -3,6 +3,7 @@ package org.ebics.client.api.healthstatus
 import org.ebics.client.api.bankconnection.BankConnectionEntity
 import org.ebics.client.api.bankconnection.BankConnectionEntityInt
 import org.ebics.client.api.bankconnection.cert.UserKeyStore
+import org.ebics.client.api.bankconnection.properties.BankConnectionPropertyEntity
 import org.ebics.client.api.partner.Partner
 import org.ebics.client.api.trace.TraceEntry
 import org.ebics.client.model.EbicsVersion
@@ -23,22 +24,25 @@ class BankConnectionWithHealthStatus(
     keyStore: UserKeyStore?,
     traces: List<TraceEntry> = emptyList(),
     val backendStatus: ConnectionStatusDetail,
+    //val properties: Map<String, String>,
+    val properties: List<BankConnectionPropertyEntity>,
 ) : BankConnectionEntityInt {
-    constructor(bankEntity: BankConnectionEntity, connectionStatus: ConnectionStatus) :
+    constructor(bankConnectionEntity: BankConnectionEntity, connectionStatus: ConnectionStatus) :
             this(
-                bankEntity.id,
-                bankEntity.partner,
-                bankEntity.ebicsVersion,
-                bankEntity.userId,
-                bankEntity.name,
-                bankEntity.dn,
-                bankEntity.userStatus,
-                bankEntity.useCertificate,
-                bankEntity.usePassword,
-                bankEntity.creator,
-                bankEntity.guestAccess,
-                bankEntity.keyStore,
-                bankEntity.traces,
+                bankConnectionEntity.id,
+                bankConnectionEntity.partner,
+                bankConnectionEntity.ebicsVersion,
+                bankConnectionEntity.userId,
+                bankConnectionEntity.name,
+                bankConnectionEntity.dn,
+                bankConnectionEntity.userStatus,
+                bankConnectionEntity.useCertificate,
+                bankConnectionEntity.usePassword,
+                bankConnectionEntity.creator,
+                bankConnectionEntity.guestAccess,
+                bankConnectionEntity.keyStore,
+                bankConnectionEntity.traces,
                 connectionStatus.status,
+                bankConnectionEntity.properties,
             )
 }

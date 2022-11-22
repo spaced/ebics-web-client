@@ -49,7 +49,7 @@ export default function useBankConnectionsAPI(
       const response = await api.get<BankConnection[]>(
         `bankconnections?permission=${accessRight}`
       );
-      bankConnections.value = response.data;
+      bankConnections.value = response.data
     } catch (error) {
       apiErrorHandler('Loading of bank data failed', error);
     } finally {

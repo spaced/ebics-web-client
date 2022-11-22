@@ -9,6 +9,12 @@ export interface BankConnectionId {
   partner: Partner;
 }
 
+export interface BankConnectionProperty {
+  id: number,
+  key: string;
+  value: string;
+}
+
 export interface BankConnection extends ConnectionStatus {
     id: number;
     ebicsVersion: EbicsVersion;
@@ -23,6 +29,7 @@ export interface BankConnection extends ConnectionStatus {
     creator: string;
     securityMedium: string;
     useCertificate: boolean;
+    properties: BankConnectionProperty[];
   }
 
   export interface UserPartnerBank {
