@@ -76,44 +76,17 @@
 <script lang="ts">
 import { Bank } from 'components/models/ebics-bank';
 import useBanksAPI from 'src/components/banks';
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useQuasar } from 'quasar';
 
 export default defineComponent({
   name: 'Banks',
   components: {},
-  data() {
-    return {
-      filter: '',
-    };
-  },
-  methods: {
-    /**
-     * Route to Bank page
-     * bankId
-     *  - if given then will be routed with 'id' parameter to edit page
-     *  - if undefined will be routed without 'id' parameter to create page
-     */
-    async routeToBankPage(bankId?: number) {
-      const routeParams = bankId === undefined ? undefined : { id: bankId };
-      const routeName = bankId === undefined ? 'bank/create' : 'bank/edit';
-      const action = bankId === undefined ? 'create' : 'edit';
-      await this.$router.push({
-        name: routeName,
-        params: routeParams,
-        query: { action: action },
-      });
-    },
-    exportTable() {
-      // naive encoding to csv format
-      this.$q.notify({
-        color: 'positive',
-        position: 'bottom-right',
-        message: 'Exporting table data',
-        icon: 'report_info',
-      });
-    },
-  },
   setup() {
+    const router = useRouter();
+    const q = useQuasar();
+    const filter = ref('');
     const columns = [
       {
         name: 'name',
@@ -140,8 +113,33 @@ export default defineComponent({
         sortable: true,
       },
     ];
+        /**
+     * Route to Bank page
+     * bankId
+     *  - if given then will be routed with 'id' parameter to edit page
+     *  - if undefined will be routed without 'id' parameter to create page
+     */
+    const routeToBankPage = async (bankId?: number) => {
+      const routeParams = bankId === undefined ? undefined : { id: bankId };
+      const routeName = bankId === undefined ? 'bank/create' : 'bank/edit';
+      const action = bankId === undefined ? 'create' : 'edit';
+      await router.push({
+        name: routeName,
+        params: routeParams,
+        query: { action: action },
+      });
+    }
+    const exportTable = () => {
+      // naive encoding to csv format
+      q.notify({
+        color: 'positive',
+        position: 'bottom-right',
+        message: 'Exporting table data',
+        icon: 'report_info',
+      });
+    }
     const  { banks, deleteBank } = useBanksAPI()
-    return { columns, banks, deleteBank };
+    return { columns, banks, deleteBank, routeToBankPage, exportTable, filter };
   },
 });
 </script>
