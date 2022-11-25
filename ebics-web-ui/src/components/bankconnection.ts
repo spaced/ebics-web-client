@@ -1,5 +1,4 @@
 import { ref, onMounted, computed } from 'vue';
-import { useRouter } from 'vue-router';
 import { Bank } from 'components/models/ebics-bank';
 import { Partner } from 'components/models/ebics-partner';
 import { BankConnection, BankConnectionProperty, UserPartnerBank } from 'components/models/ebics-bank-connection';
@@ -17,7 +16,6 @@ import { AxiosResponse } from 'axios';
  *  createOrUpdateUserData - function used for storing user data using API
  */
 export default function useBankConnectionAPI(bankConnectionId: number | undefined) {
-  const router = useRouter()
   const { apiErrorHandler, apiOkHandler } = useBaseAPI();
 
   const bankConnection = ref<BankConnection>({
@@ -81,41 +79,43 @@ export default function useBankConnectionAPI(bankConnectionId: number | undefine
     } as UserPartnerBank;
   });
 
-  const createOrUpdateBankConnection = async() => {
+  const createOrUpdateBankConnection = async():Promise<boolean> => {
     if (bankConnectionId === undefined) {
       try {
         const response = await api.post<UserPartnerBank, AxiosResponse<number>>('bankconnections', userPartnerBank.value)
         bankConnection.value.id = response.data;
         bankConnectionId = response.data;
-        router.go(-1);
-        console.log(`Bank connection created, with id = ${bankConnection.value.id}, id:${bankConnectionId}`);
-        apiOkHandler('Bank connection created');
+        console.log(`Bank connection created id:${bankConnectionId}`);
+        return true;
       } catch(error) {
-        apiErrorHandler('Bank connection creation failed', error)
+        apiErrorHandler('Bank connection creation failed', error);
+        return false;
       }
     } else {
       try {
         await api.put<UserPartnerBank>(`bankconnections/${bankConnectionId}`, userPartnerBank.value)
-        router.go(-1);
-        apiOkHandler('Bank connection updated')
+        return true;
       } catch(error) {
-        apiErrorHandler('Bank connection update failed', error)
+        apiErrorHandler('Bank connection update failed', error);
+        return false;
       }
     }  
   };
 
-  const saveBankConnectionProperties = async (): Promise<void> => {
+  const saveBankConnectionProperties = async (): Promise<boolean> => {
     try {
       console.log(`Saving bank connection properties, with id = ${bankConnection.value.id}, id:${bankConnectionId ? bankConnectionId : 'undef'}`);
       if (bankConnectionId) {
         const response = await api.post<BankConnectionProperty[]>(`bankconnections/${bankConnectionId}/properties`, bankConnectionProperties.value);
         bankConnectionProperties.value = response.data
-        apiOkHandler('Saved props sucessfully')
+        return true;
       } else {
         console.error('Existing bankConnectionId must be provided in order to save the bank connection properties');
+        return false;
       }
     } catch (error) {
       apiErrorHandler('Saving of bank connection properties failed', error);
+      return false;
     }
   };
 
@@ -128,9 +128,17 @@ export default function useBankConnectionAPI(bankConnectionId: number | undefine
    * Composite saving function, the order is here important, to have first bankConnectionId
    * And then the properties can be saved
    */
-  const saveBankConnectionWithProperties = async () => {
-    await createOrUpdateBankConnection();
-    await saveBankConnectionProperties();
+  const saveBankConnectionWithProperties = async (): Promise<boolean> => {
+    const result = await createOrUpdateBankConnection();
+    if (result) {
+      const resultProps = await saveBankConnectionProperties();
+      if (resultProps) {
+        apiOkHandler('Bank connection & properties updated')
+      }
+      return resultProps;
+    } else {
+      return false;
+    }
   }
 
   //Bank connection data is refreshed by mounting

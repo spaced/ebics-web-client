@@ -253,7 +253,7 @@ export default defineComponent({
       loading: loadingBankConnections,
     } = useBankConnectionsAPI(BankConnectionAccess.USE);
     const { ebicsUploadRequest } = useFileTransferAPI();
-    const { applySmartAdjustments, detectFileFormat } = useTextUtils();
+    const { applySmartAdjustments, applyTemplateAdjustments, detectFileFormat } = useTextUtils();
     const { isEbicsVersionAllowedForUse } = useBanksAPI(true);
     const { userSettings, loadUserSettings } = useUserSettings();
     const { orderTypeLabel, btfTypeLabel } = useOrderTypeLabelAPI();
@@ -279,9 +279,14 @@ export default defineComponent({
     const orderType = ref<OrderType>();
     const btfType = ref<BTFType>();
 
-    const refreshFileTextOnTeplateChange = (): void => {
-      if (fileTemplate.value) {
-        fileText.value = fileTemplate.value?.fileContentText;
+    const refreshFileTextOnTeplateChange = async () => {
+      if (fileTemplate.value) {      
+        console.log('ft' + JSON.stringify(fileTemplate));  
+        fileText.value = await applyTemplateAdjustments(
+          fileTemplate.value?.fileContentText,
+          fileTemplate.value?.fileFormat,
+          userSettings.value,
+          bankConnection.value?.properties ? bankConnection.value?.properties : [])
       }
     }
 

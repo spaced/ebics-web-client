@@ -163,7 +163,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref, onMounted, watch } from 'vue';
+import { defineComponent, computed } from 'vue';
 import useBankConnectionAPI from 'components/bankconnection';
 import useBanksDataAPI from 'src/components/banks';
 import { EbicsVersion } from 'src/components/models/ebics-version';
@@ -201,8 +201,10 @@ export default defineComponent({
         bankConnection.value.useCertificate = false;
     };
     const onSubmit = async (): Promise<void> => {
-      await saveBankConnectionWithProperties();
-      //router.go(-1);
+      const response = await saveBankConnectionWithProperties();
+      if (response) {
+        router.go(-1);
+      }
     };
     const onCancel = (): void => {
       router.go(-1);

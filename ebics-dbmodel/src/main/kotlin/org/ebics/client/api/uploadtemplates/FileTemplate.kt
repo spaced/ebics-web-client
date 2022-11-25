@@ -15,11 +15,16 @@ data class FileTemplate(
     val fileContentText: String,
     val templateName: String,
     val templateTags: String,
+    @Enumerated(EnumType.STRING)
+    val fileFormat: FileFormatType,
 
     //False => out of the box template (source code maintained)
     //True => custom template from DB
     @Transient
     var custom: Boolean,
+
+    @Transient
+    var canBeEdited: Boolean,
 
     val creatorUserId: String,
     val shared: Boolean,
@@ -34,7 +39,9 @@ data class FileTemplate(
                 createOrUpdateFileTemplateRequest.fileContentText,
                 createOrUpdateFileTemplateRequest.templateName,
                 createOrUpdateFileTemplateRequest.templateTags,
-                true,
+                createOrUpdateFileTemplateRequest.fileFormat,
+                custom = true,
+                canBeEdited = false,
                 authCtx.name,
                 createOrUpdateFileTemplateRequest.shared,
             )

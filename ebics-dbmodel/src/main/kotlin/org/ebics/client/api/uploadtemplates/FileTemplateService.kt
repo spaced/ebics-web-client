@@ -9,11 +9,13 @@ class FileTemplateService(private val fileTemplateRepository: FileTemplateReposi
     private val systemUserId: String = "system"
 
     fun listAll(): List<FileTemplate> {
+        val authCtx = AuthenticationContext.fromSecurityContext()
         return fileTemplateRepository.findAll()
             .map { template ->
                 template.custom = true
+                template.canBeEdited = template.hasWriteAccess(authCtx)
                 template
-            }.filter { it.hasReadAccess(AuthenticationContext.fromSecurityContext()) } + listOwnTemplates()
+            }.filter { it.hasReadAccess(authCtx) } + getPredefinedResourceTemplates()
     }
 
     fun updateTemplate(fileTemplateId: Long, fileTemplateRequest: CreateOrUpdateFileTemplateRequest): Long {
@@ -63,16 +65,58 @@ class FileTemplateService(private val fileTemplateRepository: FileTemplateReposi
             throw IllegalArgumentException("The system default templates can't be modified")
     }
 
-    private fun listOwnTemplates(): List<FileTemplate> {
+    private fun getPredefinedResourceTemplates(): List<FileTemplate> {
         return listOf(
             FileTemplate(
-                -100L, "test template content SEPA <IBAN>%%debit-account%%</IBAN> <IBAN>%%credit-account%%</IBAN>", "Pain.001.001.09.ch.02.xml SPS SEPA Payment",
-                "Payment,SEPA,SPS,CH", false, systemUserId, true
+                -101L,
+                getResourceFileContent("/upload-templates/pain.001.001.09_PaymentType_Domestic_QRR.xml"),
+                "Pain.001.001.09.ch.02.xml SPS Domestic QRR Payment",
+                "Payment,QRR,SPS,CH",
+                FileFormatType.Xml,
+                custom = false,
+                canBeEdited = false,
+                creatorUserId = systemUserId,
+                shared = true
             ),
             FileTemplate(
-                -101L, "test template content2 QRR <IBAN>%%debit-account%%</IBAN> <IBAN>%%credit-account%%</IBAN>", "Pain.001.001.09.ch.02.xml SPS Domestic QRR Payment",
-                "Payment,QRR,SPS,CH", false, systemUserId, true
+                -102L,
+                getResourceFileContent("/upload-templates/pain.001.001.09_PaymentType_Domestic_SCOR.xml"),
+                "Pain.001.001.09.ch.02.xml SPS Domestic SCOR Payment",
+                "Payment,SCOR,SPS,CH",
+                FileFormatType.Xml,
+                custom = false,
+                canBeEdited = false,
+                creatorUserId = systemUserId,
+                shared = true
+            ),
+            FileTemplate(
+                -102L,
+                getResourceFileContent("/upload-templates/pain.001.001.09_PaymentType_SEPA.xml"),
+                "Pain.001.001.09.ch.02.xml SPS SEPA Payment",
+                "Payment,SEPA,SPS,CH",
+                FileFormatType.Xml,
+                custom = false,
+                canBeEdited = false,
+                creatorUserId = systemUserId,
+                shared = true
+            ),
+            FileTemplate(
+                -103L,
+                getResourceFileContent("/upload-templates/pain.001.001.03.ch.02-2B-3C.xml"),
+                "pain.001.001.03.ch.xml SPS Payment 2xB 3xC",
+                "Payment,QRR,SPS,CH",
+                FileFormatType.Xml,
+                custom = false,
+                canBeEdited = false,
+                systemUserId,
+                true
             )
         )
+    }
+
+    private fun getResourceFileContent(resourceName: String): String {
+        val resFileUrl = requireNotNull(FileTemplateService::class.java.getResource(resourceName))
+        { "The statically defined resource path '$resourceName' is not available as file" }
+        return resFileUrl.readText(Charsets.UTF_8)
     }
 }

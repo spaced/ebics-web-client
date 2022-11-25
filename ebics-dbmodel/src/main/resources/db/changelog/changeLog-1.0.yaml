@@ -974,3 +974,14 @@ databaseChangeLog:
         referencedColumnNames: id
         referencedTableName: EbicsUser
         validate: true
+- changeSet:
+    id: 1669326814659-1
+    author: honza (generated)
+    changes:
+    - addColumn:
+        columns:
+        - column:
+            name: fileFormat
+            type: varchar(255)
+        tableName: FileTemplate
+

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.001.001.09" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:iso:std:iso:20022:tech:xsd:pain.001.001.09 pain.001.001.09.ch.03.xsd">
+	<CstmrCdtTrfInitn>
+		<GrpHdr>
+			<MsgId>%%aLevelId%%</MsgId>
+			<CreDtTm>%%IsoDtTm%%</CreDtTm>
+			<NbOfTxs>%%NbOfTxs-aLevel%%</NbOfTxs>
+			<CtrlSum>%%CtrlSum%%</CtrlSum>
+			<InitgPty>
+				<Nm>MUSTER AG</Nm>
+			</InitgPty>
+		</GrpHdr>
+		<PmtInf>
+			<PmtInfId>%%bLevelId%%</PmtInfId>
+			<PmtMtd>TRF</PmtMtd>
+			<BtchBookg>true</BtchBookg>
+			<PmtTpInf>
+				<SvcLvl>
+					<Cd>SEPA</Cd>
+				</SvcLvl>
+			</PmtTpInf>
+			<ReqdExctnDt>
+				<Dt>%%IsoDt%%</Dt>
+			</ReqdExctnDt>
+			<Dbtr>
+				<Nm>MUSTER AG</Nm>
+			</Dbtr>
+			<DbtrAcct>
+				<Id>
+					<IBAN>%%debitAccountIban%%</IBAN>
+				</Id>
+			</DbtrAcct>
+			<DbtrAgt>
+				<FinInstnId>
+					<BIC>%%debitAgentBIC%%</BIC>
+				</FinInstnId>
+			</DbtrAgt>
+			<CdtTrfTxInf>
+				<PmtId>
+					<InstrId>%%cLevelId%%</InstrId>
+					<EndToEndId>%%cLevelId-keep%%</EndToEndId>
+				</PmtId>
+				<Amt>
+					<InstdAmt Ccy="EUR">3421.00</InstdAmt>
+				</Amt>
+				<CdtrAgt>
+					<FinInstnId>
+						<BICFI>DEUTDEFF</BICFI>
+					</FinInstnId>
+				</CdtrAgt>
+				<Cdtr>
+					<Nm>Peter Haller</Nm>
+					<PstlAdr>
+						<Ctry>DE</Ctry>
+						<AdrLine>Rosenauweg 4</AdrLine>
+						<AdrLine>DE-80036 München</AdrLine>
+					</PstlAdr>
+				</Cdtr>
+				<CdtrAcct>
+					<Id>
+						<IBAN>DE62007620110623852957</IBAN>
+					</Id>
+				</CdtrAcct>
+				<RmtInf>
+					<Strd>
+						<CdtrRefInf>
+							<Tp>
+								<CdOrPrtry>
+									<Cd>SCOR</Cd>
+								</CdOrPrtry>
+							</Tp>
+							<Ref>RF712348231</Ref>
+						</CdtrRefInf>
+					</Strd>
+				</RmtInf>
+			</CdtTrfTxInf>
+		</PmtInf>
+	</CstmrCdtTrfInitn>
+</Document>

@@ -6,6 +6,7 @@ import {
   AutoAdjustmentsSwift, UserSettings
 } from './models/user-settings';
 import { uuid } from 'vue-uuid';
+import { BankConnectionProperty } from './models/ebics-bank-connection';
 
 /**
  * Text Utils composition API
@@ -33,10 +34,12 @@ export default function useTextUtils() {
 
   /**
    *
-   * @returns current date in YYYY-MM-DD format
+   * @returns current date in YYYY-MM-DD format 
+   * @param dash - if true format is ISO: YYYY-MM-DD, otherwise: YYYYMMDD
+   * @param date - optionally the concrete date, if not desired actual date
    */
-  const currentDate = (dash = true): string => {
-    const date = new Date();
+  const formatDate = (dash = true, date: Date = new Date()): string => {
+    //const date = new Date();
     return `${date.getFullYear()}${dash ? '-' : ''}${(date.getMonth() + 1)
       .toString()
       .padStart(2, '0')}${dash ? '-' : ''}${date
@@ -137,6 +140,126 @@ export default function useTextUtils() {
     else return str;
   }
 
+  const applyTemplateAdjustments = async (
+    fileText: string,
+    fileFormat: FileFormat,
+    settings: UserSettings,
+    bankConnectionProperties: BankConnectionProperty[]
+  ): Promise<string> => {
+    console.log(`applyTemplateAdjustments: ${fileFormat} props:${JSON.stringify(bankConnectionProperties)}`)
+    switch (fileFormat) {
+      case FileFormat.BINARY:
+      case FileFormat.TEXT:
+      case FileFormat.SWIFT:
+        return await applySmartAdjustmentsSwift(
+          fileText,
+          settings.adjustmentOptions.swift
+        );
+        break;
+      case FileFormat.XML:
+        return await applyTemplateAdjustmentsPain001(
+          fileText,
+          settings.adjustmentOptions.pain00x,
+          bankConnectionProperties
+        );
+    }
+  };
+
+  const applyTemplateAdjustmentsPain001 = async (fileText: string, s: AutoAdjustmentsPain00x, bankConnectionProperties: BankConnectionProperty[]): Promise<string> => {
+    const regExpParts = ['(%%aLevelId%%)', '(%%bLevelId(-keep)?%%)', '(%%cLevelId(-keep)?%%)', '(%%UETR(-keep)?%%)', 
+        '(%%IsoDtTm([+-]\d+)?%%)', '(%%IsoDt([+-]\d+)?%%)', '(%%.{3,30}?%%)',
+        '(<InstdAmt Ccy="\\w{3}">.*<\\/InstdAmt>)|(<Amt Ccy="\\w{3}">.*<\\/Amt>)'
+    ];
+    const idPrefix = s.idPrefix + '-' + uniqueTimeStamp();
+    let bLevel = 0;
+    let cLevel = 0;
+    let uetr = uuid.v4();
+    let nbOfTrxs = 0;
+    let ctrlSum = 0;
+    const regExp = new RegExp(regExpParts.join('|'), 'g');
+    console.log(regExp.source);
+
+    const text = await findAndReplace(fileText, regExp, (match) => {
+      if (match.startsWith('%%aLevelId%%')) {
+        return idPrefix;
+      }
+      else if (match.startsWith('%%bLevelId')) {
+        if (!match.includes('-keep')) {
+          cLevel = 0
+          bLevel++
+        }
+        return `${idPrefix}-B${bLevel}`;
+      }
+      else if (match.startsWith('%%cLevelId')) {
+        if (!match.includes('-keep')) {
+          cLevel++
+          nbOfTrxs++
+        }
+        return `${idPrefix}-B${bLevel}-C${cLevel}`;
+      }
+      else if (match.startsWith('%%IsoDtTm')) {
+        const date = new Date()
+        if (match.charAt(9) == '+' || match.charAt(9) == '-') {
+          const daysString = match.substring(9, match.length - 2)
+          if (Number.isInteger(daysString)) {
+            const daysOffset = Number(daysString);
+            date.setDate(date.getDate() + daysOffset);
+          }
+        }
+        return date.toISOString()
+      }
+      else if (match.startsWith('%%IsoDt')) {
+        const date = new Date()
+        if (match.charAt(7) == '+' || match.charAt(7) == '-') {
+          const daysString = match.substring(7, match.length - 2)
+          if (Number.isInteger(daysString)) {
+            const daysOffset = Number(daysString);
+            date.setDate(date.getDate() + daysOffset);
+          }
+        }
+        return formatDate(true, date)
+      }
+      else if (match.startsWith('%%UETR')) {
+        if (!match.includes('-keep')) {
+          uetr = uuid.v4();
+        }
+        return uetr;
+      } else if ((match.startsWith('<InstdAmt') || match.startsWith('<Amt'))) {
+        const amt = Number(
+          match.substring(match.indexOf('>') + 1, match.lastIndexOf('<'))
+        );
+        ctrlSum += amt;
+        return match;
+      } else if (match.startsWith('%%') && match.endsWith('%%')) {
+        const propertyKeyName = match.substring(2, match.length - 2)
+        const bankConnectionProperty = bankConnectionProperties.find(bankConnectionProperty => bankConnectionProperty.key == propertyKeyName);
+        if (bankConnectionProperty) {
+          return bankConnectionProperty.value
+        } else {
+          return match
+        }
+      } else {
+        return 'unknown match'
+      }
+    });
+
+    return await findAndReplace(
+      text,
+      new RegExp('(%%NbOfTxs-aLevel%%)|(%%CtrlSum%%)', 'g'),
+      (match) => {
+        if (match.startsWith('%%NbOfTxs-aLevel%%')) {
+          return `${nbOfTrxs}`;
+        } else if (match.startsWith('%%CtrlSum%%')) {
+          return ctrlSum
+            .toFixed(5)
+            .replace(new RegExp('(\\.)?0+$'), '');
+        } else { 
+          return 'Unknown match';
+        }
+      }
+    );
+  }
+
   const applySmartAdjustmentsSwift = async (
     fileText: string,
     settings: AutoAdjustmentsSwift
@@ -171,7 +294,7 @@ export default function useTextUtils() {
           return res;
         }
         if (s.f30 && match.startsWith(':30')) {
-          return `:30:${currentDate(false).slice(2)}`;
+          return `:30:${formatDate(false).slice(2)}`;
         }
         if (s.uetr && match.startsWith('{121')) {
           return `{121:${uuid.v4()}}`;
@@ -246,7 +369,7 @@ export default function useTextUtils() {
           ctrlSum += amt;
           return match;
         } else if (s.reqdExctnDt && match.startsWith('<ReqdExctnDt>')) {
-          return `<ReqdExctnDt>${currentDate()}</ReqdExctnDt>`;
+          return `<ReqdExctnDt>${formatDate()}</ReqdExctnDt>`;
         } else if (s.creDtTm && match.startsWith('<CreDtTm>')) {
           return `<CreDtTm>${new Date().toISOString()}</CreDtTm>`;
         } else return 'Unknown match';
@@ -277,8 +400,9 @@ export default function useTextUtils() {
   };
 
   return {
+    applyTemplateAdjustments,
     detectFileFormat,
-    currentDate,
+    currentDate: formatDate,
     uniqueTimeStamp,
     applySmartAdjustments,
     getFileExtension,
