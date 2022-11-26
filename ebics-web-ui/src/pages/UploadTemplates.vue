@@ -12,7 +12,7 @@
       >
         <template v-slot:header="props">
           <q-tr :props="props">
-            <q-th v-for="col in props.cols" :key="col.name" :props="props">
+            <q-th v-for="col in props.cols.filter(col => col.name != 'canBeEdited')" :key="col.name" :props="props">
               {{ col.label }}
             </q-th>
             <q-th auto-width></q-th>
@@ -20,11 +20,11 @@
         </template>
         <template v-slot:body="props">
           <q-tr :props="props">
-            <q-td v-for="col in props.cols" :key="col.name" :props="props">
+            <q-td v-for="col in props.cols.filter(col => col.name != 'canBeEdited')" :key="col.name" :props="props">
               {{ col.value }}
             </q-td>
             <q-td :style="{ width: '220px' }">
-              <div v-if="props.cols[5].value" class="q-gutter-sm">
+              <div v-if="props.cols[4].value" class="q-gutter-sm">
                 <q-btn 
                   size="sm"
                   color="primary"
@@ -33,7 +33,13 @@
                   no-caps
                   @click="routeToTemplatePage(Number(props.key))"
                 />
-                
+                <q-btn 
+                  size="sm"
+                  label="Copy"
+                  color="accent"
+                  icon-right="content_copy"
+                  @click="routeToTemplatePage(Number(props.key), true);"
+                />
                 <q-btn 
                   size="sm"
                   label="Delete"
@@ -50,6 +56,13 @@
                   icon-right="description"
                   no-caps
                   @click="routeToTemplatePage(Number(props.key))"
+                />
+                <q-btn 
+                  size="sm"
+                  label="Copy"
+                  color="accent"
+                  icon-right="content_copy"
+                  @click="routeToTemplatePage(Number(props.key), true);"
                 />
               </div>
             </q-td>
@@ -132,29 +145,13 @@ export default defineComponent({
         sortable: true,
       },
       {
-        name: 'custom',
-        required: true,
-        label: 'Custom',
-        align: 'left',
-        field: (row: FileTemplate) => row.custom,
-        sortable: true,
-      },
-      {
         name: 'canBeEdited',
         required: true,
-        label: 'Custom',
+        label: 'Can be edited',
         align: 'left',
         field: (row: FileTemplate) => row.canBeEdited,
         sortable: true,
       },
-      /* {
-        name: 'shared',
-        required: false,
-        label: 'Shared',
-        align: 'left',
-        field: (row: FileTemplate) => row.shared,
-        sortable: true,
-      }, */
     ];
     /**
      * Route to Template page
@@ -162,15 +159,28 @@ export default defineComponent({
      *  - if given then will be routed with 'id' parameter to edit page
      *  - if undefined will be routed without 'id' parameter to create page
      */
-    const routeToTemplatePage = async (templateId?: number) => {
+    const routeToTemplatePage = async (templateId?: number, copy?: boolean) => {
       const routeParams = templateId === undefined ? undefined : { id: templateId };
-      const routeName = templateId === undefined ? 'template/create' : 'template/edit';
-      const action = templateId === undefined ? 'create' : 'edit';
-      await router.push({
-        name: routeName,
-        params: routeParams,
-        query: { action: action },
-      });
+      
+      if (templateId === undefined) {
+        await router.push({
+          name: 'template/create',
+          params: routeParams,
+          query: { action: 'create' },
+        });
+      } else if (copy) {
+        await router.push({
+          name: 'template/copy',
+          params: routeParams,
+          query: { action: 'copy' },
+        });
+      } else {
+        await router.push({
+          name: 'template/edit',
+          params: routeParams,
+          query: { action: 'edit' },
+        });
+      }
     }
     const exportTable = () => {
       // naive encoding to csv format
@@ -181,6 +191,7 @@ export default defineComponent({
         icon: 'report_info',
       });
     }
+
     const  { fileTemplates, deleteTemplate } = useFileTemplateAPI();
 
     return { columns, fileTemplates, deleteTemplate, routeToTemplatePage, exportTable, filter };

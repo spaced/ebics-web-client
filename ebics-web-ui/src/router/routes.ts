@@ -32,6 +32,9 @@ const routes: RouteRecordRaw[] = [
         name: 'template/create',
         meta: { label: 'Templates / Create' },
         component: () => import('pages/UploadTemplate.vue'),
+        props: () => {
+          return { action: 'create' };
+        },
       },
       {
         path: '/template/:id',
@@ -43,7 +46,20 @@ const routes: RouteRecordRaw[] = [
           if (Number.isNaN(id)) {
             return undefined;
           }
-          return { id };
+          return { id, action: 'edit' };
+        },
+      },
+      {
+        path: '/template/:id',
+        name: 'template/copy',
+        meta: { label: 'Templates / Copy' },
+        component: () => import('pages/UploadTemplate.vue'),
+        props: (route) => {
+          const id = Number.parseInt(route.params.id as string, 10);
+          if (Number.isNaN(id)) {
+            return undefined;
+          }
+          return { id, action: 'copy' };
         },
       },
       { path: '/bankconnections', meta: { label: 'Bank connections' }, component: () => import('pages/BankConnections.vue') },

@@ -43,13 +43,16 @@
 
           <q-item tag="label" v-ripple :disable="!fileTemplate.canBeEdited">
             <q-item-section avatar>
-              <q-checkbox :disable="!fileTemplate.canBeEdited" v-model="fileTemplate.guestAccess" />
+              <q-checkbox
+                :disable="!fileTemplate.canBeEdited"
+                v-model="fileTemplate.guestAccess"
+              />
             </q-item-section>
             <q-item-section>
               <q-item-label>Share this file upload template</q-item-label>
               <q-item-label caption
-                >If enabled then this template will be available to every
-                GUEST user</q-item-label
+                >If enabled then this template will be available to every GUEST
+                user</q-item-label
               >
             </q-item-section>
           </q-item>
@@ -62,27 +65,26 @@
             style="height: 300px"
             :printMargin="false"
           />
-          <!-- q-input
-            filled
-            v-model="fileTemplate.templateTags"
-            label="EBICS URL"
-            hint="EBICS bank URL, including https://"
-            lazy-rules
-            :rules="[
-              (val) =>
-                (val && val.length > 1) ||
-                'Please enter valid URL including http(s)://',
-            ]"
-          /-->
-          
+
           <div>
-            <q-btn 
-              v-if="id === undefined"
+            <q-btn
+              v-if="action == 'create'"
               label="Add"
               type="submit"
               color="primary"
             />
-            <q-btn v-if="fileTemplate.canBeEdited && id" label="Update" type="submit" color="primary" />
+            <q-btn
+              v-if="action == 'edit'"
+              label="Update"
+              type="submit"
+              color="primary"
+            />
+            <q-btn
+              v-if="action == 'copy'"
+              label="Copy"
+              type="submit"
+              color="primary"
+            />
             <q-btn
               label="Cancel"
               type="reset"
@@ -99,7 +101,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed, watch } from 'vue';
+import { defineComponent, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import useSingleFileTemplateAPI from 'components/file-template-api';
 import useFileTemplateAPI from 'components/file-templates-api';
@@ -111,18 +113,23 @@ import 'ace-builds/src-noconflict/theme-clouds';
 
 export default defineComponent({
   name: 'Template',
-  components: {VAceEditor, },
+  components: { VAceEditor },
   props: {
     id: {
       type: Number,
       required: false,
       default: undefined,
     },
+    action: {
+      type: String,
+      required: true,
+    }
   },
   methods: {},
   setup(props) {
     const router = useRouter();
-    const { fileTemplate, fileTemplateTagsArray, createOrUpdateFileTemplate } = useSingleFileTemplateAPI(props.id);
+    const { fileTemplate, fileTemplateTagsArray, createOrUpdateFileTemplate } =
+      useSingleFileTemplateAPI(props.id, props.action == 'copy');
     const { allFileTemplateTagsArray } = useFileTemplateAPI();
     const onCancel = (): void => {
       router.go(-1);
@@ -131,7 +138,7 @@ export default defineComponent({
       if (await createOrUpdateFileTemplate()) {
         router.go(-1);
       }
-    }
+    };
 
     const filteredFileTemplateTags = ref<string[]>();
     const filterFileTemplateTags = (
@@ -181,12 +188,6 @@ export default defineComponent({
       if (fileTemplate.value?.fileFormat == FileFormat.SWIFT) return 'text';
       else return 'xml';
     });
-
-    //const fileTemplateTagsArray = ref([]);
-    watch(fileTemplateTagsArray, 
-      () => {console.log(JSON.stringify(fileTemplateTagsArray.value))},
-      {deep: true});
-
 
     return {
       allFileTemplateTagsArray,

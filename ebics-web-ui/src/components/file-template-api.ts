@@ -11,7 +11,7 @@ import { FileTemplate } from 'components/models/file-template';
  *  loadFileTemplate function to trigger refreshing of file template
  *  createOrUpdateFileTemplate function to trigger saving of file template
  */
-export default function useSingleFileTemplateAPI(fileTemplateId: number | undefined) {
+export default function useSingleFileTemplateAPI(fileTemplateId: number | undefined, copy?: boolean) {
   const { apiErrorHandler, apiOkHandler } = useBaseAPI();
 
   const fileTemplate = ref<FileTemplate>({
@@ -29,6 +29,10 @@ export default function useSingleFileTemplateAPI(fileTemplateId: number | undefi
       if (fileTemplate.value.id != undefined) {
         const response = await api.get<FileTemplate>(`filetemplate/${fileTemplate.value.id}`);
         fileTemplate.value = response.data;
+        if (copy) {
+          fileTemplate.value.id = undefined;
+          fileTemplate.value.creatorUserId = '';
+        }
       }
     } catch (error) {
       apiErrorHandler('Loading of file template failed', error);
