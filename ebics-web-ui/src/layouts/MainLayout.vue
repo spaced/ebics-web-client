@@ -70,6 +70,14 @@
             <q-item-section> Edit &amp; Upload file </q-item-section>
           </q-item>
 
+          <q-item to="/templates" exact clickable v-ripple>
+            <q-item-section avatar>
+              <q-icon name="code" />
+            </q-item-section>
+
+            <q-item-section> Uplaod templates </q-item-section>
+          </q-item>
+
           <q-item to="/download" exact clickable v-ripple>
             <q-item-section avatar>
               <q-icon name="file_download" />

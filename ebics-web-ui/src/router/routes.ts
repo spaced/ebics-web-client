@@ -26,6 +26,26 @@ const routes: RouteRecordRaw[] = [
           return { id };
         },
       },
+      { path: '/templates', meta: { label: 'Templates' }, component: () => import('pages/UploadTemplates.vue') },
+      {
+        path: '/template',
+        name: 'template/create',
+        meta: { label: 'Templates / Create' },
+        component: () => import('pages/UploadTemplate.vue'),
+      },
+      {
+        path: '/template/:id',
+        name: 'template/edit',
+        meta: { label: 'Templates / Edit' },
+        component: () => import('pages/UploadTemplate.vue'),
+        props: (route) => {
+          const id = Number.parseInt(route.params.id as string, 10);
+          if (Number.isNaN(id)) {
+            return undefined;
+          }
+          return { id };
+        },
+      },
       { path: '/bankconnections', meta: { label: 'Bank connections' }, component: () => import('pages/BankConnections.vue') },
       {
         path: '/bankconnection',

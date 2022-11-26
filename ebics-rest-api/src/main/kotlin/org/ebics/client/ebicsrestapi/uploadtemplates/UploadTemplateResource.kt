@@ -10,7 +10,10 @@ import org.springframework.web.bind.annotation.*
 @CrossOrigin(origins = ["http://localhost:8081"])
 class UploadTemplateResource(private val fileTemplateService: FileTemplateService) {
     @GetMapping
-    fun listTemplates(): List<FileTemplate> = fileTemplateService.listAll()
+    fun listTemplates(): List<FileTemplate> = fileTemplateService.listAllTemplates()
+
+    @GetMapping("{fileTemplateId}")
+    fun getTemplateById(@PathVariable fileTemplateId: Long) = fileTemplateService.getTemplateById(fileTemplateId)
 
     @PostMapping
     fun createTemplate(@RequestBody fileTemplate: CreateOrUpdateFileTemplateRequest): Long = fileTemplateService.createTemplate(fileTemplate)

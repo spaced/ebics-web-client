@@ -1,6 +1,7 @@
 package org.ebics.client.api.uploadtemplates
 
 import org.ebics.client.api.NotFoundException
+import org.ebics.client.api.getById
 import org.ebics.client.api.security.AuthenticationContext
 import org.springframework.stereotype.Service
 
@@ -8,7 +9,7 @@ import org.springframework.stereotype.Service
 class FileTemplateService(private val fileTemplateRepository: FileTemplateRepository) {
     private val systemUserId: String = "system"
 
-    fun listAll(): List<FileTemplate> {
+    fun listAllTemplates(): List<FileTemplate> {
         val authCtx = AuthenticationContext.fromSecurityContext()
         return fileTemplateRepository.findAll()
             .map { template ->
@@ -16,6 +17,19 @@ class FileTemplateService(private val fileTemplateRepository: FileTemplateReposi
                 template.canBeEdited = template.hasWriteAccess(authCtx)
                 template
             }.filter { it.hasReadAccess(authCtx) } + getPredefinedResourceTemplates()
+    }
+
+    fun getTemplateById(templateId: Long): FileTemplate {
+        val predefinedTemplate = getPredefinedResourceTemplates().find { template -> template.id == templateId }
+        return if (predefinedTemplate != null)
+            predefinedTemplate
+        else {
+            val authCtx = AuthenticationContext.fromSecurityContext()
+            fileTemplateRepository.getById(templateId, "file template").apply {
+                checkReadAccess(authCtx)
+                canBeEdited = hasWriteAccess(authCtx)
+            }
+        }
     }
 
     fun updateTemplate(fileTemplateId: Long, fileTemplateRequest: CreateOrUpdateFileTemplateRequest): Long {

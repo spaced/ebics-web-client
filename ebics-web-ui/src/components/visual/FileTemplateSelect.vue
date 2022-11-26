@@ -161,7 +161,7 @@
 <script lang="ts">
 import { defineComponent, computed, PropType, ref } from 'vue';
 import { FileTemplate } from 'components/models/file-template';
-import useFileTemplateAPI from 'components/file-template-api';
+import useFileTemplateAPI from 'src/components/file-templates-api';
 import useUserSettingsAPI from 'components/user-settings';
 import UserPreferences from 'components/visual/UserPreferences.vue';
 

@@ -1,25 +1,85 @@
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { api } from 'boot/axios';
+import { AxiosResponse } from 'axios';
 import useBaseAPI from './base-api';
-import { FileTemplate } from './models/file-template';
+import { FileTemplate } from 'components/models/file-template';
 
-export default function useFileTemplateAPI() {
-  const { apiErrorHandler } = useBaseAPI();
+/**
+ * File Template composition API for file template operations with backend REST API
+ * @returns
+ *  file template data synchronized with REST backend
+ *  loadFileTemplate function to trigger refreshing of file template
+ *  createOrUpdateFileTemplate function to trigger saving of file template
+ */
+export default function useSingleFileTemplateAPI(fileTemplateId: number | undefined) {
+  const { apiErrorHandler, apiOkHandler } = useBaseAPI();
 
-  const fileTemplates = ref<FileTemplate[]>();
+  const fileTemplate = ref<FileTemplate>({
+    id: fileTemplateId,
+    templateName: '',
+    templateTags: ' ',
+    fileContentText: '',
+    custom: true,
+    shared: false,
+    canBeEdited: true,
+  } as FileTemplate);
 
-  const loadFileTemplates = async (): Promise<void> => {
+  const loadFileTemplate = async (): Promise<void> => {
     try {
-      const response = await api.get<FileTemplate[]>('filetemplate');
-      fileTemplates.value = response.data;
+      if (fileTemplate.value.id != undefined) {
+        const response = await api.get<FileTemplate>(`filetemplate/${fileTemplate.value.id}`);
+        fileTemplate.value = response.data;
+      }
     } catch (error) {
-      apiErrorHandler('Loading of file templates failed', error);
+      apiErrorHandler('Loading of file template failed', error);
     }
   };
 
-  onMounted(loadFileTemplates);
+  const fileTemplateTagsArray = computed<string[]>({
+    get() {
+      return fileTemplate.value?.templateTags?.trim()?.split(',')
+    },
+    set(value) {
+      if (fileTemplate.value)
+        fileTemplate.value.templateTags = value.join(',')
+    },
+  });
+
+  const createOrUpdateFileTemplate = async ():Promise<boolean> => {
+    if (fileTemplate.value.id === undefined) {
+      try {
+        const response = await api.post<FileTemplate, AxiosResponse<number>>(
+          'filetemplate',
+          fileTemplate.value
+        );
+        fileTemplate.value.id = response.data; //Store id of the file template
+        console.log(`File template created id=${fileTemplate.value?.id}`);
+        apiOkHandler('File template created');
+        return true;
+      } catch (error) {
+        apiErrorHandler('File template creation failed', error);
+        return false;
+      }
+    } else {
+      try {
+        await api.put<FileTemplate>(`filetemplate/${fileTemplate.value.id}`, fileTemplate.value);
+        apiOkHandler('File template updated');
+        return true;
+      } catch (error) {
+        apiErrorHandler('File template update failed', error);
+        return false;
+      }
+    }
+  };
+
+  onMounted(async () => {
+    await loadFileTemplate();
+  });
 
   return {
-    fileTemplates,
+    fileTemplate,
+    fileTemplateTagsArray,
+    loadFileTemplate,
+    createOrUpdateFileTemplate,
   };
 }
