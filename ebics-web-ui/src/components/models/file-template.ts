@@ -11,5 +11,5 @@ export interface FileTemplate {
     custom: boolean,
     canBeEdited: boolean,
     creatorUserId: string,
-    shared: boolean,
+    guestAccess: boolean,
 }

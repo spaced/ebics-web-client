@@ -90,7 +90,7 @@ class FileTemplateService(private val fileTemplateRepository: FileTemplateReposi
                 custom = false,
                 canBeEdited = false,
                 creatorUserId = systemUserId,
-                shared = true
+                guestAccess = true
             ),
             FileTemplate(
                 -102L,
@@ -101,7 +101,7 @@ class FileTemplateService(private val fileTemplateRepository: FileTemplateReposi
                 custom = false,
                 canBeEdited = false,
                 creatorUserId = systemUserId,
-                shared = true
+                guestAccess = true
             ),
             FileTemplate(
                 -102L,
@@ -112,7 +112,7 @@ class FileTemplateService(private val fileTemplateRepository: FileTemplateReposi
                 custom = false,
                 canBeEdited = false,
                 creatorUserId = systemUserId,
-                shared = true
+                guestAccess = true
             ),
             FileTemplate(
                 -103L,

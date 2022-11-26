@@ -17,10 +17,10 @@ export default function useSingleFileTemplateAPI(fileTemplateId: number | undefi
   const fileTemplate = ref<FileTemplate>({
     id: fileTemplateId,
     templateName: '',
-    templateTags: ' ',
+    templateTags: '',
     fileContentText: '',
     custom: true,
-    shared: false,
+    guestAccess: false,
     canBeEdited: true,
   } as FileTemplate);
 
@@ -37,7 +37,7 @@ export default function useSingleFileTemplateAPI(fileTemplateId: number | undefi
 
   const fileTemplateTagsArray = computed<string[]>({
     get() {
-      return fileTemplate.value?.templateTags?.trim()?.split(',')
+      return fileTemplate.value?.templateTags?.split(',')?.filter(tagName => tagName.trim().length > 0)
     },
     set(value) {
       if (fileTemplate.value)

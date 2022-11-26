@@ -32,6 +32,28 @@
             @filter="filterFileTemplateTags"
           ></q-select>
 
+          <q-select
+            :disable="!fileTemplate.canBeEdited"
+            filled
+            label="File template format"
+            hint="Template format used for highligting &amp; template placeholder substitutions"
+            v-model="fileTemplate.fileFormat"
+            :options="Object.values(FileFormat)"
+          ></q-select>
+
+          <q-item tag="label" v-ripple :disable="!fileTemplate.canBeEdited">
+            <q-item-section avatar>
+              <q-checkbox :disable="!fileTemplate.canBeEdited" v-model="fileTemplate.guestAccess" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Share this file upload template</q-item-label>
+              <q-item-label caption
+                >If enabled then this template will be available to every
+                GUEST user</q-item-label
+              >
+            </q-item-section>
+          </q-item>
+
           <v-ace-editor
             ref="contentEditor"
             v-model:value="fileTemplate.fileContentText"
@@ -177,6 +199,8 @@ export default defineComponent({
       fileTemplate,
       onCancel,
       onSubmit,
+
+      FileFormat,
     };
   },
 });

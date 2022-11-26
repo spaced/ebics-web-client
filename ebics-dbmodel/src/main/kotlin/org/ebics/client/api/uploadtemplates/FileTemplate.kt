@@ -27,7 +27,9 @@ data class FileTemplate(
     var canBeEdited: Boolean,
 
     val creatorUserId: String,
-    val shared: Boolean,
+
+    @Column(name = "shared")
+    val guestAccess: Boolean,
 ) : FileTemplateAccessRightController {
     companion object {
         fun from(
@@ -51,7 +53,7 @@ data class FileTemplate(
     @JsonIgnore
     override fun getCreatorName(): String = creatorUserId
     @JsonIgnore
-    override fun isShared(): Boolean = shared
+    override fun isShared(): Boolean = guestAccess
     @JsonIgnore
     override fun getObjectName(): String = "File Template: '$templateName' created by: '$creatorUserId'"
 }
