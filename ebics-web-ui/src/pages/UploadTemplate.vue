@@ -35,7 +35,7 @@
           <q-select
             :disable="!fileTemplate.canBeEdited"
             filled
-            label="File template format"
+            label="Template file format"
             hint="Template format used for highligting &amp; template placeholder substitutions"
             v-model="fileTemplate.fileFormat"
             :options="Object.values(FileFormat)"
@@ -51,7 +51,7 @@
             <q-item-section>
               <q-item-label>Share this file upload template</q-item-label>
               <q-item-label caption
-                >If enabled then this template will be available to every GUEST
+                >If enabled then this template will be available to every
                 user</q-item-label
               >
             </q-item-section>
@@ -123,7 +123,7 @@ export default defineComponent({
     action: {
       type: String,
       required: true,
-    }
+    },
   },
   methods: {},
   setup(props) {
@@ -176,10 +176,17 @@ export default defineComponent({
       // and only resets the input textbox to empty string
 
       if (val.length > 0) {
-        if (!allFileTemplateTagsArray?.value?.includes(val)) {
+        const existingTagName = allFileTemplateTagsArray?.value.find(
+          (tag) => tag.toUpperCase() == val.toUpperCase()
+        );
+
+        if (!existingTagName) {
           allFileTemplateTagsArray.value?.push(val);
         }
-        done(val, 'toggle');
+
+        const tagName = existingTagName ? existingTagName : val;
+
+        done(tagName, 'add-unique');
       }
     };
 

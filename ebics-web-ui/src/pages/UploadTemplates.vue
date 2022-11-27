@@ -21,10 +21,16 @@
         <template v-slot:body="props">
           <q-tr :props="props">
             <q-td v-for="col in props.cols.filter(col => col.name != 'canBeEdited')" :key="col.name" :props="props">
-              {{ col.value }}
+              <div v-if="col.name != 'name'">
+                {{ col.value }}
+              </div>
+              <div v-else>
+                {{ col.value }}
+                <file-template-tags :tags="props.row.templateTags" />
+              </div>
             </q-td>
-            <q-td :style="{ width: '220px' }">
-              <div v-if="props.cols[4].value" class="q-gutter-sm">
+            <q-td :style="{ width: '270px' }">
+              <div v-if="props.cols[0].value" class="q-gutter-sm">
                 <q-btn 
                   size="sm"
                   color="primary"
@@ -102,16 +108,25 @@ import { defineComponent, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useQuasar } from 'quasar';
 import { FileTemplate } from 'components/models/file-template';
-import useFileTemplateAPI from 'src/components/file-templates-api';
+import useFileTemplateAPI from 'components/file-templates-api';
+import FileTemplateTags from 'components/visual/FileTemplateTags.vue';
 
 export default defineComponent({
   name: 'Templates',
-  components: {},
+  components: {FileTemplateTags},
   setup() {
     const router = useRouter();
     const q = useQuasar();
     const filter = ref('');
     const columns = [
+      { //The first column canBeEdited is not diplayed
+        name: 'canBeEdited',
+        required: true,
+        label: 'Can be edited',
+        align: 'left',
+        field: (row: FileTemplate) => row.canBeEdited,
+        sortable: true,
+      },
       {
         name: 'name',
         required: true,
@@ -120,14 +135,14 @@ export default defineComponent({
         field: (row: FileTemplate) => row.templateName,
         sortable: true,
       },
-      {
+      /*{
         name: 'tags',
         required: true,
         label: 'Template tags',
         align: 'left',
         field: (row: FileTemplate) => row.templateTags,
         sortable: true,
-      },
+      },*/
       {
         name: 'creator',
         required: true,
@@ -139,17 +154,9 @@ export default defineComponent({
       {
         name: 'fileFormat',
         required: true,
-        label: 'File format',
+        label: 'Format',
         align: 'left',
         field: (row: FileTemplate) => row.fileFormat,
-        sortable: true,
-      },
-      {
-        name: 'canBeEdited',
-        required: true,
-        label: 'Can be edited',
-        align: 'left',
-        field: (row: FileTemplate) => row.canBeEdited,
         sortable: true,
       },
     ];

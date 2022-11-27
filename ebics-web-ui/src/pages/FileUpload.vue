@@ -279,7 +279,7 @@ export default defineComponent({
     const orderType = ref<OrderType>();
     const btfType = ref<BTFType>();
 
-    const refreshFileTextOnTeplateChange = async () => {
+    const refreshFileTextOnTeplateOrBankConnectionChange = async () => {
       if (fileTemplate.value) {      
         console.log('ft' + JSON.stringify(fileTemplate));  
         fileText.value = await applyTemplateAdjustments(
@@ -290,7 +290,8 @@ export default defineComponent({
       }
     }
 
-    watch(fileTemplate, refreshFileTextOnTeplateChange)
+    watch(bankConnection, refreshFileTextOnTeplateOrBankConnectionChange)
+    watch(fileTemplate, refreshFileTextOnTeplateOrBankConnectionChange)
 
     const signatureFlag = ref(true);
     const requestEDS = ref(true);

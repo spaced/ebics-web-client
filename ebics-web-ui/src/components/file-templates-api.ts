@@ -40,16 +40,37 @@ export default function useFileTemplateAPI() {
     }
   };
 
-  const allFileTemplateTagsArray = computed(() => {
+  const allUsedFileTemplateTagsArray = computed(() => {
     const nonUniqueTags = fileTemplates.value?.flatMap((t) =>
       t.templateTags.split(',')
     );
     return [...new Set(nonUniqueTags)];
   });
 
+  const allPredefinedTags = ref<string[]>([
+    'SEPA',
+    'SWIFT',
+    'Payment',
+    'DirectDebit',
+    'QRR',
+    'SCOR',
+    'CH',
+    'SPS',
+    'DK',
+    'EPC',
+    'CGI',
+  ]);
+
+  const allFileTemplateTagsArray = computed(() => {
+    const allTags = allPredefinedTags.value.concat(allUsedFileTemplateTagsArray.value);
+    return [...new Set(allTags)];
+  });
+
   onMounted(loadFileTemplates);
 
   return {
-    fileTemplates, deleteTemplate, allFileTemplateTagsArray
+    fileTemplates,
+    deleteTemplate,
+    allFileTemplateTagsArray,
   };
 }

@@ -8,15 +8,6 @@
     hint="Select file template you would like to upload"
   >
     <template v-slot:append>
-      <!-- q-btn
-        round
-        dense
-        flat
-        icon="library_add"
-        @click.stop="saveTemplateDialog = true"
-      >
-        <q-tooltip> Save the content as template.. </q-tooltip>
-      </q-btn-->
       <q-btn
         round
         dense
@@ -27,57 +18,7 @@
         <q-tooltip> Adjust filter to display/hide templates.. </q-tooltip>
       </q-btn>
     </template>
-    <!-- 
-          <div class="q-pa-md">
-      <div class="q-pa-md" style="max-width: 400px">        
-    -->
-    <q-dialog v-model="saveTemplateDialog">
-      <q-card class="q-pa-md" style="min-width: 500px">
-        <q-card-section>
-          <div class="text-h6">Save template</div>
-        </q-card-section>
 
-        <q-input
-          filled
-          v-model="fileTemplateVal.templateName"
-          label="Template name"
-          hint="Template name which describes the purpose"
-          lazy-rules
-          :rules="[
-            (val) =>
-              (val && val.length > 3) || 'Please enter valid template name',
-          ]"
-        />
-        <q-select
-          filled
-          v-model="selectedFileTemplateTags"
-          use-input
-          use-chips
-          multiple
-          input-debounce="0"
-          @new-value="createFileTemplateTag"
-          :options="filteredFileTemplateTags"
-          @filter="filterFileTemplateTags"
-        ></q-select>
-
-        <q-card-actions align="right">
-          <q-btn
-            flat
-            label="Ovewrite selected"
-            color="primary"
-            v-close-popup
-            @click="saveUserSettings()"
-          />
-          <q-btn
-            flat
-            label="Add new template"
-            color="primary"
-            v-close-popup
-            @click="saveUserSettings()"
-          />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
     <q-dialog v-model="configureOrdertypesDropdown">
       <q-card>
         <q-card-section>
@@ -101,60 +42,10 @@
       <q-item v-bind="fileTemplatesOpt.itemProps">
         <q-item-section>
           <q-item-label v-html="fileTemplateLabel(fileTemplatesOpt.opt)" />
-          <!-- q-item-label caption>{{
-            fileTemplatesOpt.opt.templateTags
-          }}</q-item-label-->
-          <q-item-label>
-            <q-chip
-              v-for="tag in fileTemplatesOpt.opt.templateTags.split(',')"
-              v-bind:key="tag"
-              size="xs"
-              color="primary"
-              text-color="white"
-              icon="euro"
-            >
-              {{ tag }}
-            </q-chip>
-          </q-item-label>
+          <file-template-tags :tags="fileTemplatesOpt.opt.templateTags" />
         </q-item-section>
-        <!--
-        <q-item-section v-if="fileTemplatesOpt.opt.canBeEdited" avatar>
-          <q-btn
-            flat
-            dense
-            rounded
-            icon="edit"
-            label="edit"
-            
-            @click.stop="saveTemplateDialog = true"
-          />
-        </q-item-section>
-        <q-item-section v-if="fileTemplatesOpt.opt.canBeEdited" avatar>
-          <q-btn
-            flat
-            dense
-            rounded
-            icon="delete"
-            label="delete"
-            @click="deleteTemplate(fileTemplatesOpt.opt)"
-          />
-        </q-item-section>-->
       </q-item>
     </template>
-    <!-- template v-slot:after-options>
-      <q-item>
-        <q-item-section avatar>
-          <q-btn
-            flat
-            dense
-            rounded
-            icon="add"
-            label="add custom template"
-            @click="addTemplate()"
-          />
-        </q-item-section>
-      </q-item>
-    </template -->
   </q-select>
 </template>
 
@@ -164,10 +55,11 @@ import { FileTemplate } from 'components/models/file-template';
 import useFileTemplateAPI from 'src/components/file-templates-api';
 import useUserSettingsAPI from 'components/user-settings';
 import UserPreferences from 'components/visual/UserPreferences.vue';
+import FileTemplateTags from 'components/visual/FileTemplateTags.vue';
 
 export default defineComponent({
   name: 'FileTemplateSelect',
-  components: { UserPreferences },
+  components: { UserPreferences, FileTemplateTags },
   props: {
     fileTemplate: {
       type: Object as PropType<FileTemplate>,
