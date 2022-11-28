@@ -1010,4 +1010,36 @@ databaseChangeLog:
             type: boolean
             defaultValue: true
         tableName: UserSettings
+- changeSet:
+      id: rename-column-FileTemplate
+      author: honza
+      changes:
+          - renameColumn:
+                oldColumnName: shared
+                newColumnName: guestAccess
+                tableName: FileTemplate
+                type: boolean
+- changeSet:
+      id:  renameTableEbicsUserToBankConnectionEntity
+      author:  honza.toegel
+      changes:
+          -  renameTable:
+                 newTableName:  BankConnectionEntity
+                 oldTableName:  EbicsUser
+- changeSet:
+    id: 1669653192516-1
+    author: honza (generated)
+    changes:
+    - dropNotNullConstraint:
+        columnDataType: boolean
+        columnName: displayPredefinedTemplates
+        tableName: UserSettings
+- changeSet:
+    id: 1669653192516-2
+    author: honza (generated)
+    changes:
+    - dropNotNullConstraint:
+        columnDataType: boolean
+        columnName: displaySharedTemplates
+        tableName: UserSettings
 

@@ -11,7 +11,7 @@ import org.ebics.client.model.EbicsVersion
 import org.ebics.client.model.user.EbicsUserStatusEnum
 import javax.persistence.*
 
-@Entity(name = "EbicsUser")
+@Entity
 @JsonFilter("bankConnectionPropertiesFilter")
 data class BankConnectionEntity(
     @Id
@@ -41,14 +41,6 @@ data class BankConnectionEntity(
     @OneToMany(cascade = [CascadeType.ALL], mappedBy = "bankConnection")
     val traces: List<TraceEntry> = emptyList(),
 
-    /*@ElementCollection
-    @CollectionTable(
-        name = "bankConnectionProperties",
-        joinColumns = [JoinColumn(name = "bankConnection_id", referencedColumnName = "id")]
-    )
-    @MapKeyColumn(name = "property_name")
-    @Column(name = "property_value", length = 500)
-    val properties: Map<String, String> = emptyMap(),*/
     @OneToMany(cascade = [CascadeType.ALL], mappedBy = "bankConnection")
     val properties: List<BankConnectionPropertyEntity> = emptyList(),
 

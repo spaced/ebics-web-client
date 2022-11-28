@@ -28,7 +28,6 @@ data class FileTemplate(
 
     val creatorUserId: String,
 
-    @Column(name = "shared")
     val guestAccess: Boolean,
 ) : FileTemplateAccessRightController {
     companion object {

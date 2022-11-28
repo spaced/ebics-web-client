@@ -29,7 +29,7 @@
                 <file-template-tags :tags="props.row.templateTags" />
               </div>
             </q-td>
-            <q-td :style="{ width: '270px' }">
+            <q-td :style="{ width: '320px' }">
               <div v-if="props.cols[0].value" class="q-gutter-sm">
                 <q-btn 
                   size="sm"
