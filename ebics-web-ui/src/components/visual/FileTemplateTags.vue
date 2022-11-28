@@ -89,7 +89,7 @@ export default defineComponent({
       } as TagBadge,
     ]);
 
-    const TemplateSubstitutionHelpers = ref<TemplateSubstitutionHelper[]>([
+    const templateSubstitutionHelpers = ref<TemplateSubstitutionHelper[]>([
       {
         name: '%%IsoDt(+/-days)%%',
         description: 'Print ISO date in format dd-MM-yyyy',
@@ -115,7 +115,7 @@ export default defineComponent({
           }
         })
     );
-    return { tagBadges, allTagBadges, TemplateSubstitutionHelpers };
+    return { tagBadges, allTagBadges, templateSubstitutionHelpers };
   },
 });
 </script>

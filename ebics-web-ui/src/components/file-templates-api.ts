@@ -3,12 +3,24 @@ import { api } from 'boot/axios';
 import useBaseAPI from './base-api';
 import { FileTemplate } from 'components/models/file-template';
 import useDialogs from 'components/dialogs';
+import useUserSettingsAPI from 'components/user-settings';
 
-export default function useFileTemplateAPI() {
+export default function useFileTemplatesAPI() {
   const { apiErrorHandler } = useBaseAPI();
   const { confirmDialog } = useDialogs();
+  
+  //Used for filtering of displayedFileTemplates
+  const { userSettings } = useUserSettingsAPI(); 
 
   const fileTemplates = ref<FileTemplate[]>();
+
+  const displayedFileTemplates = computed<FileTemplate[] | undefined>(() => 
+  {
+    return fileTemplates.value?.filter(fileTemplate => {
+      return (userSettings.value?.displayPredefinedTemplates || fileTemplate.custom) &&
+             (userSettings.value?.displaySharedTemplates || !fileTemplate.guestAccess);
+    });
+  })
 
   const loadFileTemplates = async (): Promise<void> => {
     try {
@@ -72,5 +84,6 @@ export default function useFileTemplateAPI() {
     fileTemplates,
     deleteTemplate,
     allFileTemplateTagsArray,
+    displayedFileTemplates,
   };
 }

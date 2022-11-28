@@ -178,6 +178,14 @@ export default defineComponent({
         field: (row: BankConnection) => row?.guestAccess ? 'yes' : 'no',
         sortable: true,
       },
+      {
+        name: 'status',
+        required: true,
+        label: 'Status',
+        align: 'left',
+        field: (row: BankConnection) => row?.userStatus,
+        sortable: true,
+      },
     ];
     const {bankConnections, deleteBankConnection} = useBankConnectionsAPI();
 

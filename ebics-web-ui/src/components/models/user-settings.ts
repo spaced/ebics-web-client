@@ -32,4 +32,6 @@ export interface UserSettings {
   displayAdminTypes: boolean;
   displaySharedBankConnections: boolean;
   displayErroneousConnections: boolean;
+  displaySharedTemplates: boolean;
+  displayPredefinedTemplates: boolean;
 }

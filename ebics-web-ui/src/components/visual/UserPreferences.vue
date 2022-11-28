@@ -144,6 +144,22 @@
           v-model="userSettings.displayErroneousConnections"
         />
       </div>
+      <!-- FileTemplateSettings -->
+      <div v-if="displaySection('FileTemplateSettings')">
+        <q-item-label v-if="displaySection('FileTemplateSettings')" header>Upload templates setting</q-item-label>
+        <boolean-option v-if="displaySection('FileTemplateSettings')"
+          :disable="!userSettings.testerSettings"
+          label="Display shared templates"
+          hint="Shared templates from other users will be displayed, if disable only own templates are shown"
+          v-model="userSettings.displaySharedTemplates"
+        />
+        <boolean-option v-if="displaySection('FileTemplateSettings')"
+          :disable="!userSettings.testerSettings"
+          label="Display predefined templates"
+          hint="Predefined templates from the EBICS Web Client will be displayed, if disable only the user defined templates are shown"
+          v-model="userSettings.displayPredefinedTemplates"
+        />
+      </div>
     </q-list>
     <div class="q-ma-md">
       <q-btn

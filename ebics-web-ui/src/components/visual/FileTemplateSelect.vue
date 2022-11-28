@@ -22,10 +22,10 @@
     <q-dialog v-model="configureOrdertypesDropdown">
       <q-card>
         <q-card-section>
-          <div class="text-h6">Adjust order types filter settings</div>
+          <div class="text-h6">Adjust upload templates filter settings</div>
         </q-card-section>
 
-        <user-preferences sectionFilter="OrderTypesSettings" />
+        <user-preferences sectionFilter="FileTemplateSettings" />
 
         <q-card-actions align="right">
           <q-btn
@@ -71,7 +71,7 @@ export default defineComponent({
     const configureOrdertypesDropdown = ref(false);
 
     const { saveUserSettings } = useUserSettingsAPI();
-    const { fileTemplates } = useFileTemplateAPI();
+    const { displayedFileTemplates: fileTemplates } = useFileTemplateAPI();
 
     const fileTemplateVal = computed<FileTemplate>({
       get() {
@@ -95,7 +95,7 @@ export default defineComponent({
       const nonUniqueTags = fileTemplates.value?.flatMap((t) =>
         t.templateTags.split(',')
       );
-      return [...new Set(nonUniqueTags)];
+      return [...new Set(nonUniqueTags)]; //make it unique
     });
     const filteredFileTemplateTags = ref<string[]>();
     const filterFileTemplateTags = (
@@ -140,23 +140,7 @@ export default defineComponent({
       }
     };
 
-    const editTemplate = (fileTemplate: FileTemplate): void => {
-      console.log('edit');
-    };
-
-    const deleteTemplate = (fileTemplate: FileTemplate): void => {
-      console.log('delete');
-    };
-
-    const addTemplate = (): void => {
-      console.log('add');
-    };
-
     return {
-      editTemplate,
-      deleteTemplate,
-      addTemplate,
-
       fileTemplateVal,
       configureOrdertypesDropdown,
       saveUserSettings,

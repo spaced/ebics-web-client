@@ -103,8 +103,8 @@
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import useSingleFileTemplateAPI from 'components/file-template-api';
-import useFileTemplateAPI from 'components/file-templates-api';
+import useFileTemplateAPI from 'components/file-template-api';
+import useFileTemplatesAPI from 'components/file-templates-api';
 import { FileFormat } from 'components/models/file-format';
 
 import { VAceEditor } from 'vue3-ace-editor';
@@ -129,8 +129,8 @@ export default defineComponent({
   setup(props) {
     const router = useRouter();
     const { fileTemplate, fileTemplateTagsArray, createOrUpdateFileTemplate } =
-      useSingleFileTemplateAPI(props.id, props.action == 'copy');
-    const { allFileTemplateTagsArray } = useFileTemplateAPI();
+      useFileTemplateAPI(props.id, props.action == 'copy');
+    const { allFileTemplateTagsArray } = useFileTemplatesAPI();
     const onCancel = (): void => {
       router.go(-1);
     };

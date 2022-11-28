@@ -32,6 +32,8 @@ const userSettings = ref<UserSettings>({
   displayAdminTypes: false,
   displayErroneousConnections: false,
   displaySharedBankConnections: true,
+  displaySharedTemplates: true,
+  displayPredefinedTemplates: true,
 });
 
 /**

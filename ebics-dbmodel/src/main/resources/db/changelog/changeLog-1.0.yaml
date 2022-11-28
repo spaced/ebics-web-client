@@ -984,4 +984,30 @@ databaseChangeLog:
             name: fileFormat
             type: varchar(255)
         tableName: FileTemplate
+- changeSet:
+    id: 1669646034252-2
+    author: honza (generated)
+    changes:
+    - addColumn:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: displayPredefinedTemplates
+            type: boolean
+            defaultValue: true
+        tableName: UserSettings
+- changeSet:
+    id: 1669646034252-3
+    author: honza (generated)
+    changes:
+    - addColumn:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: displaySharedTemplates
+            type: boolean
+            defaultValue: true
+        tableName: UserSettings
 
