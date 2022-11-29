@@ -34,16 +34,13 @@
         Out of {{ connectionStatusObject.totalCount }} request(s) have {{ connectionStatusObject.errorRate.toFixed(0) }}%
         failed, and {{ connectionStatusObject.okRate.toFixed(0) }}% was OK.
       </q-item-label>
-      <!--div>{{ JSON.stringify(connectionStatusObject.lastError) }}</div>
-      <div>BE:{{ JSON.stringify(bankConnectionStatusVal.backendStatus.lastError) }}</div>
-      <div>FE:{{ JSON.stringify(bankConnectionStatusVal.frontendStatus.lastError) }}</div-->
       <error-message-label v-if="connectionStatusObject.lastError" :apiError="connectionStatusObject.lastError" />
     </q-item-section>
   </q-banner>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref } from 'vue';
+import { defineComponent, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { ConnectionStatus } from 'components/models/connection-status';
 import { HealthStatusType, ConnectionStatusObject } from 'components/models/allivenes-health-status';
