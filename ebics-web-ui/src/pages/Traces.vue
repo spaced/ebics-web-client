@@ -1,6 +1,6 @@
 <template>
   <q-page class="justify-evenly">
-    <div class="q-pa-md q-ma-md">
+    <div class="q-pa-md">
       <q-table
         title="Traces"
         :filter="customFilterInput"
@@ -10,6 +10,7 @@
         selection="single"
         v-model:selected="selectedTraceList"
         :filter-method="customFilterFunction"
+        class="q-ma-sm"
       >
         <template v-slot:top-right>
           <div class="bg-grey-2 q-pa-sm q-mr-sm rounded-borders">
@@ -71,11 +72,12 @@
         </template>
       </q-table>
       <v-ace-editor
-        v-bind:value="selectedTrace?.messageBody ?? ''"
+        v-bind:value="selectedTrace?.textMessageBody ?? ''"
         lang="xml"
         theme="clouds"
         style="height: 300px"
         :printMargin="false"
+        class="q-ma-sm"
       />
     </div>
   </q-page>
@@ -84,12 +86,13 @@
 <script lang="ts">
 import { defineComponent, ref, Ref, computed } from 'vue';
 import useTracesAPI from 'components/traces';
-import { OrderTypeDefinition, TraceType, TraceEntry } from 'components/models/trace'
+import { OrderTypeDefinition, TraceType, TraceEntry, TraceCategory } from 'components/models/trace'
 import { TransferType } from 'components/models/ebics-order-type'
 import useOrderTypeLabelAPI from 'components/order-type-label';
 import { VAceEditor } from 'vue3-ace-editor';
 import 'ace-builds/src-noconflict/mode-xml';
 import 'ace-builds/src-noconflict/theme-clouds';
+import { EbicsVersion } from 'src/components/models/ebics-version';
 
 interface CustomFilterInput {
   traceTypeValue: Ref<TraceType[]>,
@@ -118,6 +121,13 @@ export default defineComponent({
 
     const columns = [
       {
+        name: 'traceCategory',
+        label: 'Category',
+        align: 'left',
+        field: (row: TraceEntry) => row.traceCategory,
+        sortable: true,
+      },
+      {
         name: 'dateTime',
         required: true,
         label: 'Date/Time',
@@ -130,7 +140,7 @@ export default defineComponent({
         required: true,
         label: 'EBICS User',
         align: 'left',
-        field: (row: TraceEntry) => row.user.userId,
+        field: (row: TraceEntry) => row.bankConnection?.userId,
         sortable: true,
       },
       {
@@ -138,7 +148,7 @@ export default defineComponent({
         required: true,
         label: 'EBICS Customer',
         align: 'left',
-        field: (row: TraceEntry) => row.user.partner.partnerId,
+        field: (row: TraceEntry) => row.bankConnection?.partner?.partnerId,
         sortable: true,
       },
       {
@@ -153,14 +163,14 @@ export default defineComponent({
         name: 'messageBody',
         label: 'Message Body',
         align: 'left',
-        field: (row: TraceEntry) => row.messageBody,
+        field: (row: TraceEntry) => row.textMessageBody,
         sortable: true,
       },
       {
         name: 'ebicsVersion',
         label: 'Version',
         align: 'left',
-        field: (row: TraceEntry) => row.ebicsVesion,
+        field: (row: TraceEntry) => row.ebicsVersion,
         sortable: true,
       },
       {
@@ -251,15 +261,17 @@ export default defineComponent({
       if (lowerCaseSearchCriteriaInput) {
 
       const lowCaseFieldValues:string[] = [
-        traceEntry.messageBody,
+        traceEntry.textMessageBody,
         traceEntry.creator,
         traceEntry.sessionId,
         traceEntry.orderNumber,
-        traceEntry.user.creator,
-        traceEntry.user.userId,
-        traceEntry.user.name,
-        traceEntry.user.partner.partnerId,
-        traceEntry.user.partner.bank.hostId,
+        traceEntry.bankConnection?.userId,
+        traceEntry.bankConnection?.name,
+        traceEntry.bankConnection?.partner.partnerId,
+        traceEntry.bankConnection?.partner.bank.hostId,
+        traceEntry.bank?.hostId,
+        traceEntry.bank?.bankURL,
+        traceEntry.bank?.name,
         traceEntry.orderType?.adminOrderType, 
         traceEntry.orderType?.businessOrderType,
         traceEntry.orderType?.ebicsServiceType?.serviceName,
@@ -306,6 +318,9 @@ export default defineComponent({
       traceTypeOptions,
       customFilterInput,
       customFilterFunction,
+
+      EbicsVersion,
+      TraceCategory,
     };
   },
 });

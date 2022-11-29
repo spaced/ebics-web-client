@@ -1,7 +1,21 @@
 import { EbicsVersion } from 'components/models/ebics-version';
 import { Partner } from 'components/models/ebics-partner';
+import { ConnectionStatus } from './connection-status';
 
-export interface BankConnection {
+export interface BankConnectionId {
+  id: number;
+  userId: string;
+  name: string;
+  partner: Partner;
+}
+
+export interface BankConnectionProperty {
+  id: number,
+  key: string;
+  value: string;
+}
+
+export interface BankConnection extends ConnectionStatus {
     id: number;
     ebicsVersion: EbicsVersion;
     userId: string;
@@ -15,6 +29,7 @@ export interface BankConnection {
     creator: string;
     securityMedium: string;
     useCertificate: boolean;
+    properties: BankConnectionProperty[];
   }
 
   export interface UserPartnerBank {

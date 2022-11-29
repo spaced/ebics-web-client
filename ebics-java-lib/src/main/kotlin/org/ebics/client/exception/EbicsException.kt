@@ -23,4 +23,6 @@ package org.ebics.client.exception
  *
  * @author hachani
  */
-open class EbicsException( message: String? ) : Exception(message)
+open class EbicsException( message: String?, exception: Exception? ) : Exception(message, exception) {
+    constructor(message: String?) : this (message, null)
+}

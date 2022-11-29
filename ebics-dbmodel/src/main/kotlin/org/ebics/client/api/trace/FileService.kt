@@ -5,71 +5,56 @@ import org.ebics.client.api.trace.orderType.OrderTypeDefinition
 import org.ebics.client.api.bankconnection.BankConnectionEntity
 import org.ebics.client.model.EbicsVersion
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
-import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
-import java.time.ZonedDateTime
 
 @Service
-open class FileService(private val traceRepository: TraceRepository,
-                  @Value("\${housekeeping.trace.older-than-days:30}")
-                  private val houseKeepOlderThanDays: Long) : IFileService {
+open class FileService(private val traceRepository: TraceRepository) : IFileService {
 
     override fun getLastDownloadedFile(
-        orderType: OrderTypeDefinition,
-        user: BankConnectionEntity,
+        orderType: ITraceOrderTypeDefinition,
+        bankConnection: BankConnectionEntity,
         ebicsVersion: EbicsVersion,
         useSharedPartnerData: Boolean
     ): TraceEntry {
         val authCtx = AuthenticationContext.fromSecurityContext()
         return traceRepository
             .findAll(
-                fileDownloadFilter(authCtx.name, orderType, user, ebicsVersion, useSharedPartnerData),
+                fileDownloadFilter(authCtx.name, orderType, bankConnection, ebicsVersion, useSharedPartnerData),
                 PageRequest.of(0, 1, Sort.by(Sort.Direction.DESC, "dateTime"))
             )
             .single { it.hasReadAccess(authCtx) }.also {
-                logger.debug("File retrieved from file service, orderType {}, bank connection id={}, userId={}, ebicsVersion={}", orderType.toString(), user.id, user.userId, ebicsVersion)
+                logger.debug("File retrieved from file service, orderType {}, bank connection id={}, userId={}, ebicsVersion={}", orderType.toString(), bankConnection.id, bankConnection.userId, ebicsVersion)
             }
     }
 
-    override fun addTextFile(
-        user: BankConnectionEntity,
-        orderType: OrderTypeDefinition,
-        fileContent: String,
+    override fun addFile(
+        bankConnection: BankConnectionEntity,
+        orderType: ITraceOrderTypeDefinition,
+        fileContent: ByteArray,
         sessionId: String,
         orderNumber: String?,
         ebicsVersion: EbicsVersion,
-        upload: Boolean
+        upload: Boolean,
+        request: Boolean,
     ) {
         traceRepository.save(
             TraceEntry(
                 null,
+                fileContent.decodeToString(),
                 fileContent,
-                user,
+                bankConnection, bankConnection.partner.bank,
                 sessionId,
                 orderNumber,
                 ebicsVersion,
                 upload,
-                orderType = orderType,
-                traceType = TraceType.Content
+                request,
+                orderType = OrderTypeDefinition.fromOrderTypeDefinition(orderType),
+                traceType = TraceType.Content,
+                traceCategory = null
             )
         )
-    }
-
-    //Transactional here should solve error: No EntityManager with actual transaction available for current thread
-    @Transactional
-    override fun removeAllFilesOlderThan(@Value("$\\{value.from.file\\}") dateTime: ZonedDateTime) {
-        val numberOfRemovedEntries = traceRepository.deleteByDateTimeLessThan(dateTime)
-        logger.info("Total '{}' TraceEntries removed", numberOfRemovedEntries)
-    }
-
-    @Scheduled(cron = "0 0 1 * * *")
-    fun houseKeeping() {
-        logger.info("House keeping of TraceEntries older than {} days", houseKeepOlderThanDays)
-        removeAllFilesOlderThan(ZonedDateTime.now().minusDays(houseKeepOlderThanDays))
     }
 
     companion object {

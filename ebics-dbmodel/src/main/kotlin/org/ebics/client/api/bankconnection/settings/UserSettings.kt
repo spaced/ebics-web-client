@@ -6,6 +6,11 @@ data class UserSettingsData(
     val uploadOnDrop: Boolean,
     val testerSettings: Boolean,
     val adjustmentOptions: AdjustmentOptions,
+    val displayAdminTypes: Boolean,
+    val displaySharedBankConnections: Boolean,
+    val displayErroneousConnections: Boolean,
+    val displaySharedTemplates: Boolean,
+    val displayPredefinedTemplates: Boolean,
 )
 
 /**
@@ -21,6 +26,14 @@ class UserSettings(
 
     @Embedded
     val adjustmentOptions: AdjustmentOptions,
+
+    val displayAdminTypes: Boolean,
+    val displaySharedBankConnections: Boolean,
+    val displayErroneousConnections: Boolean,
+    @Column(columnDefinition = "boolean default true")
+    val displaySharedTemplates: Boolean,
+    @Column(columnDefinition = "boolean default true")
+    val displayPredefinedTemplates: Boolean,
 ) : UserSettingsAccessRightsController {
     override fun getOwnerName(): String = userId
     override fun getObjectName(): String = "User settings of '$userId'"

@@ -1,4 +1,4 @@
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 import { UserSettings } from 'components/models/user-settings';
 import { api } from 'boot/axios';
 import useBaseAPI from './base-api';
@@ -30,6 +30,10 @@ const userSettings = ref<UserSettings>({
     },
   },
   displayAdminTypes: false,
+  displayErroneousConnections: false,
+  displaySharedBankConnections: true,
+  displaySharedTemplates: true,
+  displayPredefinedTemplates: true,
 });
 
 /**
@@ -56,8 +60,6 @@ export default function useUserSettingsAPI() {
       apiErrorHandler('Saving settings failed', error);
     }
   };
-
-  onMounted(loadUserSettings);
 
   return { userSettings, loadUserSettings, saveUserSettings };
 }

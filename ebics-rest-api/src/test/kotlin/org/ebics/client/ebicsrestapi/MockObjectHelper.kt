@@ -24,7 +24,7 @@ class MockObjectHelper {
             return Bank(bankId, URL("https://ebics.ubs.com/ebicsweb/ebicsweb"), "EBXUBSCH", bankName, null)
         }
 
-        fun createMockUser(userId: Long, bankCerts: Boolean = true): BankConnectionEntity {
+        fun createMockBankConnection(userId: Long, bankCerts: Boolean = true): BankConnectionEntity {
             val bank = createMockBank(1, "Test bank 1")
 
             if (bankCerts) {

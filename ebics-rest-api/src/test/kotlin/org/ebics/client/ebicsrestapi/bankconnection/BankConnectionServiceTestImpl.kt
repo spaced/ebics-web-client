@@ -13,35 +13,35 @@ import org.springframework.stereotype.Service
 class BankConnectionServiceTestImpl : BankConnectionService {
 
     private val mockUsers = mapOf(
-        1L to MockObjectHelper.createMockUser(1, true),
-        2L to MockObjectHelper.createMockUser(2, false)
+        1L to MockObjectHelper.createMockBankConnection(1, true),
+        2L to MockObjectHelper.createMockBankConnection(2, false)
     )
 
-    override fun findUsers(permission: BankConnectionAccessType): List<BankConnectionEntity> {
+    override fun findBankConnections(permission: BankConnectionAccessType): List<BankConnectionEntity> {
         return ArrayList(mockUsers.values)
     }
 
-    override fun getUserById(userId: Long, permission: BankConnectionAccessType): BankConnectionEntity {
-        return mockUsers[userId]!!
+    override fun getBankConnectionById(bankConnectionId: Long, permission: BankConnectionAccessType): BankConnectionEntity {
+        return mockUsers[bankConnectionId]!!
     }
 
-    override fun saveUser(bankConnection: BankConnectionEntity): Long {
+    override fun saveBankConnection(bankConnection: BankConnectionEntity): Long {
         TODO("Not yet implemented")
     }
 
-    override fun createUserAndPartner(bankConnection: BankConnection): Long {
+    override fun createBankConnection(bankConnection: BankConnection): Long {
         TODO("Not yet implemented")
     }
 
-    override fun updateUserAndPartner(id: Long, bankConnection: BankConnection): Long {
+    override fun updateBankConnection(bankConnectionId: Long, bankConnection: BankConnection): Long {
         TODO("Not yet implemented")
     }
 
-    override fun deleteUser(userId: Long) {
+    override fun deleteBankConnection(bankConnectionId: Long) {
         TODO("Not yet implemented")
     }
 
-    override fun resetStatus(userId: Long) {
+    override fun resetStatus(bankConnectionId: Long) {
         TODO("Not yet implemented")
     }
 }

@@ -36,7 +36,7 @@ export default function useFileTransferAPI() {
         { headers: { 'Content-Type': 'multipart/form-data' } }
       );
       console.log('Upload response: ' + JSON.stringify(response))
-      pwdApiOkHandler(
+      pwdApiOkHandler(bankConnection,
         `File uploaded successfully for bank connection: ${bankConnection.name}, order number: ${response.data.orderNumber}`
       );
       return response.data;
@@ -63,7 +63,7 @@ export default function useFileTransferAPI() {
           `bankconnections/${bankConnection.id}/${ebicsVersion}/download`,
           downloadRequest, {responseType: 'arraybuffer'}
         );
-        pwdApiOkHandler(
+        pwdApiOkHandler(bankConnection,
           `File downloaded successfully for bank connection: ${bankConnection.name}`
         );
         return new Blob([response.data]);
@@ -95,9 +95,12 @@ export default function useFileTransferAPI() {
             bankConnection.name
           }, types: ${JSON.stringify(response.data)}`
         );
+        pwdApiOkHandler(bankConnection,
+          `Ordertypes refreshed successfully for bank connection: ${bankConnection.name}`, true
+        );
         return response.data;
       } catch (error) {
-        pwdApiErrorHandler(bankConnection, `Order types refresh for bank connection ${bankConnection.name} and ${ebicsVersion} failed: `, error);
+        pwdApiErrorHandler(bankConnection, `Order types refresh for bank connection ${bankConnection.name} and ${ebicsVersion} failed: `, error, true);
         return [];
       }
     };

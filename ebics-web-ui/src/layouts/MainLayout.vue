@@ -70,6 +70,14 @@
             <q-item-section> Edit &amp; Upload file </q-item-section>
           </q-item>
 
+          <q-item to="/templates" exact clickable v-ripple>
+            <q-item-section avatar>
+              <q-icon name="code" />
+            </q-item-section>
+
+            <q-item-section> Uplaod templates </q-item-section>
+          </q-item>
+
           <q-item to="/download" exact clickable v-ripple>
             <q-item-section avatar>
               <q-icon name="file_download" />
@@ -99,6 +107,7 @@
 
     <q-page-container>
       <router-view />
+      <!-- sticky-log-viewer / -->
     </q-page-container>
   </q-layout>
 </template>
@@ -108,8 +117,10 @@ import { defineComponent, ref, computed } from 'vue';
 import useUserContextAPI from 'src/components/user-context';
 import { useRouter } from 'vue-router';
 import { MenuItemRouteMeta } from 'src/components/vue-ext';
+//import StickyLogViewer from 'components/visual/StickyLogViewer.vue';
 
 export default defineComponent({
+//  components: { StickyLogViewer },
   name: 'MainLayout',
 
   setup() {

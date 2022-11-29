@@ -6,18 +6,23 @@ import org.ebics.client.api.bank.BankService
 import org.ebics.client.api.bank.versions.VersionSupport
 import org.ebics.client.api.bank.versions.VersionSupportBase
 import org.ebics.client.api.bank.versions.VersionSupportService
+import org.ebics.client.api.trace.h000.BankTraceSession
+import org.ebics.client.api.trace.orderType.OrderTypeDefinition
 import org.ebics.client.bank.BankOperations
 import org.ebics.client.ebicsrestapi.EbicsAccessMode
 import org.ebics.client.ebicsrestapi.configuration.EbicsRestConfiguration
 import org.ebics.client.model.EbicsVersion
+import org.ebics.client.order.EbicsAdminOrderType
 import org.springframework.stereotype.Component
 import java.net.URL
+import java.util.*
 
 @Component("EbicsBankAPI")
 class EbicsBankAPI(
     private val configuration: EbicsRestConfiguration,
     private val bankService: BankService,
-    private val versionSupportService: VersionSupportService
+    private val versionSupportService: VersionSupportService,
+    private val bankOperations: BankOperations,
 ) {
 
     fun updateSupportedVersion(bankId: Long, versionSupport: VersionSupportBase) {
@@ -136,7 +141,15 @@ class EbicsBankAPI(
     }
 
     private fun getEbicsServerVersions(bank: Bank): List<EbicsVersion> {
-        val versions = BankOperations(configuration).sendHEV(bank.bankURL, bank.hostId, bank.httpClientConfigurationName)
+        val traceSession = BankTraceSession(
+            bank,
+            upload = false,
+            true,
+            UUID.randomUUID().toString(),
+            EbicsVersion.H000,
+            OrderTypeDefinition(EbicsAdminOrderType.HEV)
+        )
+        val versions = bankOperations.sendHEV(bank, traceSession)
         if (versions.isEmpty())
             throw FunctionException(
                 "The bank ${bank.bankURL} with hostID: ${bank.hostId} doen't support any EBICS version, HEV return empty list",

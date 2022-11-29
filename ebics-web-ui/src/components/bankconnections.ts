@@ -1,8 +1,30 @@
-import { ref, onMounted, computed, watch } from 'vue';
-import { BankConnection, BankConnectionAccess } from 'src/components/models/ebics-bank-connection';
+import { ref, onMounted, computed } from 'vue';
+import {
+  BankConnection,
+  BankConnectionAccess,
+} from 'src/components/models/ebics-bank-connection';
 import { api } from 'boot/axios';
 import useBaseAPI from './base-api';
 import { useQuasar } from 'quasar';
+import { HealthStatusType } from './models/allivenes-health-status';
+import useUserSettingsAPI from './user-settings';
+
+/**
+ * Display label of the bankConnection
+ */
+export function bankConnectionLabel(
+  bankConnection: BankConnection | undefined
+): string {
+  if (
+    bankConnection &&
+    bankConnection.userId.trim().length > 0 &&
+    bankConnection.name.trim().length > 0
+  ) {
+    return `${bankConnection.userId} | ${bankConnection.name}`;
+  } else {
+    return '';
+  }
+}
 
 /**
  * Bank Connections composition API for bank connection list operations with backend REST API
@@ -11,19 +33,27 @@ import { useQuasar } from 'quasar';
  *  loadBankConnections function to trigger refreshing of bank connections
  *  deleteBankConnection function to delete bank connection
  */
-export default function useBankConnectionsAPI(accessRight: BankConnectionAccess = BankConnectionAccess.READ) {
+export default function useBankConnectionsAPI(
+  accessRight: BankConnectionAccess = BankConnectionAccess.READ
+) {
   const { apiErrorHandler } = useBaseAPI();
   const q = useQuasar();
+  const { userSettings } = useUserSettingsAPI();
 
   const bankConnections = ref<BankConnection[]>();
+  const loading = ref<boolean>(false);
 
   const loadBankConnections = async (): Promise<void> => {
     try {
-      //console.info('api: ' + JSON.stringify(api));
-      const response = await api.get<BankConnection[]>(`bankconnections?permission=${accessRight}`);
-      bankConnections.value = response.data;
+      loading.value = true;
+      const response = await api.get<BankConnection[]>(
+        `bankconnections?permission=${accessRight}`
+      );
+      bankConnections.value = response.data
     } catch (error) {
       apiErrorHandler('Loading of bank data failed', error);
+    } finally {
+      loading.value = false;
     }
   };
 
@@ -50,10 +80,10 @@ export default function useBankConnectionsAPI(accessRight: BankConnectionAccess 
           resolve(true);
         })
         .onCancel(() => {
-          reject('Password entry canceled');
+          reject('Deletion canceled');
         })
         .onDismiss(() => {
-          reject('Password entry dismissed');
+          reject('Deletion dismissed');
         });
     });
   };
@@ -79,40 +109,41 @@ export default function useBankConnectionsAPI(accessRight: BankConnectionAccess 
     }
   };
 
-  /**
-   * Display label of the bankConnection
-   */
-  const bankConnectionLabel = (bankConnection: BankConnection | undefined): string => {
-    if (
-      bankConnection &&
-      bankConnection.userId.trim().length > 0 &&
-      bankConnection.name.trim().length > 0
-    ) {
-      return `${bankConnection.userId} | ${bankConnection.name}`;
-    } else {
-      return '';
-    }
-  };
-
   const hasActivePrivateConnections = computed((): boolean => {
-    return activeBankConnections.value?.some(bc => !bc.guestAccess) ?? false
+    return activeBankConnections.value?.some((bc) => !bc.guestAccess) ?? false;
   });
 
   const hasActiveSharedConnections = computed((): boolean => {
-    return activeBankConnections.value?.some(bc => bc.guestAccess) ?? false
+    return activeBankConnections.value?.some((bc) => bc.guestAccess) ?? false;
   });
 
-  const displaySharedBankConnections = ref(true);
-  watch(hasActivePrivateConnections, (hasActivePrivateConnectionsValue: boolean) => {
-    if (hasActivePrivateConnectionsValue)
-      displaySharedBankConnections.value = false
-    else
-      displaySharedBankConnections.value = true
-  })
+  const isConnectionErrorneous = (bankConnection: BankConnection): boolean => {
+    return (
+      bankConnection.backendStatus?.healthStatus == HealthStatusType.Error ||
+      bankConnection.frontendStatus?.healthStatus == HealthStatusType.Error
+    );
+  };
 
-  const activeDisplayedBankConnections = computed<BankConnection[] | undefined>(() => {
-    return activeBankConnections.value?.filter((bc) => !bc.guestAccess || displaySharedBankConnections.value);
+  const hasErrorneousConnections = computed((): boolean => {
+    return (
+      activeBankConnections.value?.some((bc) => isConnectionErrorneous(bc)) ??
+      false
+    );
   });
+  
+  /**
+   * This method returns only the connections which should be displayed
+   * The shared & errorneous connection are filtered out if relevant
+   */
+  const activeDisplayedBankConnections = computed<BankConnection[] | undefined>(
+    () => {
+      return activeBankConnections.value?.filter(
+        (bc) =>
+          (!bc.guestAccess || userSettings.value.displaySharedBankConnections) &&
+          (!isConnectionErrorneous(bc) || userSettings.value.displayErroneousConnections)
+      );
+    }
+  );
 
   onMounted(loadBankConnections);
 
@@ -123,9 +154,10 @@ export default function useBankConnectionsAPI(accessRight: BankConnectionAccess 
     hasActiveConnections,
     hasActivePrivateConnections,
     hasActiveSharedConnections,
-    displaySharedBankConnections,
+    hasErrorneousConnections,
     loadBankConnections,
     deleteBankConnection,
     bankConnectionLabel,
+    loading,
   };
 }

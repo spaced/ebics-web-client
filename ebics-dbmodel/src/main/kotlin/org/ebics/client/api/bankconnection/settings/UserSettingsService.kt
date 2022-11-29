@@ -18,7 +18,7 @@ class UserSettingsService(private val userSettingsRepository: UserSettingsReposi
                     applyAutomatically = true,
                     AdjustmentsOptionsPain00x(true, true, true, true, true, true, true, true, true, userId ),
                     AdjustmentsOptionsSwift(true, true, true, false, true, userId)
-                ))
+                ), false, true, false, true, true)
             userSettings.checkReadAccess()
             return userSettings
         }
@@ -27,11 +27,11 @@ class UserSettingsService(private val userSettingsRepository: UserSettingsReposi
     fun updateCurrentUserSettings(userSettings: UserSettingsData) {
         val userId = AuthenticationContext.fromSecurityContext().name
         with(userSettings) {
-            updateUserSettings(UserSettings(userId, uploadOnDrop, testerSettings, adjustmentOptions))
+            updateUserSettings(UserSettings(userId, uploadOnDrop, testerSettings, adjustmentOptions, displayAdminTypes, displaySharedBankConnections, displayErroneousConnections, displaySharedTemplates, displayPredefinedTemplates))
         }
     }
 
-    fun updateUserSettings(userSettings: UserSettings) {
+    private fun updateUserSettings(userSettings: UserSettings) {
         userSettings.checkWriteAccess()
         userSettingsRepository.saveAndFlush(userSettings)
     }

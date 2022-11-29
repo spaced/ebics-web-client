@@ -695,3 +695,351 @@ databaseChangeLog:
             name: x002CertDigest
             type: BLOB
         tableName: BankKeyStore
+- changeSet:
+    id: 1659539116286-1
+    author: honza (generated)
+    changes:
+    - renameColumn:
+          oldColumnName: user_id
+          newColumnName: bankConnection_id
+          tableName: TraceEntry
+          type: bigint
+- changeSet:
+    id: 1659539116286-2
+    author: honza (generated)
+    changes:
+    - addColumn:
+        columns:
+        - column:
+            name: bank_id
+            type: bigint
+        tableName: TraceEntry
+- changeSet:
+    id: 1659539116286-3
+    author: honza (generated)
+    changes:
+    - addColumn:
+        columns:
+        - column:
+            name: binaryMessageBody
+            type: blob
+        tableName: TraceEntry
+- changeSet:
+    id: 1659539116286-4
+    author: honza (generated)
+    changes:
+    - addColumn:
+        columns:
+        - column:
+            name: errorCode
+            type: varchar(255)
+        tableName: TraceEntry
+- changeSet:
+    id: 1659539116286-5
+    author: honza (generated)
+    changes:
+    - addColumn:
+        columns:
+        - column:
+            name: errorCodeText
+            type: varchar(255)
+        tableName: TraceEntry
+- changeSet:
+    id: 1659539116286-6
+    author: honza (generated)
+    changes:
+    - addColumn:
+        columns:
+        - column:
+            name: errorMessage
+            type: varchar(255)
+        tableName: TraceEntry
+- changeSet:
+    id: 1659539116286-7
+    author: honza (generated)
+    changes:
+    - addColumn:
+        columns:
+        - column:
+            name: errorStackTrace
+            type: clob
+        tableName: TraceEntry
+- changeSet:
+    id: 1659539116286-8
+    author: honza (generated)
+    changes:
+    - addColumn:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: request
+            type: boolean
+            defaultValue: false
+        tableName: TraceEntry
+- changeSet:
+    id: 1659539116286-9
+    author: honza (generated)
+    changes:
+    - renameColumn:
+          oldColumnName: messageBody
+          newColumnName: textMessageBody
+          tableName: TraceEntry
+          type: clob
+- changeSet:
+    id: 1659539116286-10
+    author: honza (generated)
+    changes:
+    - addColumn:
+        columns:
+        - column:
+            name: traceCategory
+            type: integer
+        tableName: TraceEntry
+- changeSet:
+    id: 1659539116286-11
+    author: honza (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: bankConnection_id
+        baseTableName: TraceEntry
+        constraintName: TraceEntryBankConnectionId
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: EbicsUser
+        validate: true
+- changeSet:
+    id: 1659539116286-12
+    author: honza (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: bank_id
+        baseTableName: TraceEntry
+        constraintName: TraceEntryBankId
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: Bank
+        validate: true
+- changeSet:
+    id: 1659539116286-13
+    author: honza (generated)
+    changes:
+    - dropForeignKeyConstraint:
+        baseTableName: TRACEENTRY
+        constraintName: FKTBXDXNB92Q9XBPBTWNVOS7K8W
+- changeSet:
+    id:  TraceEntry-dropNotNullConstraint-on-bankConnection_id
+    author:  honza
+    changes:
+        -  dropNotNullConstraint:
+               columnDataType:  BIGINT
+               columnName:  bankConnection_id
+               tableName:  TraceEntry
+- changeSet:
+      id: additional-user-settings
+      author: honza
+      changes:
+          - addColumn:
+                columns:
+                    - column:
+                          name: displayAdminTypes
+                          type: BOOLEAN
+                    - column:
+                          name: displaySharedBankConnections
+                          type: BOOLEAN
+                    - column:
+                          name: displayErroneousConnections
+                          type: BOOLEAN
+                tableName: UserSettings
+- changeSet:
+      id: user-settings-defaults
+      author: honza (generated)
+      changes:
+          - sql: update UserSettings set displayAdminTypes=FALSE
+          - sql: update UserSettings set displaySharedBankConnections=TRUE
+          - sql: update UserSettings set displayErroneousConnections=FALSE
+- changeSet:
+    id: 1668544016855-5
+    author: honza (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: FileTemplatePK
+            name: id
+            type: BIGINT
+        - column:
+            name: creatorUserId
+            type: VARCHAR(255)
+        - column:
+            name: fileContentText
+            type: CLOB
+        - column:
+            constraints:
+              nullable: false
+            name: shared
+            type: BOOLEAN
+        - column:
+            name: templateName
+            type: VARCHAR(255)
+        - column:
+            name: templateTags
+            type: VARCHAR(255)
+        tableName: FileTemplate
+- changeSet:
+    id: 1668544016855-1
+    author: honza (generated)
+    changes:
+    - addNotNullConstraint:
+        columnDataType: boolean
+        columnName: displayAdminTypes
+        tableName: UserSettings
+        validate: true
+- changeSet:
+    id: 1668544016855-2
+    author: honza (generated)
+    changes:
+    - addNotNullConstraint:
+        columnDataType: boolean
+        columnName: displayErroneousConnections
+        tableName: UserSettings
+        validate: true
+- changeSet:
+    id: 1668544016855-3
+    author: honza (generated)
+    changes:
+    - addNotNullConstraint:
+        columnDataType: boolean
+        columnName: displaySharedBankConnections
+        tableName: UserSettings
+        validate: true
+- changeSet:
+    id: 1668544016855-4
+    author: honza (generated)
+    changes:
+    - dropDefaultValue:
+        columnDataType: boolean
+        columnName: request
+        tableName: TraceEntry
+- changeSet:
+    id: 1669107139385-1
+    author: honza (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: BankConnectionPropertyEntityPK
+            name: id
+            type: BIGINT
+        - column:
+            name: key
+            type: VARCHAR(100)
+        - column:
+            name: value
+            type: VARCHAR(500)
+        - column:
+            constraints:
+              nullable: false
+            name: bankConnection_id
+            type: BIGINT
+        tableName: BankConnectionPropertyEntity
+- changeSet:
+    id: 1669107139385-2
+    author: honza (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: key, bankConnection_id
+        constraintName: uniqueKeyToBankConnection
+        tableName: BankConnectionPropertyEntity
+- changeSet:
+    id: 1669107139385-3
+    author: honza (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: bankConnection_id
+        baseTableName: BankConnectionPropertyEntity
+        constraintName: FKcaflw6897wv9n41gjy29rwgb3
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: EbicsUser
+        validate: true
+- changeSet:
+    id: 1669326814659-1
+    author: honza (generated)
+    changes:
+    - addColumn:
+        columns:
+        - column:
+            name: fileFormat
+            type: varchar(255)
+        tableName: FileTemplate
+- changeSet:
+    id: 1669646034252-2
+    author: honza (generated)
+    changes:
+    - addColumn:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: displayPredefinedTemplates
+            type: boolean
+            defaultValue: true
+        tableName: UserSettings
+- changeSet:
+    id: 1669646034252-3
+    author: honza (generated)
+    changes:
+    - addColumn:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: displaySharedTemplates
+            type: boolean
+            defaultValue: true
+        tableName: UserSettings
+- changeSet:
+      id: rename-column-FileTemplate
+      author: honza
+      changes:
+          - renameColumn:
+                oldColumnName: shared
+                newColumnName: guestAccess
+                tableName: FileTemplate
+                type: boolean
+- changeSet:
+      id:  renameTableEbicsUserToBankConnectionEntity
+      author:  honza.toegel
+      changes:
+          -  renameTable:
+                 newTableName:  BankConnectionEntity
+                 oldTableName:  EbicsUser
+- changeSet:
+    id: 1669653192516-1
+    author: honza (generated)
+    changes:
+    - dropNotNullConstraint:
+        columnDataType: boolean
+        columnName: displayPredefinedTemplates
+        tableName: UserSettings
+- changeSet:
+    id: 1669653192516-2
+    author: honza (generated)
+    changes:
+    - dropNotNullConstraint:
+        columnDataType: boolean
+        columnName: displaySharedTemplates
+        tableName: UserSettings
+

@@ -1,8 +1,8 @@
 
 export enum FileFormat {
-  XML = 'xml',
-  SWIFT = 'swift',
-  TEXT = 'text',
-  BINARY = 'binary',
+  XML = 'Xml',
+  SWIFT = 'Swift',
+  TEXT = 'Text',
+  BINARY = 'Binary',
 }
 

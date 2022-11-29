@@ -29,7 +29,7 @@ class EbicsSessionFactory(
         bankKeysRequired: Boolean,
         accessType: BankConnectionAccessType
     ): EbicsSession {
-        val user = userService.getUserById(userIdPass.id, accessType)
+        val user = userService.getBankConnectionById(userIdPass.id, accessType)
         with(requireNotNull(user.keyStore) { "User certificates must be initialized in order to create EBICS session" }) {
             val manager = toUserCertMgr(userIdPass.password)
             val bankCertManager = if (bankKeysRequired) {

@@ -14,7 +14,7 @@ class EbicsSessionFactoryMockImpl(private val configuration: EbicsConfiguration,
         bankKeysRequired: Boolean,
         accessType: BankConnectionAccessType
     ): EbicsSession {
-        val user = MockObjectHelper.createMockUser(1, true)
+        val user = MockObjectHelper.createMockBankConnection(1, true)
         return EbicsSession(user, configuration, product, user.keyStore!!.toUserCertMgr("pass1"), null)
     }
 }

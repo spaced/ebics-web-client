@@ -8,7 +8,7 @@ import org.ebics.client.model.EbicsSession
 class MockSession {
     companion object {
         fun getSession(userId: Long, bankCerts: Boolean = true, prod: EbicsProduct, configuration: EbicsConfiguration): EbicsSession {
-            val user = MockObjectHelper.createMockUser(userId, bankCerts)
+            val user = MockObjectHelper.createMockBankConnection(userId, bankCerts)
             return getSession(user, prod, configuration, bankCerts)
         }
 

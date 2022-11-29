@@ -18,7 +18,10 @@
  */
 package org.ebics.client.api.trace
 
-import org.ebics.client.interfaces.EbicsRootElement
+import org.ebics.client.exception.EbicsException
+import org.ebics.client.exception.EbicsServerException
+import org.ebics.client.interfaces.ContentFactory
+import kotlin.reflect.KFunction
 
 /**
  * A mean to make EBICS transfer logged by saving
@@ -26,21 +29,66 @@ import org.ebics.client.interfaces.EbicsRootElement
  */
 interface TraceManager {
     /**
-     * Saves the `EbicsRootElement` in the traces
+     * Saves the content in the traces,
+     * and annotate it with all information from TraceSession
      *
-     * @param element the element to trace
-     * @param traceRequest all the trace request attributes
+     * @param contentFactory the content to trace
+     * @param traceSession trace session used
      *
-     * @see Configuration.isTraceEnabled
      */
     fun trace(
-        element: EbicsRootElement,
-        traceSession: org.ebics.client.api.trace.h004.ITraceSession
+        contentFactory: ContentFactory,
+        traceSession: IBaseTraceSession,
+        request:Boolean = traceSession.request,
     )
 
-    fun trace(
-        element: EbicsRootElement,
-        traceSession: org.ebics.client.api.trace.h005.ITraceSession
+    fun traceException(
+        exception: Exception,
+        traceSession: IBaseTraceSession
+    )
+
+
+
+    /**
+     * This is calling the provided function,
+     * In case exception is thrown, the exception is traced and propagated further
+     */
+    fun <T> callAndUpdateLastTrace(traceSession: IBaseTraceSession, function: KFunction<T>, vararg params: Any?):T {
+        return try {
+            function.call(params)
+        } catch (exception: Exception) {
+            traceException(exception, traceSession)
+            throw exception
+        }
+    }
+
+    /**
+     * This is used to call function which can throw EbicsServerException so that last incomplete trace message is updated
+     * In case EbicsServerException is thrown, the last trace entry is updated, and exception is re-thrown
+     * In case of no exception, the last trace entry is updated
+     * In case of other exception than EbicsServerException, the exception is traced separately as new trace entry
+     */
+    fun <T> callAndUpdateLastTrace(traceSession: IBaseTraceSession, functionThrowingEbicsServerException: () -> T):T {
+        try {
+            val result = functionThrowingEbicsServerException()
+            updateLastTrace(traceSession, TraceCategory.EbicsResponseOk)
+            return result
+        } catch (ebicsServerException: EbicsServerException) {
+            updateLastTrace(traceSession, TraceCategory.EbicsResponseError, ebicsServerException)
+            throw ebicsServerException
+        } catch (exception: Exception) {
+            traceException(exception, traceSession)
+            throw exception
+        }
+    }
+
+    /**
+     * This will update last trace entry category & exception details if needed
+     */
+    fun updateLastTrace(
+        traceSession: IBaseTraceSession,
+        traceCategory: TraceCategory,
+        exception: EbicsException? = null
     )
 
     /**
@@ -48,4 +96,9 @@ interface TraceManager {
      * @param enabled is trace enabled?
      */
     fun setTraceEnabled(enabled: Boolean)
+
+    /**
+     * This updates the order number of all previous trace entries in the given @param traceSession
+     */
+    fun updateSessionOrderNumber(traceSession: IBankConnectionTraceSession, orderNumber: String)
 }

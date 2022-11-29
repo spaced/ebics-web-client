@@ -1,286 +1,188 @@
 <template>
   <q-page class="justify-evenly">
-    <div v-if="hasActiveConnections" class="q-pa-md">
-      <!-- style="max-width: 400px" -->
-      <div class="q-pa-md">
-        <q-form ref="uploadForm" @submit="processUpload" class="q-gutter-md">
-          <q-select
-            filled
-            v-model="bankConnection"
-            :options="activeDisplayedBankConnections"
-            :option-label="bankConnectionLabel"
-            label="EBICS Bank connection"
-            hint="Select EBICS bank connection"
-            lazy-rules
-            :rules="[
-              (val) =>
-                bankConnection || 'Please select valid EBICS bank connection',
-            ]"
-          >
-            <template v-slot:option="bankConnection">
-              <q-item v-bind="bankConnection.itemProps">
-                <q-item-section avatar>
-                  <q-icon v-if="bankConnection.opt.guestAccess" name="lock_open" />
-                  <q-icon v-else name="lock" />
-                </q-item-section>
-                <q-item-section>
-                  <q-item-label>{{ bankConnection.opt.name }}</q-item-label>
-                  <q-item-label caption>{{ `${bankConnection.opt.userId} | ${bankConnection.opt.partner?.partnerId}` }}</q-item-label>
-                </q-item-section>
-              </q-item>
-            </template>
-          </q-select>
-
-          <q-item
-            tag="label"
-            v-ripple
-            v-if="hasActivePrivateConnections && hasActiveSharedConnections"
-          >
-            <q-item-section avatar>
-              <q-checkbox v-model="displaySharedBankConnections" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>Show shared bank connections</q-item-label>
-              <q-item-label caption>
-                If enabled, the shared connection are listed as well, If
-                disabled, only your private connections are listed
-              </q-item-label>
-            </q-item-section>
-          </q-item>
-
-          <div v-if="bankConnection" class="q-gutter-sm">
-            <!-- q-radio
-              v-model="bankConnection.ebicsVersion"
-              val="H003"
-              label="EBICS 2.4 (H003)"
-            /-->
-            <q-radio
-              v-model="bankConnection.ebicsVersion"
-              :disable="
-                !isEbicsVersionAllowedForUse(
-                  bankConnection.partner.bank,
-                  EbicsVersion.H004
-                )
-              "
-              val="H004"
-              label="EBICS 2.5 (H004)"
-            />
-            <q-radio
-              v-model="bankConnection.ebicsVersion"
-              :disable="
-                !isEbicsVersionAllowedForUse(
-                  bankConnection.partner.bank,
-                  EbicsVersion.H005
-                )
-              "
-              val="H005"
-              label="EBICS 3.0 (H005)"
-            />
-          </div>
-
-          <q-select
-            v-if="
-              bankConnection?.ebicsVersion == 'H003' ||
-              bankConnection?.ebicsVersion == 'H004'
-            "
-            filled
-            v-model="orderType"
-            :options="orderTypes"
-            :option-label="(t) => orderTypeLabel(t)"
-            label="EBICS Order Type"
-            hint="Select EBICS Order Type"
-            lazy-rules
-            :rules="[(val) => val || 'Please select valid EBICS Order Type']"
-          >
-            <template v-slot:append>
-              <q-btn
-                round
-                dense
-                flat
-                icon="refresh"
-                @click.stop="refreshOrderTypes(bankConnection)"
-              />
-            </template>
-            <template v-slot:option="scope">
-              <q-item v-bind="scope.itemProps">
-                <q-item-section>
-                  <q-item-label v-html="orderTypeLabel(scope.opt)" />
-                  <q-item-label caption>{{
-                    scope.opt.description
-                  }}</q-item-label>
-                </q-item-section>
-              </q-item>
-            </template>
-          </q-select>
-
-          <q-select
-            v-if="bankConnection?.ebicsVersion == 'H005'"
-            filled
-            v-model="btfType"
-            :options="btfTypes"
-            :option-label="(t) => btfTypeLabel(t)"
-            label="Business Transaction Format"
-            hint="Select EBICS Business Transaction Format (BTF)"
-            lazy-rules
-            :rules="[(val) => val || 'Please select valid EBICS BTF']"
-          >
-            <template v-slot:append>
-              <q-btn
-                round
-                dense
-                flat
-                icon="refresh"
-                @click.stop="refreshBtfTypes(bankConnection)"
-              />
-            </template>
-            <template v-slot:option="scope">
-              <q-item v-bind="scope.itemProps">
-                <q-item-section>
-                  <q-item-label v-html="btfTypeLabel(scope.opt)" />
-                  <q-item-label caption>{{
-                    scope.opt.description
-                  }}</q-item-label>
-                </q-item-section>
-              </q-item>
-            </template>
-          </q-select>
-
-          <!-- DZHNN / OZHNN -->
-          <q-toggle
-            v-if="
-              bankConnection?.ebicsVersion == 'H003' ||
-              bankConnection?.ebicsVersion == 'H004'
-            "
-            v-model="signatureOZHNN"
-            :label="
-              signatureOZHNN ? 'Signature (OZHNN)' : 'No Signature (DZHNN)'
-            "
-          />
-          <!-- signature flag, request EDS -->
-
-          <q-toggle
-            v-if="bankConnection?.ebicsVersion == 'H005'"
-            v-model="signatureFlag"
-            label="Signature flag"
-          />
-          <q-toggle
-            v-if="bankConnection?.ebicsVersion == 'H005' && signatureFlag"
-            v-model="requestEDS"
-            label="Request EDS"
-          />
-
-          <q-file
-            v-if="fileEditor"
-            style="max-width: 300px"
-            v-model="file"
-            outlined
-            label="Drop file here"
-            hint="Max file size (20MB)"
-            max-file-size="21000000"
-            @rejected="onRejectedMessage(false)"
-            @update:model-value="onUpdateInputFile"
-          >
-            <template v-slot:prepend>
-              <q-icon name="attach_file" />
-            </template>
-          </q-file>
-
-          <q-file
-            v-else
-            style="max-width: 300px"
-            v-model="files"
-            outlined
-            multiple
-            use-chips
-            label='Drop file(s) here to upload'
-            hint="Max file size (1GB)"
-            max-file-size="1200000000"
-            @rejected="onRejectedMessage(true)"
-            @update:model-value="onUpdateInputFiles"
-            lazy-rules
-            :rules="[
-              (val) =>
-                val.length > 0 || 'Please drop or select file(s) for upload',
-            ]"
-          >
-            <template v-slot:prepend>
-              <q-icon name="attach_file" />
-            </template>
-          </q-file>
-
-          <v-ace-editor
-            ref="contentEditor"
-            v-if="fileEditor && fileFormat != FileFormat.BINARY"
-            v-model:value="fileText"
-            :lang="editorLang"
-            theme="clouds"
-            style="height: 300px"
-            :printMargin="false"
-          />
-
-          <!--
-          <div>Format: {{fileFormat}}</div>
-          <div>EditorLang: {{editorLang}}</div>
-          -->
-
-          <q-input
-            v-if="fileEditor && bankConnection?.ebicsVersion == 'H005'"
-            filled
-            v-model="fileName"
-            label="Uploaded filename"
-            hint="For support purposes only"
-            lazy-rules
-            :rules="[
-              (val) => val.length > 0 || 'Please provide input file name',
-            ]"
-          />
-
-          <div class="q-pa-md q-gutter-sm">
-            <q-btn-dropdown
-              :split="fileEditor"
-              color="primary"
-              label="Smart Adjust"
-              @click="applySmartAdjustmentsForSingleFile()"
-            >
-              <user-preferences
-                :section-filter="
-                  fileEditor ? contentOptionsFilter : 'ContentOptions'
-                "
-              />
-            </q-btn-dropdown>
-            <q-btn
-              v-if="fileEditor || !userSettings.uploadOnDrop"
-              label="Upload"
-              type="submit"
-              color="primary"
-            />
-          </div>
-        </q-form>
-      </div>
-    </div>
-    <div v-else class="q-pa-md">
+    <div v-if="loadingOrderTypes || loadingBankConnections" class="q-pa-md">
       <q-banner class="bg-grey-3">
         <template v-slot:avatar>
-          <q-icon name="signal_wifi_off" color="primary" />
+          <q-spinner-dots color="primary" size="2em" />
         </template>
-        You have no initialized bank connection. Create and initialize one bank
-        connection in order to upload files.
-        <template v-slot:action>
-          <q-btn
-            flat
-            color="primary"
-            label="Manage bank connections"
-            to="/bankconnections"
-          />
-        </template>
+        The bank connection are being loaded..
       </q-banner>
+    </div>
+    <div v-else>
+      <div v-if="hasActiveConnections" class="q-pa-md">
+        <!-- style="max-width: 400px" -->
+        <div class="q-pa-md">
+          <q-form ref="uploadForm" @submit="processUpload" class="q-gutter-md">
+            <bank-connection-select
+              v-model:bankConnection="bankConnection"
+              :bankConnections="activeDisplayedBankConnections"
+            />
+
+            <connection-status-banner
+              v-if="bankConnection"
+              :connectionStatus="bankConnection"
+              :bankConnectionId="bankConnection.id"
+            />
+
+            <ebics-version-radios v-model:bankConnection="bankConnection"/>
+
+            <order-type-select
+              v-model:orderType="orderType"
+              :orderTypes="orderTypes"
+              :bankConnection="bankConnection"
+              @click:refreshOrderTypes="refreshOrderTypes(bankConnection)"
+            />
+            <btf-select
+              v-model:btfType="btfType"
+              :btfTypes="btfTypes"
+              :bankConnection="bankConnection"
+              @click:refreshBtfTypes="refreshBtfTypes(bankConnection)"
+            />
+
+            <!-- DZHNN / OZHNN -->
+            <q-toggle
+              v-if="
+                bankConnection?.ebicsVersion == 'H003' ||
+                bankConnection?.ebicsVersion == 'H004'
+              "
+              v-model="signatureOZHNN"
+              :label="
+                signatureOZHNN ? 'Signature (OZHNN)' : 'No Signature (DZHNN)'
+              "
+            />
+            <!-- signature flag, request EDS -->
+
+            <q-toggle
+              v-if="bankConnection?.ebicsVersion == 'H005'"
+              v-model="signatureFlag"
+              label="Signature flag"
+            />
+            <q-toggle
+              v-if="bankConnection?.ebicsVersion == 'H005' && signatureFlag"
+              v-model="requestEDS"
+              label="Request EDS"
+            />
+
+            <q-file
+              v-if="fileEditor"
+              style="max-width: 300px"
+              v-model="file"
+              outlined
+              label="Drop file here"
+              hint="Max file size (20MB)"
+              max-file-size="21000000"
+              @rejected="onRejectedMessage(false)"
+              @update:model-value="onUpdateInputFile"
+            >
+              <template v-slot:prepend>
+                <q-icon name="attach_file" />
+              </template>
+            </q-file>
+
+            <q-file
+              v-else
+              style="max-width: 300px"
+              v-model="files"
+              outlined
+              multiple
+              use-chips
+              label="Drop file(s) here to upload"
+              hint="Max file size (1GB)"
+              max-file-size="1200000000"
+              @rejected="onRejectedMessage(true)"
+              @update:model-value="onUpdateInputFiles"
+              lazy-rules
+              :rules="[
+                (val) =>
+                  val.length > 0 || 'Please drop or select file(s) for upload',
+              ]"
+            >
+              <template v-slot:prepend>
+                <q-icon name="attach_file" />
+              </template>
+            </q-file>
+
+            <file-template-select v-if="fileEditor" v-model:fileTemplate="fileTemplate" />
+
+            <v-ace-editor
+              ref="contentEditor"
+              v-if="fileEditor && fileFormat != FileFormat.BINARY"
+              v-model:value="fileText"
+              :lang="editorLang"
+              theme="clouds"
+              style="height: 300px"
+              :printMargin="false"
+            />
+
+            <!--
+            <div>Format: {{fileFormat}}</div>
+            <div>EditorLang: {{editorLang}}</div>
+            -->
+
+            <q-input
+              v-if="fileEditor && bankConnection?.ebicsVersion == 'H005'"
+              filled
+              v-model="fileName"
+              label="Uploaded filename"
+              hint="For support purposes only"
+              lazy-rules
+              :rules="[
+                (val) => val.length > 0 || 'Please provide input file name',
+              ]"
+            />
+
+            <div class="q-pa-md q-gutter-sm">
+              <q-btn-dropdown
+                :split="fileEditor"
+                color="primary"
+                label="Smart Adjust"
+                @click="applySmartAdjustmentsForSingleFile()"
+              >
+                <user-preferences
+                  :section-filter="
+                    fileEditor ? contentOptionsFilter : 'ContentOptions'
+                  "
+                />
+              </q-btn-dropdown>
+              <q-btn
+                v-if="fileEditor || !userSettings.uploadOnDrop"
+                label="Upload"
+                type="submit"
+                color="primary"
+              />
+            </div>
+          </q-form>
+        </div>
+      </div>
+      <div v-else class="q-pa-md">
+        <q-banner class="bg-grey-3">
+          <template v-slot:avatar>
+            <q-icon name="signal_wifi_off" color="primary" />
+          </template>
+          You have no initialized bank connection. Create and initialize one
+          bank connection in order to upload files.
+          <template v-slot:action>
+            <q-btn
+              flat
+              color="primary"
+              label="Manage bank connections"
+              to="/bankconnections"
+            />
+          </template>
+        </q-banner>
+      </div>
     </div>
   </q-page>
 </template>
 
 <script lang="ts">
-import { BankConnection, BankConnectionAccess } from 'components/models/ebics-bank-connection';
+import {
+  BankConnection,
+  BankConnectionAccess,
+} from 'components/models/ebics-bank-connection';
+import { FileTemplate } from 'components/models/file-template';
 import { EbicsVersion } from 'components/models/ebics-version';
+import { HealthStatusType } from 'components/models/allivenes-health-status';
 import { FileFormat } from 'components/models/file-format';
 import {
   BTFType,
@@ -293,14 +195,20 @@ import {
   UploadRequestH005,
 } from 'components/models/ebics-request-response';
 import { defineComponent } from 'vue';
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 
 //Components
 import { QForm, useQuasar } from 'quasar';
 import { VAceEditor } from 'vue3-ace-editor';
 import 'ace-builds/src-noconflict/mode-xml';
 import 'ace-builds/src-noconflict/theme-clouds';
-import UserPreferences from 'components/UserPreferences.vue';
+import UserPreferences from 'components/visual/UserPreferences.vue';
+import ConnectionStatusBanner from 'components/visual/ConnectionStatusBanner.vue';
+import BankConnectionSelect from 'components/visual/BankConnectionSelect.vue';
+import OrderTypeSelect from 'components/visual/OrderTypeSelect.vue';
+import BtfSelect from 'components/visual/BtfSelect.vue';
+import EbicsVersionRadios from 'components/visual/EbicsVersionRadios.vue';
+import FileTemplateSelect from 'components/visual/FileTemplateSelect.vue';
 
 //Composition APIs
 import useBankConnectionsAPI from 'components/bankconnections';
@@ -313,7 +221,16 @@ import useBanksAPI from 'src/components/banks';
 
 export default defineComponent({
   name: 'FileUpload',
-  components: { VAceEditor, UserPreferences },
+  components: {
+    VAceEditor,
+    UserPreferences,
+    ConnectionStatusBanner,
+    BankConnectionSelect,
+    OrderTypeSelect,
+    BtfSelect,
+    EbicsVersionRadios,
+    FileTemplateSelect,
+  },
   props: {
     fileEditor: {
       type: Boolean,
@@ -328,23 +245,27 @@ export default defineComponent({
     const {
       activeBankConnections,
       activeDisplayedBankConnections,
-      hasActiveConnections,
-      hasActivePrivateConnections,
-      hasActiveSharedConnections,
-      displaySharedBankConnections,
+      hasActiveConnections, 
       bankConnectionLabel,
+      loading: loadingBankConnections,
     } = useBankConnectionsAPI(BankConnectionAccess.USE);
     const { ebicsUploadRequest } = useFileTransferAPI();
-    const { applySmartAdjustments, detectFileFormat } = useTextUtils();
+    const { applySmartAdjustments, applyTemplateAdjustments, detectFileFormat } = useTextUtils();
     const { isEbicsVersionAllowedForUse } = useBanksAPI(true);
-    const { userSettings } = useUserSettings();
+    const { userSettings, loadUserSettings } = useUserSettings();
     const { orderTypeLabel, btfTypeLabel } = useOrderTypeLabelAPI();
-    const { btfTypes, orderTypes, refreshOrderTypes, refreshBtfTypes } =
-      useOrderTypesAPI(
-        bankConnection,
-        activeBankConnections,
-        ref(OrderTypeFilter.UploadOnly)
-      );
+    const {
+      btfTypes,
+      orderTypes,
+      refreshOrderTypes,
+      refreshBtfTypes,
+      loading: loadingOrderTypes,
+    } = useOrderTypesAPI(
+      bankConnection,
+      activeBankConnections,
+      ref(OrderTypeFilter.UploadOnly)
+    );
+    const fileTemplate = ref<FileTemplate>();
 
     //Single file setup
     const testInput = ref(null);
@@ -354,6 +275,20 @@ export default defineComponent({
     const fileName = ref('');
     const orderType = ref<OrderType>();
     const btfType = ref<BTFType>();
+
+    const refreshFileTextOnTeplateOrBankConnectionChange = async () => {
+      if (fileTemplate.value) {      
+        console.log('ft' + JSON.stringify(fileTemplate));  
+        fileText.value = await applyTemplateAdjustments(
+          fileTemplate.value?.fileContentText,
+          fileTemplate.value?.fileFormat,
+          userSettings.value,
+          bankConnection.value?.properties ? bankConnection.value?.properties : [])
+      }
+    }
+
+    watch(bankConnection, refreshFileTextOnTeplateOrBankConnectionChange)
+    watch(fileTemplate, refreshFileTextOnTeplateOrBankConnectionChange)
 
     const signatureFlag = ref(true);
     const requestEDS = ref(true);
@@ -406,7 +341,11 @@ export default defineComponent({
       }
     };
 
-    const getUploadContent = (fileFormat: FileFormat, file: File | undefined, fileContent: string): Blob => {
+    const getUploadContent = (
+      fileFormat: FileFormat,
+      file: File | undefined,
+      fileContent: string
+    ): Blob => {
       if (fileFormat == FileFormat.BINARY && file) {
         return file;
       } else if (fileFormat != FileFormat.BINARY && fileContent) {
@@ -422,29 +361,35 @@ export default defineComponent({
       return getUploadContent(fileFormat.value, file.value, fileText.value);
     };
 
-    const processOneFileUpload = async(file: File, bankConnection: BankConnection) => {
-      let fileContent = await file.text()
+    const processOneFileUpload = async (
+      file: File,
+      bankConnection: BankConnection
+    ) => {
+      let fileContent = await file.text();
       const detectedFileFormat = detectFileFormat(fileContent);
-      if (userSettings.value.adjustmentOptions.applyAutomatically && detectedFileFormat != FileFormat.BINARY) {
+      if (
+        userSettings.value.adjustmentOptions.applyAutomatically &&
+        detectedFileFormat != FileFormat.BINARY
+      ) {
         fileContent = await applySmartAdjustments(
           fileContent,
           detectedFileFormat,
           userSettings.value
         );
-      } 
+      }
       await ebicsUploadRequest(
         bankConnection,
         getUploadRequest(file.name),
         getUploadContent(detectedFileFormat, file, fileContent)
       );
-    }
+    };
 
     const processUpload = async (): Promise<void> => {
       if (bankConnection.value) {
         if (!props.fileEditor) {
           //Multiple files upload
           for (let file of files.value) {
-            await processOneFileUpload(file, bankConnection.value)
+            await processOneFileUpload(file, bankConnection.value);
           }
         } else {
           //Single file upload
@@ -507,6 +452,8 @@ export default defineComponent({
       }
     };
 
+    onMounted(loadUserSettings);
+
     const onUpdateInputFiles = async (inputFiles: File[]) => {
       console.log(inputFiles);
       files.value = inputFiles;
@@ -541,9 +488,6 @@ export default defineComponent({
       activeBankConnections,
       activeDisplayedBankConnections,
       hasActiveConnections,
-      hasActivePrivateConnections,
-      hasActiveSharedConnections,
-      displaySharedBankConnections,
       bankConnectionLabel,
       isEbicsVersionAllowedForUse,
       EbicsVersion,
@@ -585,12 +529,19 @@ export default defineComponent({
       btfTypeLabel,
       refreshBtfTypes,
 
+      //Loading flags
+      loadingOrderTypes,
+      loadingBankConnections,
+
       //Commons request flags
       signatureFlag,
       requestEDS,
       signatureOZHNN,
       FileFormat,
       processUpload,
+      HealthStatusType,
+
+      fileTemplate,
     };
   },
 });

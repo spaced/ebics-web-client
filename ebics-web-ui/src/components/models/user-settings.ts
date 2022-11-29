@@ -30,4 +30,8 @@ export interface UserSettings {
     swift: AutoAdjustmentsSwift;
   };
   displayAdminTypes: boolean;
+  displaySharedBankConnections: boolean;
+  displayErroneousConnections: boolean;
+  displaySharedTemplates: boolean;
+  displayPredefinedTemplates: boolean;
 }

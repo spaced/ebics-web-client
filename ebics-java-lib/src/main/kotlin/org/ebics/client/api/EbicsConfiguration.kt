@@ -18,8 +18,6 @@
  */
 package org.ebics.client.api
 
-import org.ebics.client.api.trace.TraceManager
-import org.ebics.client.http.HttpClientFactory
 import java.util.*
 
 /**
@@ -28,18 +26,6 @@ import java.util.*
  * @author hachani
  */
 interface EbicsConfiguration {
-
-    /**
-     * Returns the global HTTP client factory
-     */
-    val httpClientFactory: HttpClientFactory
-
-    /**
-     * Returns the Ebics client trace manager.
-     * @return the Ebics client trace manager.
-     */
-    val traceManager: TraceManager
-
     /**
      * Returns the application locale.
      * @return the application locale.

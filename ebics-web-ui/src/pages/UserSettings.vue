@@ -9,14 +9,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import UserPreferences from 'components/UserPreferences.vue'
+import { defineComponent, onMounted } from 'vue';
+import UserPreferences from 'components/visual/UserPreferences.vue'
+import useUserSettingsAPI from 'src/components/user-settings';
 
 export default defineComponent({
   name: 'UserContext',
   components: { UserPreferences },
   setup() {
-    //const { userContext } = useUserContextAPI();
+    const { loadUserSettings } = useUserSettingsAPI();
+    onMounted(loadUserSettings);
     return { };
   },
 });

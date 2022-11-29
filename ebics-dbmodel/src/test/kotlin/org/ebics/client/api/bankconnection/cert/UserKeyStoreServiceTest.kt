@@ -34,8 +34,8 @@ open class UserKeyStoreServiceTest (
         val userInfo = BankConnection( EbicsVersion.H005, "CHT10001", "Jan",  "CH100001", bankId,
             guestAccess = true, useCertificate = true
         )
-        val userId = userService.createUserAndPartner(userInfo)
-        val user = userService.getUserById(userId)
+        val userId = userService.createBankConnection(userInfo)
+        val user = userService.getBankConnectionById(userId)
 
         //Create and store user certificate
         val certificates = UserCertificateManager.create("cn=jan")

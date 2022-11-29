@@ -82,7 +82,7 @@ export default function useBankConnectionInitializationAPI(
         usePassword: user.value.usePassword,
         password: pass,
       } as CertRequest);
-      pwdApiOkHandler(
+      pwdApiOkHandler(user.value,
         `Certificates created successfully for user name: ${user.value.name} dn: ${user.value.dn}`
       );
     } catch (error) {
@@ -96,7 +96,7 @@ export default function useBankConnectionInitializationAPI(
       const response = await api.post<UserLettersResponse>(`bankconnections/${user.value.id}/certificates/letters`, { 
         password: pass
       });
-      pwdApiOkHandler(
+      pwdApiOkHandler(user.value,
         `Certificates created successfully for user name: ${user.value.name} dn: ${user.value.dn}`
       );
       return response.data;
@@ -108,7 +108,7 @@ export default function useBankConnectionInitializationAPI(
   const resetUserStatusRequest = async (): Promise<void> => {
     try {
       await api.post<UserPassword>(`bankconnections/${user.value.id}/resetStatus`);
-      pwdApiOkHandler(
+      pwdApiOkHandler(user.value,
         `Initialization status resetted successfully for user name: ${user.value.name}`
       );
     } catch (error) {
@@ -131,7 +131,7 @@ export default function useBankConnectionInitializationAPI(
         `bankconnections/${user.value.id}/${user.value.ebicsVersion}/send${adminOrderType}`,
         { password: pass }
       );
-      pwdApiOkHandler(
+      pwdApiOkHandler(user.value,
         `${adminOrderType} executed successfully for user name: ${user.value.name}`
       );
     } catch (error) {

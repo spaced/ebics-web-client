@@ -1,6 +1,6 @@
 package org.ebics.client.api.trace
 
-import org.ebics.client.api.trace.orderType.OrderTypeDefinition
+import org.ebics.client.api.bank.Bank
 import org.ebics.client.api.bankconnection.BankConnectionEntity
 import org.ebics.client.model.EbicsVersion
 import org.springframework.data.jpa.domain.Specification
@@ -25,15 +25,32 @@ fun <T, X> CriteriaBuilder.attributeEquals(path: Path<X>, attributeName: String,
     return equal(path.get<SingularAttribute<X, T>>(attributeName), value)
 }
 
-fun bankConnectionEquals(user: BankConnectionEntity, useSharedPartnerData: Boolean = true): Specification<TraceEntry> {
+fun <T, X> CriteriaBuilder.attributeIsNull(path: Path<X>, attributeName: String): Predicate {
+    return isNull(path.get<SingularAttribute<X, T>>(attributeName))
+}
+
+fun <T, X> CriteriaBuilder.attributeIsNotNull(path: Path<X>, attributeName: String): Predicate {
+    return isNotNull(path.get<SingularAttribute<X, T>>(attributeName))
+}
+
+fun bankConnectionEquals(bankConnection: BankConnectionEntity, useSharedPartnerData: Boolean = true): Specification<TraceEntry> {
     return Specification<TraceEntry> { root, _, builder ->
         val p = builder.disjunction()
-        val userAttr = root.get<SingularAttribute<TraceEntry, String>>("user")
-        p.addEqualsIfNotNull(builder, userAttr, "id", user.id)
+        val userAttr = root.get<SingularAttribute<TraceEntry, String>>("bankConnection")
+        p.addEqualsIfNotNull(builder, userAttr, "id", bankConnection.id)
         if (useSharedPartnerData) {
             val partnerAttr = userAttr.get<SingularAttribute<TraceEntry, String>>("partner")
-            p.addEqualsIfNotNull(builder, partnerAttr, "id", user.partner.id)
+            p.addEqualsIfNotNull(builder, partnerAttr, "id", bankConnection.partner.id)
         }
+        p
+    }
+}
+
+fun bankEquals(bank: Bank): Specification<TraceEntry> {
+    return Specification<TraceEntry> { root, _, builder ->
+        val p = builder.disjunction()
+        val userAttr = root.get<SingularAttribute<TraceEntry, String>>("bank")
+        p.addEqualsIfNotNull(builder, userAttr, "id", bank.id)
         p
     }
 }
@@ -44,15 +61,16 @@ fun creatorEquals(creator: String): Specification<TraceEntry> {
     }
 }
 
-fun orderTypeEquals(orderType: OrderTypeDefinition): Specification<TraceEntry> {
+fun orderTypeEquals(orderType: ITraceOrderTypeDefinition): Specification<TraceEntry> {
     return Specification<TraceEntry> { root, _, builder ->
         val p = builder.conjunction()
         with(orderType) {
             val orderTypeAttr = root.get<SingularAttribute<TraceEntry, String>>("orderType")
             p.addEqualsIfNotNull(builder, orderTypeAttr, "adminOrderType", adminOrderType)
             p.addEqualsIfNotNull(builder, orderTypeAttr, "businessOrderType", businessOrderType)
-            if (ebicsServiceType != null) {
-                with(ebicsServiceType) {
+            val ebicsService = ebicsServiceType
+            if (ebicsService != null) {
+                with(ebicsService) {
                     val serviceTypeAttr = orderTypeAttr.get<SingularAttribute<TraceEntry, String>>("ebicsServiceType")
                     p.addEqualsIfNotNull(builder, serviceTypeAttr, "serviceName", serviceName)
                     p.addEqualsIfNotNull(builder, serviceTypeAttr, "serviceOption", serviceOption)
@@ -96,11 +114,33 @@ fun traceTypeEquals(traceType: TraceType): Specification<TraceEntry> {
     }
 }
 
-fun fileDownloadFilter(creator: String, orderType: OrderTypeDefinition, user: BankConnectionEntity, ebicsVersion: EbicsVersion, useSharedPartnerData: Boolean = true): Specification<TraceEntry> {
+fun traceCategoryEquals(traceCategory: TraceCategory): Specification<TraceEntry> {
+    return Specification<TraceEntry> { root, _, builder ->
+        builder.attributeEquals(root, "traceCategory", traceCategory)
+    }
+}
+
+fun traceCategoryIsNull(): Specification<TraceEntry> {
+    return Specification<TraceEntry> { root, _, builder ->
+        builder.attributeIsNull<String, TraceEntry>(root, "traceCategory")
+    }
+}
+
+fun traceMessageBodyIsNotEmpty(): Specification<TraceEntry> {
+    return Specification<TraceEntry> { root, _, builder ->
+        builder.attributeIsNotNull<String, TraceEntry>(root,"textMessageBody")
+    }.or { root, _, builder ->
+        builder.attributeIsNotNull<String, TraceEntry>(root, "binaryMessageBody")
+    }
+}
+
+fun fileDownloadFilter(creator: String, orderType: ITraceOrderTypeDefinition, user: BankConnectionEntity, ebicsVersion: EbicsVersion, useSharedPartnerData: Boolean = true): Specification<TraceEntry> {
     return creatorEquals(creator)
         .and(orderTypeEquals(orderType))
         .and(bankConnectionEquals(user, useSharedPartnerData))
         .and(ebicsVersionEquals(ebicsVersion))
         .and(uploadEquals(false))
         .and(traceTypeEquals(TraceType.Content))
+        .and(traceCategoryIsNull())
+        .and(traceMessageBodyIsNotEmpty())
 }

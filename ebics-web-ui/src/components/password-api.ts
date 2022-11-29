@@ -71,19 +71,24 @@ export default function usePasswordAPI() {
     tempPasswords.value.set(user.id, undefined)
   }
 
-  const {apiOkHandler: pwdApiOkHandler, apiErrorHandler} = useBaseAPI();
+  const {apiOkHandler, apiErrorHandler} = useBaseAPI();
+
+  const pwdApiOkHandler = (bankConnection: BankConnection, msg: string, silent?: boolean): void => {
+    apiOkHandler(msg, bankConnection, silent);
+  }
 
   const pwdApiErrorHandler = (
-    user: BankConnection,
+    bankConnection: BankConnection,
     msg: string,
-    error: unknown 
+    error: unknown,
+    silent?: boolean,
   ): void => {
-    apiErrorHandler(msg, error, (errorMessage) => {
+    apiErrorHandler(msg, error, bankConnection, (errorMessage) => {
         if (errorMessage?.includes('wrong password')) {
           //In case of error 'wrong password' we have to reset temporary stored password in order to ask for new one
-          resetCertPassword(user)
+          resetCertPassword(bankConnection)
         }
-    })
+    }, silent)
   }
 
   return { pwdApiOkHandler, pwdApiErrorHandler, resetCertPassword, promptCertPassword };

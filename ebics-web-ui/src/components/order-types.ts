@@ -15,6 +15,7 @@ import useFileTransferAPI from './filetransfer';
 import { CustomMap } from './utils';
 import usePasswordAPI from './password-api';
 import useBanksAPI from './banks';
+import useUserSettingsAPI from './user-settings';
 
 //Global internal cache of all OrderTypes for all active bank connections..
 const orderTypeCache: CustomMap<number, OrderType[]> = new CustomMap<
@@ -32,13 +33,16 @@ export default function useOrderTypesAPI(
   selectedBankConnection: Ref<BankConnection | undefined>,
   activeBankConnections: Ref<BankConnection[] | undefined>,
   filterType: Ref<OrderTypeFilter>,
-  displayAdminTypes: Ref<boolean> = ref(false),
 ) {
   //BTF   types of selectedBankConnection filtered by filterType
   const outputBtfTypes: Ref<BTFType[]> = ref([]);
   //Order types of selectedBankConnection filtered by filterType
   const outputOrderTypes: Ref<OrderType[]> = ref([]);
 
+  const loading = ref<boolean>(false);
+
+  //Used for the displayAdminTypes filter
+  const { userSettings } = useUserSettingsAPI(); 
   const { ebicsOrderTypes } = useFileTransferAPI();
   const { promptCertPassword } = usePasswordAPI();
   const { isEbicsVersionAllowedForUse } = useBanksAPI(true);
@@ -127,12 +131,15 @@ export default function useOrderTypesAPI(
    */
   const updateOrderTypesCacheForBankConnection = async (
     bankConnection: BankConnection,
-    forceCashRefresh = false
+    forceCashRefresh = false,
+    suppressLoadingStateChange = false,
   ) => {
 
     //For pasword protected connection ask first password
     //It prevents parallel poping of UI password dialog
     await promptCertPassword(bankConnection, false);
+
+    if (!suppressLoadingStateChange) loading.value = true;
 
     //Now execute all update promisses
     //the password UI would not pop-up any more because of previous promptCertPassword
@@ -146,20 +153,24 @@ export default function useOrderTypesAPI(
         forceCashRefresh
       ),
     ]);
+
+    if (!suppressLoadingStateChange) loading.value = false;
   };
 
   const updateOrderTypesCacheForAllActiveConnections =
     async (): Promise<void> => {
       if (activeBankConnections.value) {
         console.log('Loading order types')
+        loading.value = true;
         //Collect all update ordertype promisses
         const updateOrderTypesPromisses = activeBankConnections.value.map(
           (bankConnection) =>
-            updateOrderTypesCacheForBankConnection(bankConnection)
+            updateOrderTypesCacheForBankConnection(bankConnection, false, true)
         );
 
         //Execute those promisses parallel
         await Promise.allSettled(updateOrderTypesPromisses);
+        loading.value = false;
         console.log('Order types loaded')
       }
     };
@@ -186,7 +197,7 @@ export default function useOrderTypesAPI(
         outputBtfTypes.value = selectedTypes.filter(
           (btf) =>
             btf.adminOrderType == 'BTD' ||
-            (displayAdminTypes.value &&
+            (userSettings.value.displayAdminTypes &&
               downloadableAdminOrderTypes.includes(btf.adminOrderType))
         );
       }
@@ -212,7 +223,7 @@ export default function useOrderTypesAPI(
           (ot) =>
             ot.adminOrderType == 'DNL' ||
             ot.adminOrderType == 'FDL' ||
-            (displayAdminTypes.value &&
+            (userSettings.value.displayAdminTypes &&
               downloadableAdminOrderTypes.includes(ot.adminOrderType)) ||
             ot.transferType == TransferType.Download
         );
@@ -227,6 +238,11 @@ export default function useOrderTypesAPI(
 
   watch(
     selectedBankConnection,
+    refreshOutputOrdertypesForSelectedBankConnection
+  );
+
+  watch(
+    () => userSettings.value.displayAdminTypes,
     refreshOutputOrdertypesForSelectedBankConnection
   );
   watch(activeBankConnections, updateOrderTypesCacheForAllActiveConnections);
@@ -246,5 +262,6 @@ export default function useOrderTypesAPI(
     refreshOrderTypes,
     refreshBtfTypes,
     updateOrderTypesCacheForBankConnection,
+    loading,
   };
 }

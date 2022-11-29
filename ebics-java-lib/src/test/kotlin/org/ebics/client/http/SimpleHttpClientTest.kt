@@ -4,7 +4,6 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
-import org.apache.http.Header
 import org.apache.http.ProtocolVersion
 import org.apache.http.client.methods.CloseableHttpResponse
 import org.apache.http.entity.ByteArrayEntity
@@ -12,6 +11,8 @@ import org.apache.http.impl.client.CloseableHttpClient
 import org.apache.http.message.BasicHeader
 import org.apache.http.message.BasicStatusLine
 import org.ebics.client.exception.EbicsException
+import org.ebics.client.http.client.HttpClientRequestConfiguration
+import org.ebics.client.http.client.SimpleHttpClient
 import org.ebics.client.io.ByteArrayContentFactory
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -78,7 +79,7 @@ class SimpleHttpClientTest {
         val exception = Assertions.assertThrows(EbicsException::class.java) {
             client.send(URL("http://not.existing.url.com.xx"), ByteArrayContentFactory("aaa".toByteArray()))
         }
-        Assertions.assertEquals("Wrong returned HTTP code: 500 Error 500", exception.message)
+        Assertions.assertEquals("Wrong returned HTTP code: 500 Error 500", exception.cause?.message)
     }
 
     @Test
@@ -102,6 +103,6 @@ class SimpleHttpClientTest {
         val exception = Assertions.assertThrows(EbicsException::class.java) {
             client.send(URL("http://not.existing.url.com.xx"), ByteArrayContentFactory("aaa".toByteArray()))
         }
-        Assertions.assertEquals("Wrong returned HTTP code: 302 Error 302", exception.message)
+        Assertions.assertEquals("Wrong returned HTTP code: 302 Error 302", exception.cause?.message)
     }
 }

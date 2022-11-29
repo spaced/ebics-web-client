@@ -20,7 +20,7 @@
 package org.ebics.client.xml.h005;
 
 import org.ebics.client.api.EbicsSession;
-import org.ebics.client.api.trace.h005.TraceSession;
+import org.ebics.client.api.trace.BankConnectionTraceSession;
 import org.ebics.client.exception.EbicsException;
 import org.ebics.client.order.EbicsAdminOrderType;
 import org.ebics.client.utils.Utils;
@@ -39,18 +39,14 @@ public class HIARequestElement extends DefaultEbicsRootElement {
    * Constructs a new HIA Request root element
    * @param session the current ebics session
    */
-  public HIARequestElement(EbicsSession session, TraceSession traceSession) {
+  public HIARequestElement(EbicsSession session) {
     super(session);
-    this.traceSession = traceSession;
   }
 
   @Override
   public void build() throws EbicsException {
-    HIARequestOrderDataElement requestOrderData;
-
     requestOrderData = new HIARequestOrderDataElement(session);
     requestOrderData.build();
-    traceSession.trace(requestOrderData);
     unsecuredRequest = new UnsecuredRequestElement(session,
 	                                           EbicsAdminOrderType.HIA,
 	                                           Utils.zip(requestOrderData.prettyPrint()));
@@ -69,11 +65,15 @@ public class HIARequestElement extends DefaultEbicsRootElement {
     unsecuredRequest.validate();
   }
 
+  public HIARequestOrderDataElement getRequestOrderData() {
+    return requestOrderData;
+  }
+
   // --------------------------------------------------------------------
   // DATA MEMBERS
   // --------------------------------------------------------------------
 
+  private HIARequestOrderDataElement requestOrderData;
   private UnsecuredRequestElement unsecuredRequest;
-  private TraceSession traceSession;
   private static final long 		serialVersionUID = 1130436605993828777L;
 }

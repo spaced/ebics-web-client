@@ -4,9 +4,10 @@ import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.mockk
 import org.ebics.client.api.bank.Bank
-import org.ebics.client.api.bank.BankServiceImpl
+import org.ebics.client.api.bank.BankService
 import org.ebics.client.api.bank.versions.VersionSupport
 import org.ebics.client.api.bank.versions.VersionSupportService
+import org.ebics.client.bank.BankOperations
 import org.ebics.client.ebicsrestapi.bank.EbicsBankAPI
 import org.ebics.client.ebicsrestapi.configuration.EbicsRestConfiguration
 import org.ebics.client.model.EbicsVersion
@@ -25,7 +26,7 @@ class EbicsBankAPITestContext {
     fun versionSupportService() = mockk<VersionSupportService>()
 
     @Bean
-    fun bankService() = mockk<BankServiceImpl>().also { bankService ->
+    fun bankService() = mockk<BankService>().also { bankService ->
         every {
             bankService.getBankById(1)
         } returns
@@ -54,5 +55,8 @@ class EbicsBankAPITestContext {
     }
 
     @Bean
-    fun ebicsBankApi() = EbicsBankAPI(configuration, bankService(), versionSupportService())
+    fun bankOperations() = mockk<BankOperations>()
+
+    @Bean
+    fun ebicsBankApi() = EbicsBankAPI(configuration, bankService(), versionSupportService(), bankOperations())
 }

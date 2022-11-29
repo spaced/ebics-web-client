@@ -33,7 +33,7 @@ class HEVResponse(factory: ContentFactory) : DefaultResponseElement(factory) {
     override fun build() {
         parse(factory)
         response = (document as EbicsHEVResponseDocument).ebicsHEVResponse
-        returnCode = EbicsReturnCode.toReturnCode(response.systemReturnCode.returnCode, "")
+        returnCode = EbicsReturnCode.toReturnCode(response.systemReturnCode.returnCode)
     }
 
     fun getSupportedVersions(): List<EbicsVersion> = EnumUtil.toEbicsVersions(response)

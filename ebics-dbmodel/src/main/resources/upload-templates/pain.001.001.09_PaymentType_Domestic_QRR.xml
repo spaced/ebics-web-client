@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.001.001.09" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:iso:std:iso:20022:tech:xsd:pain.001.001.09  pain.001.001.09.ch.03.xsd">
+	<CstmrCdtTrfInitn>
+		<GrpHdr>
+			<MsgId>%%aLevelId%%</MsgId>
+			<CreDtTm>%%IsoDtTm%%</CreDtTm>
+			<NbOfTxs>%%NbOfTxs-aLevel%%</NbOfTxs>
+			<CtrlSum>%%CtrlSum%%</CtrlSum>
+			<InitgPty>
+				<Nm>MUSTER AG</Nm>
+				<CtctDtls>
+					<Othr>
+						<ChanlTp>NAME</ChanlTp>
+						<Id>EBICS Web Client</Id>
+					</Othr>
+					<Othr>
+						<ChanlTp>VRSN</ChanlTp>
+						<Id>1.7.5</Id>
+					</Othr>
+					<Othr>
+						<ChanlTp>PRVD</ChanlTp>
+						<Id>JTO OpenSource</Id>
+					</Othr>
+					<Othr>
+						<ChanlTp>SPSV</ChanlTp>
+						<Id>2.0</Id>
+					</Othr>
+				</CtctDtls>
+			</InitgPty>
+		</GrpHdr>
+		<PmtInf>
+			<PmtInfId>%%bLevelId%%</PmtInfId>
+			<PmtMtd>TRF</PmtMtd>
+			<BtchBookg>true</BtchBookg>
+			<ReqdExctnDt>
+				<DtTm>%%IsoDtTm%%</DtTm>
+			</ReqdExctnDt>
+			<Dbtr>
+				<Nm>MUSTER AG</Nm>
+				<PstlAdr>
+					<TwnNm>SELDWYLA</TwnNm>
+					<Ctry>CH</Ctry>
+				</PstlAdr>
+			</Dbtr>
+			<DbtrAcct>
+				<Id>
+					<IBAN>%%debitAccountIban%%</IBAN>
+				</Id>
+			</DbtrAcct>
+			<DbtrAgt>
+				<FinInstnId>
+					<BIC>%%debitAgentBIC%%</BIC>
+				</FinInstnId>
+			</DbtrAgt>
+			<CdtTrfTxInf>
+				<PmtId>
+					<InstrId>%%cLevelId%%</InstrId>
+					<EndToEndId>%%cLevelId-keep%%</EndToEndId>
+				</PmtId>
+				<Amt>
+					<InstdAmt Ccy="CHF">3949.75</InstdAmt>
+				</Amt>
+				<Cdtr>
+					<Nm>Robert Schneider AG</Nm>
+					<PstlAdr>
+						<StrtNm>Rue du Lac</StrtNm>
+						<BldgNb>1268</BldgNb>
+						<PstCd>2501</PstCd>
+						<TwnNm>Biel</TwnNm>
+						<Ctry>CH</Ctry>
+					</PstlAdr>
+				</Cdtr>
+				<CdtrAcct>
+					<Id>
+						<IBAN>CH4431999123000889012</IBAN>
+					</Id>
+				</CdtrAcct>
+				<RmtInf>
+					<Strd>
+						<CdtrRefInf>
+							<Tp>
+								<CdOrPrtry>
+									<Prtry>QRR</Prtry>
+								</CdOrPrtry>
+							</Tp>
+							<Ref>210000000003139471430009017</Ref>
+						</CdtrRefInf>
+						<AddtlRmtInf>Auftrag vom 10.02.2023</AddtlRmtInf>
+					</Strd>
+				</RmtInf>
+			</CdtTrfTxInf>
+		</PmtInf>
+	</CstmrCdtTrfInitn>
+</Document>

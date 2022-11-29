@@ -20,7 +20,6 @@
 package org.ebics.client.xml.h004;
 
 import org.ebics.client.api.EbicsSession;
-import org.ebics.client.api.trace.h004.TraceSession;
 import org.ebics.client.exception.EbicsException;
 import org.ebics.client.order.EbicsAdminOrderType;
 import org.ebics.client.utils.Utils;
@@ -38,18 +37,14 @@ public class INIRequestElement extends DefaultEbicsRootElement {
    * Constructs a new INI request element.
    * @param session the ebics session.
    */
-  public INIRequestElement(EbicsSession session, TraceSession traceSession) {
+  public INIRequestElement(EbicsSession session) {
     super(session);
-    this.traceSession = traceSession;
   }
 
   @Override
   public void build() throws EbicsException {
-    SignaturePubKeyOrderDataElement signaturePubKey;
-
     signaturePubKey = new SignaturePubKeyOrderDataElement(session);
     signaturePubKey.build();
-    traceSession.trace(signaturePubKey);
     unsecuredRequest = new UnsecuredRequestElement(session,
 	                                           EbicsAdminOrderType.INI,
 	                                           Utils.zip(signaturePubKey.prettyPrint()));
@@ -68,11 +63,15 @@ public class INIRequestElement extends DefaultEbicsRootElement {
     unsecuredRequest.validate();
   }
 
+  public SignaturePubKeyOrderDataElement getSignaturePubKey() {
+    return signaturePubKey;
+  }
+
   // --------------------------------------------------------------------
   // DATA MEMBERS
   // --------------------------------------------------------------------
 
+  private SignaturePubKeyOrderDataElement signaturePubKey;
   private UnsecuredRequestElement unsecuredRequest;
-  private TraceSession traceSession;
   private static final long 		serialVersionUID = -1966559247739923555L;
 }
