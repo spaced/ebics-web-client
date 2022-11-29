@@ -31,17 +31,14 @@
         {{ connectionStatusObject.errorCount }} failed, and {{ connectionStatusObject.okCount }} was OK.
       </q-item-label>
       <q-item-label caption v-else>
-        Out of {{ connectionStatusObject.totalCount }} request(s) have {{ connectionStatusObject.errorRate }}%
-        failed, and {{ connectionStatusObject.okRate }}% was OK.
+        Out of {{ connectionStatusObject.totalCount }} request(s) have {{ connectionStatusObject.errorRate.toFixed(0) }}%
+        failed, and {{ connectionStatusObject.okRate.toFixed(0) }}% was OK.
       </q-item-label>
+      <!--div>{{ JSON.stringify(connectionStatusObject.lastError) }}</div>
+      <div>BE:{{ JSON.stringify(bankConnectionStatusVal.backendStatus.lastError) }}</div>
+      <div>FE:{{ JSON.stringify(bankConnectionStatusVal.frontendStatus.lastError) }}</div-->
       <error-message-label v-if="connectionStatusObject.lastError" :apiError="connectionStatusObject.lastError" />
     </q-item-section>
-    <!-- template v-slot:action>
-      <q-btn flat color="primary" label="Latest errors" @click="showLatestErrors = true"/>
-      <q-dialog v-model="showLatestErrors" class="absolute-top" >
-        <response-statistics-alert-dialog :bankConnectionId="bankConnectionId"/>
-      </q-dialog>
-    </template-->
   </q-banner>
 </template>
 
@@ -97,16 +94,11 @@ export default defineComponent({
       });
     }
 
-    const showLatestErrors = ref(false);
-    const togleShowLatestErrors = ():void => { 
-      showLatestErrors.value = true; 
-    }
-
     const connectionStatusObject = computed((): ConnectionStatusObject => {
       return bankConnectionStatusVal.value?.frontendStatus ? bankConnectionStatusVal.value?.frontendStatus : bankConnectionStatusVal.value?.backendStatus;
     }); 
 
-    return { HealthStatusType, routeToResponseStatisticsPage, showLatestErrors, togleShowLatestErrors, bankConnectionStatusVal, connectionStatusObject };
+    return { HealthStatusType, routeToResponseStatisticsPage, bankConnectionStatusVal, connectionStatusObject };
   },
 });
 </script>

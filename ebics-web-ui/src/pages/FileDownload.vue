@@ -38,10 +38,10 @@
               :showSettingsButton="true"
             />
             <btf-select
-              v-model:btfType="orderType"
+              v-model:btfType="btfType"
               :btfTypes="btfTypes"
               :bankConnection="bankConnection"
-              @click:refreshOrderTypes="refreshBtfTypes(bankConnection)"
+              @click:refreshBtfTypes="refreshBtfTypes(bankConnection)"
               :showSettingsButton="true"
             />
 
@@ -183,6 +183,7 @@ export default defineComponent({
     const btfType = ref<BTFType>();
 
     const getDownloadRequest = (): DownloadRequest => {
+      console.log('download request');
       if (bankConnection.value?.ebicsVersion == 'H005') {
         return {
           adminOrderType: btfType.value?.adminOrderType,

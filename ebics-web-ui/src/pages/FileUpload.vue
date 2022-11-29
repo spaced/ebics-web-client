@@ -33,10 +33,10 @@
               @click:refreshOrderTypes="refreshOrderTypes(bankConnection)"
             />
             <btf-select
-              v-model:btfType="orderType"
+              v-model:btfType="btfType"
               :btfTypes="btfTypes"
               :bankConnection="bankConnection"
-              @click:refreshOrderTypes="refreshBtfTypes(bankConnection)"
+              @click:refreshBtfTypes="refreshBtfTypes(bankConnection)"
             />
 
             <!-- DZHNN / OZHNN -->
@@ -245,10 +245,7 @@ export default defineComponent({
     const {
       activeBankConnections,
       activeDisplayedBankConnections,
-      hasActiveConnections,
-      hasActivePrivateConnections,
-      hasActiveSharedConnections,
-      hasErrorneousConnections,
+      hasActiveConnections, 
       bankConnectionLabel,
       loading: loadingBankConnections,
     } = useBankConnectionsAPI(BankConnectionAccess.USE);
@@ -491,9 +488,6 @@ export default defineComponent({
       activeBankConnections,
       activeDisplayedBankConnections,
       hasActiveConnections,
-      hasActivePrivateConnections,
-      hasActiveSharedConnections,
-      hasErrorneousConnections,
       bankConnectionLabel,
       isEbicsVersionAllowedForUse,
       EbicsVersion,
