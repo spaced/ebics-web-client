@@ -1,9 +1,12 @@
 <template>
   <q-select
     filled
+    use-input
+     @filter="filterTemplates"
     v-model="fileTemplateVal"
-    :options="fileTemplates"
+    :options="filteredFileTemplates"
     :option-label="fileTemplateLabel"
+    clearable
     label="Select the template here.."
     hint="Select file template you would like to upload"
   >
@@ -88,56 +91,23 @@ export default defineComponent({
       return fileTemplate ? fileTemplate.templateName : '';
     };
 
-    const saveTemplateDialog = ref(false);
-    const saveAsNew = ref<boolean>(false);
-    const selectedFileTemplateTags = ref<string[]>();
-    const allFileTemplateTagsArray = computed(() => {
-      const nonUniqueTags = fileTemplates.value?.flatMap((t) =>
-        t.templateTags.split(',')
-      );
-      return [...new Set(nonUniqueTags)]; //make it unique
-    });
-    const filteredFileTemplateTags = ref<string[]>();
-    const filterFileTemplateTags = (
+    const filteredFileTemplates = ref<FileTemplate[] | unknown>([]);
+    
+    const filterTemplates = (
       val: string,
       update: (fn: () => void) => void
     ) => {
       update(() => {
         if (val === '') {
-          filteredFileTemplateTags.value = allFileTemplateTagsArray.value;
+          filteredFileTemplates.value = fileTemplates.value;
         } else {
           const needle = val.toLowerCase();
-          filteredFileTemplateTags.value =
-            allFileTemplateTagsArray.value?.filter(
-              (v) => v.toLowerCase().indexOf(needle) > -1
-            );
+          filteredFileTemplates.value = fileTemplates.value?.filter(template => {
+            return template.templateName.toLowerCase().includes(needle) || 
+                  template.templateTags.toLowerCase().includes(needle);
+          });
         }
       });
-    };
-    const createFileTemplateTag = (
-      val: string,
-      done: (val: string, res: string) => void
-    ): void => {
-      // Calling done(var) when new-value-mode is not set or "add", or done(var, "add") adds "var" content to the model
-      // and it resets the input textbox to empty string
-      // ----
-      // Calling done(var) when new-value-mode is "add-unique", or done(var, "add-unique") adds "var" content to the model
-      // only if is not already set
-      // and it resets the input textbox to empty string
-      // ----
-      // Calling done(var) when new-value-mode is "toggle", or done(var, "toggle") toggles the model with "var" content
-      // (adds to model if not already in the model, removes from model if already has it)
-      // and it resets the input textbox to empty string
-      // ----
-      // If "var" content is undefined/null, then it doesn't tampers with the model
-      // and only resets the input textbox to empty string
-
-      if (val.length > 0) {
-        if (!allFileTemplateTagsArray?.value?.includes(val)) {
-          allFileTemplateTagsArray.value?.push(val);
-        }
-        done(val, 'toggle');
-      }
     };
 
     return {
@@ -145,13 +115,9 @@ export default defineComponent({
       configureOrdertypesDropdown,
       saveUserSettings,
       fileTemplates,
+      filteredFileTemplates,
+      filterTemplates,
       fileTemplateLabel,
-      saveTemplateDialog,
-      saveAsNew,
-      selectedFileTemplateTags,
-      filteredFileTemplateTags,
-      filterFileTemplateTags,
-      createFileTemplateTag,
     };
   },
 });
