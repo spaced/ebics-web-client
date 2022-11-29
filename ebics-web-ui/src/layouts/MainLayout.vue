@@ -75,7 +75,7 @@
               <q-icon name="code" />
             </q-item-section>
 
-            <q-item-section> Uplaod templates </q-item-section>
+            <q-item-section> Upload templates </q-item-section>
           </q-item>
 
           <q-item to="/download" exact clickable v-ripple>
