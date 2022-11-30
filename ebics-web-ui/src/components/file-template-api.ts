@@ -11,7 +11,7 @@ import { FileTemplate } from 'components/models/file-template';
  *  loadFileTemplate function to trigger refreshing of file template
  *  createOrUpdateFileTemplate function to trigger saving of file template
  */
-export default function useSingleFileTemplateAPI(fileTemplateId: number | undefined, copy?: boolean) {
+export default function useFileTemplateAPI(fileTemplateId: number | undefined, copy?: boolean) {
   const { apiErrorHandler, apiOkHandler } = useBaseAPI();
 
   const fileTemplate = ref<FileTemplate>({
