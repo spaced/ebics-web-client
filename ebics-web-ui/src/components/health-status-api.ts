@@ -173,7 +173,9 @@ export default function useHealthAllivenessStatusAPI() {
           connectionStatus.frontendStatus = createFrontendConnectionStatus(
             relatedObjectReference, connectionStatus.backendStatus
           );
-          connectionStatus.lastError = apiError;
+          if (apiError) {
+            connectionStatus.frontendStatus.lastError = apiError;
+          }
         }
       }
     );

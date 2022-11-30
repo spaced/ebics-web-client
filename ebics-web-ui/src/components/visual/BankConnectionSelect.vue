@@ -110,7 +110,7 @@ export default defineComponent({
           case HealthStatusType.Error:
             return {labelText: 'Status: The connection is erroneous.', labelClass: 'text-negative' };
           case HealthStatusType.Warning:
-            return {labelText: `Status: The connection has some issues - ${connectionStatus.okRate}% OK rate.`, labelClass: 'text-warning' };
+            return {labelText: `Status: The connection has some issues - ${connectionStatus.okRate.toFixed(0)}% OK rate.`, labelClass: 'text-warning' };
           default:
             return {labelText: 'Status: The connection is Unknown.', labelClass: 'text-grey' };
         }

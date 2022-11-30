@@ -62,6 +62,19 @@ const routes: RouteRecordRaw[] = [
           return { id, action: 'copy' };
         },
       },
+      {
+        path: '/template/:id',
+        name: 'template/view',
+        meta: { label: 'Templates / View' },
+        component: () => import('pages/UploadTemplate.vue'),
+        props: (route) => {
+          const id = Number.parseInt(route.params.id as string, 10);
+          if (Number.isNaN(id)) {
+            return undefined;
+          }
+          return { id, action: 'view' };
+        },
+      },
       { path: '/bankconnections', meta: { label: 'Bank connections' }, component: () => import('pages/BankConnections.vue') },
       {
         path: '/bankconnection',

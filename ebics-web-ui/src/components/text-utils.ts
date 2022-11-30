@@ -329,7 +329,7 @@ export default function useTextUtils() {
         ? '(<InstdAmt Ccy="\\w{3}">.*<\\/InstdAmt>)|(<Amt Ccy="\\w{3}">.*<\\/Amt>)'
         : null,
       s.creDtTm ? '(<CreDtTm>.*<\\/CreDtTm>)' : null,
-      s.reqdExctnDt ? '(<ReqdExctnDt>.*<\\/ReqdExctnDt>)' : null,
+      s.reqdExctnDt ? '(<ReqdExctnDt>.*<\\/ReqdExctnDt>)|(<Dt>.*<\\/Dt>)|(<DtTm>.*<\\/DtTm>)' : null,
       s.msgId ? '(<MsgId>.*</MsgId>)' : null,
     ].filter(Boolean);
     let output = fileText;
@@ -370,6 +370,10 @@ export default function useTextUtils() {
           return match;
         } else if (s.reqdExctnDt && match.startsWith('<ReqdExctnDt>')) {
           return `<ReqdExctnDt>${formatDate()}</ReqdExctnDt>`;
+        } else if (s.reqdExctnDt && match.startsWith('<DtTm>')) {
+          return `<DtTm>${new Date().toISOString()}</DtTm>`;
+        } else if (s.reqdExctnDt && match.startsWith('<Dt>')) {
+          return `<Dt>${formatDate()}</Dt>`;
         } else if (s.creDtTm && match.startsWith('<CreDtTm>')) {
           return `<CreDtTm>${new Date().toISOString()}</CreDtTm>`;
         } else return 'Unknown match';

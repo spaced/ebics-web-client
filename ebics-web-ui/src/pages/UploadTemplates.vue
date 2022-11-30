@@ -2,7 +2,7 @@
   <q-page class="justify-evenly">
     <div class="q-pa-md">
       <q-table
-        title="File uplaod templates"
+        title="File upload templates"
         :filter="filter"
         :rows="fileTemplates"
         :columns="columns"
@@ -37,14 +37,14 @@
                   label="Edit"
                   icon-right="edit"
                   no-caps
-                  @click="routeToTemplatePage(Number(props.key))"
+                  @click="routeToTemplatePage('edit', Number(props.key))"
                 />
                 <q-btn 
                   size="sm"
                   label="Copy"
                   color="accent"
                   icon-right="content_copy"
-                  @click="routeToTemplatePage(Number(props.key), true);"
+                  @click="routeToTemplatePage('copy', Number(props.key));"
                 />
                 <q-btn 
                   size="sm"
@@ -61,14 +61,14 @@
                   label="View"
                   icon-right="description"
                   no-caps
-                  @click="routeToTemplatePage(Number(props.key))"
+                  @click="routeToTemplatePage('view', Number(props.key))"
                 />
                 <q-btn 
                   size="sm"
                   label="Copy"
                   color="accent"
                   icon-right="content_copy"
-                  @click="routeToTemplatePage(Number(props.key), true);"
+                  @click="routeToTemplatePage('copy', Number(props.key));"
                 />
               </div>
             </q-td>
@@ -94,7 +94,7 @@
               label="Add Template"
               icon-right="add"
               no-caps
-              @click="routeToTemplatePage()"
+              @click="routeToTemplatePage('create')"
             />
           </div>
         </template>
@@ -166,27 +166,24 @@ export default defineComponent({
      *  - if given then will be routed with 'id' parameter to edit page
      *  - if undefined will be routed without 'id' parameter to create page
      */
-    const routeToTemplatePage = async (templateId?: number, copy?: boolean) => {
+    const routeToTemplatePage = async (action: string, templateId?: number) => {
       const routeParams = templateId === undefined ? undefined : { id: templateId };
       
-      if (templateId === undefined) {
-        await router.push({
-          name: 'template/create',
-          params: routeParams,
-          query: { action: 'create' },
-        });
-      } else if (copy) {
-        await router.push({
-          name: 'template/copy',
-          params: routeParams,
-          query: { action: 'copy' },
-        });
-      } else {
-        await router.push({
-          name: 'template/edit',
-          params: routeParams,
-          query: { action: 'edit' },
-        });
+      switch(action) {
+        case 'create':
+          await router.push({
+            name: 'template/create',
+            params: routeParams,
+            query: { action: 'create' },
+          });
+          break;
+        default: //copy, edit, view
+          await router.push({
+            name: 'template/' + action,
+            params: routeParams,
+            query: { action: action },
+          });
+          break; 
       }
     }
     const exportTable = () => {
