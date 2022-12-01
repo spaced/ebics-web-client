@@ -106,13 +106,13 @@ export default defineComponent({
         const connectionStatus = getBankConnectionStatus(bankConnection);
         switch(connectionStatus.healthStatus) {
           case HealthStatusType.Ok:
-            return {labelText: 'Status: The connection is OK.', labelClass: 'text-positive' };
+            return {labelText: 'The connection status is OK.', labelClass: 'text-positive' };
           case HealthStatusType.Error:
-            return {labelText: 'Status: The connection is erroneous.', labelClass: 'text-negative' };
+            return {labelText: 'The connection is erroneous.', labelClass: 'text-negative' };
           case HealthStatusType.Warning:
-            return {labelText: `Status: The connection has some issues - ${connectionStatus.okRate.toFixed(0)}% OK rate.`, labelClass: 'text-warning' };
+            return {labelText: `The connection has some issues - ${connectionStatus.okRate.toFixed(0)}% OK rate.`, labelClass: 'text-warning' };
           default:
-            return {labelText: 'Status: The connection is Unknown.', labelClass: 'text-grey' };
+            return {labelText: 'The connection status is unknown.', labelClass: 'text-grey' };
         }
       } else {
         return {labelText: 'Bank connection not given', labelClass: 'text-warning' };

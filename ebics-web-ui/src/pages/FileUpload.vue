@@ -278,7 +278,6 @@ export default defineComponent({
 
     const refreshFileTextOnTeplateOrBankConnectionChange = async () => {
       if (fileTemplate.value) {      
-        console.log('ft' + JSON.stringify(fileTemplate));  
         fileText.value = await applyTemplateAdjustments(
           fileTemplate.value?.fileContentText,
           fileTemplate.value?.fileFormat,

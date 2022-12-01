@@ -79,9 +79,11 @@ class Splitter(
     val segmentNumber: Int
 
     /**
-     * Maximum size of the segment (1MB)
+     * The maximum size of a segment to be put in a request. base64 encoding adds
+     * 33% to that, and we need to stay below 1 MB. This is where 700kB comes from,
+     * to make sure we stay below that.
      */
-    val maxSegmentSize: Int = 1024 * 1024
+    val maxSegmentSize: Int = 700000
 
     /**
      * Slits the input into 1MB portions.
