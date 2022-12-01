@@ -1,17 +1,17 @@
 import {
   ConnectionStatusObject,
   HealthStatusType,
-} from './models/allivenes-health-status';
-import { ConnectionStatus } from './models/connection-status';
+} from 'components/models/allivenes-health-status';
+import { ConnectionStatus } from 'components/models/connection-status';
 import {
   ApiResponse,
   ApiResponseType,
   RelatedObjectReference,
   RelatedObjectType,
-} from './models/api-response';
-import { BankConnection } from './models/ebics-bank-connection';
-import { Bank } from './models/ebics-bank';
-import { ApiError } from './models/ebics-api-error';
+} from 'components/models/api-response';
+import { BankConnection } from 'components/models/ebics-bank-connection';
+import { Bank } from 'components/models/ebics-bank';
+import { ApiError } from 'components/models/ebics-api-error';
 
 function isBankConnection(
   connectionStatus: ConnectionStatus

@@ -1,4 +1,3 @@
-
 export interface AutoAdjustmentsPain00x {
   msgId: boolean;
   pmtInfId: boolean;

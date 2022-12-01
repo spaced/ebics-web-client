@@ -67,7 +67,7 @@ import { BankConnection } from 'components/models/ebics-bank-connection';
 import { bankConnectionLabel } from 'components/bankconnections';
 import { ConnectionStatusObject, HealthStatusType } from 'components/models/allivenes-health-status';
 import UserPreferences from 'components/visual/UserPreferences.vue'
-import useUserSettingsAPI from '../user-settings';
+import useUserSettingsAPI from 'components/user-settings';
 
 interface LabelTextAndClass {
   labelText: string,

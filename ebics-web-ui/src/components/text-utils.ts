@@ -1,12 +1,12 @@
 import {
   FileFormat,
-} from './models/file-format';
+} from 'components/models/file-format';
 import {
   AutoAdjustmentsPain00x,
   AutoAdjustmentsSwift, UserSettings
-} from './models/user-settings';
+} from 'components/models/user-settings';
 import { uuid } from 'vue-uuid';
-import { BankConnectionProperty } from './models/ebics-bank-connection';
+import { BankConnectionProperty } from 'components/models/ebics-bank-connection';
 
 /**
  * Text Utils composition API

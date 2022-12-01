@@ -3,7 +3,7 @@ import { Bank } from 'components/models/ebics-bank';
 import { Partner } from 'components/models/ebics-partner';
 import { BankConnection, BankConnectionProperty, UserPartnerBank } from 'components/models/ebics-bank-connection';
 import { api } from 'boot/axios';
-import useBaseAPI from './base-api';
+import useBaseAPI from 'components/base-api';
 import { AxiosResponse } from 'axios';
 
 /**

@@ -1,6 +1,6 @@
 import { ref, onMounted, computed } from 'vue';
 import { api } from 'boot/axios';
-import useBaseAPI from './base-api';
+import useBaseAPI from 'components/base-api';
 
 export interface HttpClientGlobalConfiguration {
   connectionPoolMaxTotal: number;

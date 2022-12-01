@@ -1,4 +1,4 @@
-import { ConnectionStatusObject } from './allivenes-health-status';
+import { ConnectionStatusObject } from 'components/models/allivenes-health-status';
 
 
 export interface ConnectionStatus {

@@ -62,7 +62,7 @@ export default defineComponent({
     },
   },
   emits: ['update:properties'],
-  setup(props, { emit }) {
+  setup(props) {
     const columns = [
       {
         name: 'name',

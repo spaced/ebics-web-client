@@ -1,4 +1,4 @@
-import { ApiError } from './ebics-api-error';
+import { ApiError } from 'components/models/ebics-api-error';
 
 export enum RelatedObjectType {
     Bank,
