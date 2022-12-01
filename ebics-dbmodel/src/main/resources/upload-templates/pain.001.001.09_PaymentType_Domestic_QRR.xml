@@ -15,7 +15,7 @@
 					</Othr>
 					<Othr>
 						<ChanlTp>VRSN</ChanlTp>
-						<Id>1.7.5</Id>
+						<Id>1.7</Id>
 					</Othr>
 					<Othr>
 						<ChanlTp>PRVD</ChanlTp>
@@ -49,7 +49,7 @@
 			</DbtrAcct>
 			<DbtrAgt>
 				<FinInstnId>
-					<BIC>%%debitAgentBIC%%</BIC>
+					<BICFI>%%debitAgentBIC%%</BICFI>
 				</FinInstnId>
 			</DbtrAgt>
 			<CdtTrfTxInf>

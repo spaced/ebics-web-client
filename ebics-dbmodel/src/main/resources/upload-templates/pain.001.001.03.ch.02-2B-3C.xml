@@ -7,7 +7,7 @@ Allgemeine Anregungen können auch bei der SIX Interbank Clearing AG unter folge
 operations@six-group.com 
 -->
 <Document xmlns="http://www.six-interbank-clearing.com/de/pain.001.001.03.ch.02.xsd"
-		  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+>
 	<CstmrCdtTrfInitn>
 		<GrpHdr>
 			<MsgId>%%aLevelId%%</MsgId>
@@ -51,7 +51,7 @@ operations@six-group.com
 					</LclInstrm>
 				</PmtTpInf>
 				<Amt>
-					<InstdAmt Ccy="CHF">3949.75</InstdAmt>
+					<InstdAmt Ccy="CHF">1.01</InstdAmt>
 				</Amt>
 				<CdtrAcct>
 					<Id>
@@ -102,7 +102,7 @@ operations@six-group.com
 					</LclInstrm>
 				</PmtTpInf>
 				<Amt>
-					<InstdAmt Ccy="EUR">8479.25</InstdAmt>
+					<InstdAmt Ccy="EUR">1.02</InstdAmt>
 				</Amt>
 				<Cdtr>
 					<Nm>Robert Scheider SA</Nm>
@@ -136,7 +136,7 @@ operations@six-group.com
 					</SvcLvl>
 				</PmtTpInf>
 				<Amt>
-					<InstdAmt Ccy="EUR">3421.00</InstdAmt>
+					<InstdAmt Ccy="EUR">1.03</InstdAmt>
 				</Amt>
 				<CdtrAgt>
 					<FinInstnId>

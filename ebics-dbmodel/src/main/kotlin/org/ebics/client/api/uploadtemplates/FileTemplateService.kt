@@ -11,12 +11,13 @@ class FileTemplateService(private val fileTemplateRepository: FileTemplateReposi
 
     fun listAllTemplates(): List<FileTemplate> {
         val authCtx = AuthenticationContext.fromSecurityContext()
-        return fileTemplateRepository.findAll()
+        val templates = fileTemplateRepository.findAll()
             .map { template ->
                 template.custom = true
                 template.canBeEdited = template.hasWriteAccess(authCtx)
                 template
             }.filter { it.hasReadAccess(authCtx) } + getPredefinedResourceTemplates()
+        return templates.sortedBy { it.templateName }
     }
 
     fun getTemplateById(templateId: Long): FileTemplate {
@@ -85,7 +86,7 @@ class FileTemplateService(private val fileTemplateRepository: FileTemplateReposi
                 -101L,
                 getResourceFileContent("/upload-templates/pain.001.001.09_PaymentType_Domestic_QRR.xml"),
                 "Pain.001.001.09.ch.02.xml SPS Domestic QRR Payment",
-                "Payment,QRR,SPS,CH",
+                "Payment,QRR,SPS,CH,Domestic,ISOv2019",
                 FileFormatType.Xml,
                 custom = false,
                 canBeEdited = false,
@@ -96,7 +97,7 @@ class FileTemplateService(private val fileTemplateRepository: FileTemplateReposi
                 -102L,
                 getResourceFileContent("/upload-templates/pain.001.001.09_PaymentType_Domestic_SCOR.xml"),
                 "Pain.001.001.09.ch.02.xml SPS Domestic SCOR Payment",
-                "Payment,SCOR,SPS,CH",
+                "Payment,SCOR,SPS,CH,Domestic,ISOv2019",
                 FileFormatType.Xml,
                 custom = false,
                 canBeEdited = false,
@@ -107,7 +108,7 @@ class FileTemplateService(private val fileTemplateRepository: FileTemplateReposi
                 -102L,
                 getResourceFileContent("/upload-templates/pain.001.001.09_PaymentType_SEPA.xml"),
                 "Pain.001.001.09.ch.02.xml SPS SEPA Payment",
-                "Payment,SEPA,SPS,CH",
+                "Payment,SEPA,SPS,CH,ISOv2019",
                 FileFormatType.Xml,
                 custom = false,
                 canBeEdited = false,
@@ -116,15 +117,81 @@ class FileTemplateService(private val fileTemplateRepository: FileTemplateReposi
             ),
             FileTemplate(
                 -103L,
+                getResourceFileContent("/upload-templates/pain.001.001.09_PaymentType_XBorder-V1.xml"),
+                "Pain.001.001.09.ch.02.xml SPS X-Border V1 Payment",
+                "Payment,SWIFT,SPS,CH,ISOv2019",
+                FileFormatType.Xml,
+                custom = false,
+                canBeEdited = false,
+                creatorUserId = systemUserId,
+                guestAccess = true
+            ),
+            FileTemplate(
+                -104L,
+                getResourceFileContent("/upload-templates/pain.001.001.09_PaymentType_XBorder-V2.xml"),
+                "Pain.001.001.09.ch.02.xml SPS X-Border V2 Payment",
+                "Payment,SWIFT,SPS,CH,ISOv2019",
+                FileFormatType.Xml,
+                custom = false,
+                canBeEdited = false,
+                creatorUserId = systemUserId,
+                guestAccess = true
+            ),
+            FileTemplate(
+                -105L,
+                getResourceFileContent("/upload-templates/pain.001.001.09-2B-3C.xml"),
+                "Pain.001.001.09.ch.02.xml SPS 2xB 3xC Payment",
+                "Payment,SPS,CH,Multiple-B-Level,Multiple-C-Level,ISOv2019",
+                FileFormatType.Xml,
+                custom = false,
+                canBeEdited = false,
+                creatorUserId = systemUserId,
+                guestAccess = true
+            ),
+            FileTemplate(
+                -110L,
                 getResourceFileContent("/upload-templates/pain.001.001.03.ch.02-2B-3C.xml"),
                 "pain.001.001.03.ch.xml SPS Payment 2xB 3xC",
-                "Payment,QRR,SPS,CH",
+                "Payment,QRR,SPS,CH,Multiple-B-Level,Multiple-C-Level,ISOv2009",
                 FileFormatType.Xml,
                 custom = false,
                 canBeEdited = false,
                 systemUserId,
                 true
-            )
+            ),
+            FileTemplate(
+                -111L,
+                getResourceFileContent("/upload-templates/pain.001.001.03.ch.02-PaymentType_Domestic_CH01.xml"),
+                "pain.001.001.03.ch.xml SPS Payment CH01 ESR",
+                "Payment,QRR,SPS,CH,CH01,ESR,Domestic,ISOv2009",
+                FileFormatType.Xml,
+                custom = false,
+                canBeEdited = false,
+                systemUserId,
+                true
+            ),
+            FileTemplate(
+                -112L,
+                getResourceFileContent("/upload-templates/pain.001.001.03.ch.02-PaymentType_Domestic_CH02.xml"),
+                "pain.001.001.03.ch.xml SPS Payment CH02 ESR",
+                "Payment,QRR,SPS,CH,CH02,ESR,Domestic,ISOv2009",
+                FileFormatType.Xml,
+                custom = false,
+                canBeEdited = false,
+                systemUserId,
+                true
+            ),
+            FileTemplate(
+                -113L,
+                getResourceFileContent("/upload-templates/pain.001.001.03.ch.02-PaymentType_SEPA.xml"),
+                "pain.001.001.03.ch.xml SPS Payment SEPA",
+                "Payment,QRR,SPS,CH,SEPA,ISOv2009",
+                FileFormatType.Xml,
+                custom = false,
+                canBeEdited = false,
+                systemUserId,
+                true
+            ),
         )
     }
 

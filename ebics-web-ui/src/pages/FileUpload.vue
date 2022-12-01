@@ -283,6 +283,7 @@ export default defineComponent({
           fileTemplate.value?.fileFormat,
           userSettings.value,
           bankConnection.value?.properties ? bankConnection.value?.properties : [])
+        fileName.value = fileTemplate.value.templateName
       }
     }
 
