@@ -11,7 +11,7 @@ import {
   CertRequest
 } from 'components/models/ebics-request-response';
 import { api } from 'boot/axios';
-import usePasswordAPI from './password-api';
+import usePasswordAPI from 'components/password-api';
 
 
 

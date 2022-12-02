@@ -2,24 +2,24 @@
 <Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.001.001.09" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:iso:std:iso:20022:tech:xsd:pain.001.001.09 pain.001.001.09.ch.03.xsd">
 	<CstmrCdtTrfInitn>
 		<GrpHdr>
-			<MsgId>MSG-01</MsgId>
-			<CreDtTm>2023-02-15T07:30:00</CreDtTm>
-			<NbOfTxs>3</NbOfTxs>
-			<CtrlSum>15850.00</CtrlSum>
+			<MsgId>%%aLevelId%%</MsgId>
+			<CreDtTm>%%IsoDtTm%%</CreDtTm>
+			<NbOfTxs>%%NbOfTxs-aLevel%%</NbOfTxs>
+			<CtrlSum>%%CtrlSum%%</CtrlSum>
 			<InitgPty>
 				<Nm>MUSTER AG</Nm>
 				<CtctDtls>
 					<Othr>
 						<ChanlTp>NAME</ChanlTp>
-						<Id>pay.4me</Id>
+						<Id>EBICS Web Client</Id>
 					</Othr>
 					<Othr>
 						<ChanlTp>VRSN</ChanlTp>
-						<Id>2.8.1</Id>
+						<Id>1.7</Id>
 					</Othr>
 					<Othr>
 						<ChanlTp>PRVD</ChanlTp>
-						<Id>SuperPay AG</Id>
+						<Id>JTO OpenSource</Id>
 					</Othr>
 					<Othr>
 						<ChanlTp>SPSV</ChanlTp>
@@ -29,11 +29,11 @@
 			</InitgPty>
 		</GrpHdr>
 		<PmtInf>
-			<PmtInfId>PMTINF-01</PmtInfId>
+			<PmtInfId>%%bLevelId%%</PmtInfId>
 			<PmtMtd>TRF</PmtMtd>
 			<BtchBookg>true</BtchBookg>
 			<ReqdExctnDt>
-				<Dt>2023-02-22</Dt>
+				<Dt>%%IsoDt%%</Dt>
 			</ReqdExctnDt>
 			<Dbtr>
 				<Nm>MUSTER AG</Nm>
@@ -44,21 +44,21 @@
 			</Dbtr>
 			<DbtrAcct>
 				<Id>
-					<IBAN>CH7280005000088877766</IBAN>
+					<IBAN>%%debitAccountIban%%</IBAN>
 				</Id>
 			</DbtrAcct>
 			<DbtrAgt>
 				<FinInstnId>
-					<BICFI>RAIFCH22005</BICFI>
+					<BICFI>%%debitAgentBIC%%</BICFI>
 				</FinInstnId>
 			</DbtrAgt>
 			<CdtTrfTxInf>
 				<PmtId>
-					<InstrId>INSTRID-01-01</InstrId>
-					<EndToEndId>ENDTOENDID-001</EndToEndId>
+					<InstrId>%%cLevelId%%</InstrId>
+					<EndToEndId>%%cLevelId-keep%%</EndToEndId>
 				</PmtId>
 				<Amt>
-					<InstdAmt Ccy="USD">3949.75</InstdAmt>
+					<InstdAmt Ccy="USD">1.01</InstdAmt>
 				</Amt>
 				<Cdtr>
 					<Nm>Peter Haller</Nm>
@@ -90,7 +90,7 @@
 			</CdtTrfTxInf>
 		</PmtInf>
 		<PmtInf>
-			<PmtInfId>PMTINF-02</PmtInfId>
+			<PmtInfId>%%bLevelId%%</PmtInfId>
 			<PmtMtd>TRF</PmtMtd>
 			<BtchBookg>true</BtchBookg>
 			<PmtTpInf>
@@ -99,28 +99,28 @@
 				</SvcLvl>
 			</PmtTpInf>
 			<ReqdExctnDt>
-				<Dt>2023-02-18</Dt>
+				<Dt>%%IsoDt%%</Dt>
 			</ReqdExctnDt>
 			<Dbtr>
 				<Nm>MUSTER AG</Nm>
 			</Dbtr>
 			<DbtrAcct>
 				<Id>
-					<IBAN>CH7280005000088877766</IBAN>
+					<IBAN>%%debitAccountIban%%</IBAN>
 				</Id>
 			</DbtrAcct>
 			<DbtrAgt>
 				<FinInstnId>
-					<BICFI>RAIFCH22005</BICFI>
+					<BICFI>%%debitAgentBIC%%</BICFI>
 				</FinInstnId>
 			</DbtrAgt>
 			<CdtTrfTxInf>
 				<PmtId>
-					<InstrId>INSTRID-02-01</InstrId>
-					<EndToEndId>ENDTOENDID-002</EndToEndId>
+					<InstrId>%%cLevelId%%</InstrId>
+					<EndToEndId>%%cLevelId-keep%%</EndToEndId>
 				</PmtId>
 				<Amt>
-					<InstdAmt Ccy="EUR">8479.25</InstdAmt>
+					<InstdAmt Ccy="EUR">2.02</InstdAmt>
 				</Amt>
 				<Cdtr>
 					<Nm>Robert Scheider SA</Nm>
@@ -143,11 +143,11 @@
 			</CdtTrfTxInf>
 			<CdtTrfTxInf>
 				<PmtId>
-					<InstrId>INSTRID-02-02</InstrId>
-					<EndToEndId>ENDTOENDID-003</EndToEndId>
+					<InstrId>%%cLevelId%%</InstrId>
+					<EndToEndId>%%cLevelId-keep%%</EndToEndId>
 				</PmtId>
 				<Amt>
-					<InstdAmt Ccy="EUR">3421.00</InstdAmt>
+					<InstdAmt Ccy="EUR">3.03</InstdAmt>
 				</Amt>
 				<CdtrAgt>
 					<FinInstnId>

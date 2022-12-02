@@ -1,7 +1,7 @@
 import { EbicsVersion } from 'components/models/ebics-version';
 import { BankConnectionId } from 'components/models/ebics-bank-connection';
 import { BtfService } from 'src/components/models/btf-service';
-import { Bank } from './ebics-bank';
+import { Bank } from 'components/models/ebics-bank';
 
 
 export enum TraceType {

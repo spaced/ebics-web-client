@@ -11,11 +11,11 @@ import {
   OrderType,
   TransferType
 } from 'components/models/ebics-order-type';
-import useFileTransferAPI from './filetransfer';
-import { CustomMap } from './utils';
-import usePasswordAPI from './password-api';
-import useBanksAPI from './banks';
-import useUserSettingsAPI from './user-settings';
+import useFileTransferAPI from 'components/filetransfer';
+import { CustomMap } from 'components/utils';
+import usePasswordAPI from 'components/password-api';
+import useBanksAPI from 'components/banks';
+import useUserSettingsAPI from 'components/user-settings';
 
 //Global internal cache of all OrderTypes for all active bank connections..
 const orderTypeCache: CustomMap<number, OrderType[]> = new CustomMap<

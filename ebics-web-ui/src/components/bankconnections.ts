@@ -4,10 +4,10 @@ import {
   BankConnectionAccess,
 } from 'src/components/models/ebics-bank-connection';
 import { api } from 'boot/axios';
-import useBaseAPI from './base-api';
+import useBaseAPI from 'components/base-api';
 import { useQuasar } from 'quasar';
-import { HealthStatusType } from './models/allivenes-health-status';
-import useUserSettingsAPI from './user-settings';
+import { HealthStatusType } from 'components/models/allivenes-health-status';
+import useUserSettingsAPI from 'components/user-settings';
 
 /**
  * Display label of the bankConnection

@@ -1,4 +1,4 @@
-import { BtfService } from './btf-service';
+import { BtfService } from 'components/models/btf-service';
 
 export enum AdminOrderType {
   INI = 'INI',

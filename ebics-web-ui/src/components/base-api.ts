@@ -1,8 +1,8 @@
 import { ApiError, EbicsApiError, EbicsServerApiError } from 'components/models/ebics-api-error';
 import { useQuasar } from 'quasar';
 import { AxiosError } from 'axios';
-import { ConnectionStatus } from './models/connection-status';
-import useHealthAllivenessStatusAPI from './health-status-api';
+import { ConnectionStatus } from 'components/models/connection-status';
+import useHealthAllivenessStatusAPI from 'components/health-status-api';
 
 function isAxiosError<T>(error: unknown): error is AxiosError<T> {
   return (error as AxiosError).isAxiosError !== undefined;

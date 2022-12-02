@@ -8,22 +8,39 @@
 			<CtrlSum>%%CtrlSum%%</CtrlSum>
 			<InitgPty>
 				<Nm>MUSTER AG</Nm>
+				<CtctDtls>
+					<Othr>
+						<ChanlTp>NAME</ChanlTp>
+						<Id>EBICS Web Client</Id>
+					</Othr>
+					<Othr>
+						<ChanlTp>VRSN</ChanlTp>
+						<Id>1.7</Id>
+					</Othr>
+					<Othr>
+						<ChanlTp>PRVD</ChanlTp>
+						<Id>JTO OpenSource</Id>
+					</Othr>
+					<Othr>
+						<ChanlTp>SPSV</ChanlTp>
+						<Id>2.0</Id>
+					</Othr>
+				</CtctDtls>
 			</InitgPty>
 		</GrpHdr>
 		<PmtInf>
 			<PmtInfId>%%bLevelId%%</PmtInfId>
 			<PmtMtd>TRF</PmtMtd>
 			<BtchBookg>true</BtchBookg>
-			<PmtTpInf>
-				<SvcLvl>
-					<Cd>SEPA</Cd>
-				</SvcLvl>
-			</PmtTpInf>
 			<ReqdExctnDt>
 				<Dt>%%IsoDt%%</Dt>
 			</ReqdExctnDt>
 			<Dbtr>
 				<Nm>MUSTER AG</Nm>
+				<PstlAdr>
+					<TwnNm>SELDWYLA</TwnNm>
+					<Ctry>CH</Ctry>
+				</PstlAdr>
 			</Dbtr>
 			<DbtrAcct>
 				<Id>
@@ -32,33 +49,51 @@
 			</DbtrAcct>
 			<DbtrAgt>
 				<FinInstnId>
-					<BIC>%%debitAgentBIC%%</BIC>
+					<BICFI>%%debitAgentBIC%%</BICFI>
 				</FinInstnId>
 			</DbtrAgt>
 			<CdtTrfTxInf>
 				<PmtId>
 					<InstrId>%%cLevelId%%</InstrId>
 					<EndToEndId>%%cLevelId-keep%%</EndToEndId>
+					<UETR>%%UETR%%</UETR>
 				</PmtId>
 				<Amt>
-					<InstdAmt Ccy="EUR">1.01</InstdAmt>
+					<InstdAmt Ccy="USD">1.01</InstdAmt>
 				</Amt>
 				<CdtrAgt>
 					<FinInstnId>
-						<BICFI>DEUTDEFF</BICFI>
+						<ClrSysMmbId>
+							<ClrSysId>
+								<Cd>CHP</Cd>
+							</ClrSysId>
+							<MmbId>BR004507</MmbId>
+						</ClrSysMmbId>
+						<Nm>UBS Ltd</Nm>
+						<PstlAdr>
+							<StrtNm>Finsbury Avenue</StrtNm>
+							<BldgNb>1</BldgNb>
+							<PstCd>EC2M 2PP</PstCd>
+							<TwnNm>London</TwnNm>
+							<Ctry>GB</Ctry>
+						</PstlAdr>
 					</FinInstnId>
 				</CdtrAgt>
 				<Cdtr>
-					<Nm>Peter Haller</Nm>
+					<Nm>Peter Fonda</Nm>
 					<PstlAdr>
-						<Ctry>DE</Ctry>
-						<AdrLine>Rosenauweg 4</AdrLine>
-						<AdrLine>DE-80036 München</AdrLine>
+						<StrtNm>Saville Row</StrtNm>
+						<BldgNb>4</BldgNb>
+						<PstCd>EC2R WYK</PstCd>
+						<TwnNm>London</TwnNm>
+						<Ctry>GB</Ctry>
 					</PstlAdr>
 				</Cdtr>
 				<CdtrAcct>
 					<Id>
-						<IBAN>DE62007620110623852957</IBAN>
+						<Othr>
+							<Id>474-8512-007</Id>
+						</Othr>
 					</Id>
 				</CdtrAcct>
 				<RmtInf>

@@ -1,7 +1,7 @@
 import { ref, onMounted, computed } from 'vue';
 import { api } from 'boot/axios';
 import { AxiosResponse } from 'axios';
-import useBaseAPI from './base-api';
+import useBaseAPI from 'components/base-api';
 import { FileTemplate } from 'components/models/file-template';
 
 /**

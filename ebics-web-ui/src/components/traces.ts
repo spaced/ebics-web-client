@@ -1,7 +1,7 @@
 import { ref, onMounted } from 'vue';
 import { api } from 'boot/axios';
-import useBaseAPI from './base-api';
-import { TraceEntry } from './models/trace';
+import useBaseAPI from 'components/base-api';
+import { TraceEntry } from 'components/models/trace';
 
 export default function useTracesAPI() {
   const { apiErrorHandler } = useBaseAPI();

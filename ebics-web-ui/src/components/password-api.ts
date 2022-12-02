@@ -1,7 +1,7 @@
 import { ref, Ref } from 'vue';
 import { useQuasar } from 'quasar';
 import { BankConnection } from 'components/models/ebics-bank-connection'
-import useBaseAPI from './base-api';
+import useBaseAPI from 'components/base-api';
 
 /**
  * Passwords entered on actual session for the given @param user.id

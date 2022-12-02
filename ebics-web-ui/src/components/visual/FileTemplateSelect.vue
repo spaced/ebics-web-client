@@ -93,22 +93,27 @@ export default defineComponent({
 
     const filteredFileTemplates = ref<FileTemplate[] | unknown>([]);
     
+    const templateFilterPredicate = (template:FileTemplate, needle: string):boolean => {
+      return template.templateName.toLowerCase().includes(needle) || 
+             template.templateTags.toLowerCase().includes(needle);
+    }
+
     const filterTemplates = (
       val: string,
       update: (fn: () => void) => void
     ) => {
       update(() => {
-        if (val === '') {
+        if (val.trim() === '') {
           filteredFileTemplates.value = fileTemplates.value;
         } else {
-          const needle = val.toLowerCase();
+          const needle = val.trim().toLowerCase();
+          const needles = needle.split(' ');
           filteredFileTemplates.value = fileTemplates.value?.filter(template => {
-            return template.templateName.toLowerCase().includes(needle) || 
-                  template.templateTags.toLowerCase().includes(needle);
+            return needles.every(needle => templateFilterPredicate(template, needle))
           });
         }
       });
-    };
+    };    
 
     return {
       fileTemplateVal,

@@ -1,7 +1,7 @@
 import { ref } from 'vue';
 import { UserSettings } from 'components/models/user-settings';
 import { api } from 'boot/axios';
-import useBaseAPI from './base-api';
+import useBaseAPI from 'components/base-api';
 
 const userSettings = ref<UserSettings>({
   uploadOnDrop: true,

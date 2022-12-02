@@ -2,8 +2,8 @@ import { ref, onMounted } from 'vue';
 import { EbicsVersion } from 'components/models/ebics-version';
 import { Bank } from 'components/models/ebics-bank';
 import { api } from 'boot/axios';
-import useBaseAPI from './base-api';
-import useDialogs from './dialogs';
+import useBaseAPI from 'components/base-api';
+import useDialogs from 'components/dialogs';
 
 /**
  * Bank Connections composition API for bank connection list operations with backend REST API
