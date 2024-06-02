@@ -273,7 +273,7 @@
 			<documentation xml:lang="en">Data type for digital signature data transferred using EBICS.</documentation>
 		</annotation>
 		<sequence>
-			<element name="OrderSignature" minOccurs="0" maxOccurs="0">
+			<element name="OrderSignature" minOccurs="0">
 				<annotation>
 					<documentation xml:lang="de">bankfachliche Elektronische Unterschrift.</documentation>
 					<documentation xml:lang="en">Digital signature (either autorising an order or applied for transportation).</documentation>
@@ -428,7 +428,7 @@
 						</complexContent>
 					</complexType>
 				</element>
-				<element name="SignatureData" minOccurs="0" maxOccurs="0">
+				<element name="SignatureData" minOccurs="0">
 					<annotation>
 						<documentation xml:lang="de">enthält Signaturdaten (EUs).</documentation>
 						<documentation xml:lang="en">contains signature data (ESs).</documentation>
@@ -684,7 +684,7 @@
 					<documentation xml:lang="en">public encryption key</documentation>
 				</annotation>
 			</element>
-			<element ref="esig:SignaturePubKeyInfo" minOccurs="0" maxOccurs="0">
+			<element ref="esig:SignaturePubKeyInfo" minOccurs="0">
 				<annotation>
 					<documentation xml:lang="de">öffentlicher EU-Signaturschlüssel.</documentation>
 					<documentation xml:lang="en">public ES key.</documentation>
@@ -919,7 +919,7 @@
 					<documentation xml:lang="en">Can the order details be downloaded as XML document HVTResponseOrderData?  (HVT with completeOrderData=false)</documentation>
 				</annotation>
 			</element>
-			<element name="BankSignature" type="ebics:SignatureType" minOccurs="0" maxOccurs="0">
+			<element name="BankSignature" type="ebics:SignatureType" minOccurs="0">
 				<annotation>
 					<documentation xml:lang="de">bankfachliche Elektronische Unterschrift des Kreditinstituts über Hashwert und Displaydatei.</documentation>
 					<documentation xml:lang="en">Digital Signature issued by the bank, covering the hash value and the accompanying ticket.</documentation>
@@ -1887,7 +1887,7 @@
 					<element name="SignatureFlag" type="ebics:SignatureFlagType" minOccurs="0">
 						<annotation>
 							<documentation>If not present the order doesn't contain any ES and shall be authorised outside EBICS
-If present the order shall be autorised within EBICS: 
+If present the order shall be autorised within EBICS:
 1. If the attribute VEU is also present the sender desires spooling into the VEU - hence in this case the order is not rejected in the case of not sufficient number of ES
 2. If the attribute is not present all necessary ES must be inside the order (else: rejection of the order)  </documentation>
 						</annotation>
@@ -1915,7 +1915,7 @@ If present the order shall be autorised within EBICS:
 			<element name="SignatureFlag" type="ebics:SignatureFlagType" minOccurs="0">
 				<annotation>
 					<documentation>If not present the order doesn't contain any ES and shall be authorised outside EBICS
-If present the order shall be autorised within EBICS: 
+If present the order shall be autorised within EBICS:
 1. If the attribute VEU is also present the sender desires spooling into the VEU - hence in this case the order is not rejected in the case of not sufficient number of ES
 2. If the attribute is not present all necessary ES must be inside the order (else: rejection of the order)  </documentation>
 				</annotation>
@@ -1985,7 +1985,7 @@ If present the order shall be autorised within EBICS:
 			</element>
 			<element name="Scope" type="ebics:ScopeStringType" minOccurs="0">
 				<annotation>
-					<documentation>Specifies whose rules have to be taken into account for the service. This means which market / comminity has defined the rules. 
+					<documentation>Specifies whose rules have to be taken into account for the service. This means which market / comminity has defined the rules.
 If the element is absent a global definition for the service is assumed.
 External list specified and maintained by EBICS. In addition the following codes may be used:
 2-character ISO country code or a 3-character issuer code (defined by EBICS)</documentation>
@@ -2023,10 +2023,10 @@ Additional option for the service (also depends on used scope)</documentation>
 					</element>
 					<element name="Scope" type="ebics:ScopeStringType" minOccurs="0">
 						<annotation>
-							<documentation>Specifies whose rules have to be taken into account for the service. This means which market / comminity has defined the rules. 
+							<documentation>Specifies whose rules have to be taken into account for the service. This means which market / comminity has defined the rules.
 If the element is absent a global definition for the service is assumed.
 External list specified and maintained by EBICS.
-In addition the following codes may be used:        
+In addition the following codes may be used:
 2-character ISO country code or a 3-character issuer code (defined by EBICS)</documentation>
 						</annotation>
 					</element>
