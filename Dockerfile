@@ -2,7 +2,7 @@
 # docker run -p 8080:8080 ebics-java-client
 # docker run -p 8080:8080 -v ./conf:/app/conf -e EWC_CONFIG_HOME=/app/conf ebics-java-client
 
-FROM maven:3-jdk-8 as build
+FROM maven:3 as build
 #16 as build
 RUN mkdir app
 COPY ./ebics-dbmodel /app/ebics-dbmodel
@@ -11,8 +11,8 @@ COPY ./ebics-rest-api /app/ebics-rest-api
 COPY ./ebics-web-ui /app/ebics-web-ui
 COPY ./pom.xml /app/
 WORKDIR /app
-RUN mvn clean install -DskipTests
-FROM openjdk:8-alpine
+RUN mvn -e clean install -DskipTests
+FROM amazoncorretto:21-alpine-jdk
 #16-alpine
 #COPY ./libpatch/local_policy.jar ./libpatch/US_export_policy.jar /opt/jdk/jre/lib/security/
 RUN mkdir /app

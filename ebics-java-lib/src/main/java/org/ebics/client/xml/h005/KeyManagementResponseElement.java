@@ -57,9 +57,8 @@ public class KeyManagementResponseElement extends DefaultResponseElement {
    * Returns the order data of the response.
    * @return the order data.
    */
-  @SuppressWarnings("deprecation")
   public byte[] getOrderData() {
-    return response.getBody().getDataTransfer().getOrderData().byteArrayValue();
+    return response.getBody().getDataTransfer().getOrderData().getByteArrayValue();
   }
 
   @Override
