@@ -19,6 +19,7 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager
 import org.springframework.security.provisioning.JdbcUserDetailsManager
 import org.springframework.security.provisioning.UserDetailsManager
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import javax.sql.DataSource
 
 
@@ -30,22 +31,23 @@ class SecurityConfiguration() {
     @Bean
     fun configure(): InMemoryUserDetailsManager {
         return InMemoryUserDetailsManager(
-            User.withUsername("guest").password("password").roles("GUEST").build(),
-            User.withUsername("user").password("password").roles("USER", "GUEST").build(),
-            User.withUsername("admin").password("password").roles("ADMIN", "USER", "GUEST").build()
+            User.withUsername("guest").password("{noop}pass").roles("GUEST").build(),
+            User.withUsername("user").password("{noop}pass").roles("USER", "GUEST").build(),
+            User.withUsername("admin").password("{noop}pass").roles("ADMIN", "USER", "GUEST").build()
         )
     }
 
     @Bean
     fun filterChainBasic(http: HttpSecurity): SecurityFilterChain {
         http {
+            httpBasic {  }
             authorizeRequests {
                 authorize(HttpMethod.GET, "/bankconnections",hasAnyRole("ADMIN", "USER", "GUEST"))
-                authorize(HttpMethod.POST, "/bankconnections/{\\d+}/H00{\\d+}/**",hasAnyRole("USER", "GUEST"))
-                authorize(HttpMethod.GET, "/bankconnections/{\\d+}/H00{\\d+}/**",hasAnyRole("USER", "GUEST"))
+                authorize(AntPathRequestMatcher( "/bankconnections/{\\d+}/H00{\\d+}/**",HttpMethod.POST.name()),hasAnyRole("USER", "GUEST"))
+                authorize(AntPathRequestMatcher("/bankconnections/{\\d+}/H00{\\d+}/**", HttpMethod.GET.name()),hasAnyRole("USER", "GUEST"))
                 authorize(HttpMethod.POST, "/bankconnections",hasRole("USER"))
-                authorize(HttpMethod.PUT, "/bankconnections/{\\d+}",hasRole("USER"))
-                authorize(HttpMethod.DELETE, "/bankconnections/{\\d+}",hasAnyRole("ADMIN", "USER"))
+                authorize(AntPathRequestMatcher("/bankconnections/{\\d+}", HttpMethod.PUT.name()),hasRole("USER"))
+                authorize(AntPathRequestMatcher("/bankconnections/{\\d+}",HttpMethod.DELETE.name()),hasAnyRole("ADMIN", "USER"))
                 authorize(HttpMethod.GET, "/banks/**",hasAnyRole("ADMIN", "USER", "GUEST"))
                 authorize(HttpMethod.POST, "/banks/**",hasRole("ADMIN"))
                 authorize(HttpMethod.PUT, "/banks/**",hasRole("ADMIN"))
@@ -55,7 +57,6 @@ class SecurityConfiguration() {
                 authorize(HttpMethod.GET, "/user/settings",hasAnyRole("ADMIN", "USER", "GUEST"))
                 authorize(HttpMethod.PUT, "/user/settings",hasAnyRole("ADMIN", "USER", "GUEST"))
             }
-            httpBasic { }
             cors {  }
             csrf { disable() }
             formLogin { disable() }
