@@ -20,7 +20,7 @@ import org.springframework.data.jpa.domain.Specification
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import java.net.URL
+import java.net.URI
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
@@ -33,7 +33,7 @@ class TraceRepositoryTest(
     @Autowired private val traceRepository: TraceRepository,
 ) {
     private fun getMockBank(hostId: String): Long {
-        val bank = BankData(URL("https://ebics.ubs.com/ebicsweb/ebicsweb"), "EBXUBSCH", "UBS-PROD-CH")
+        val bank = BankData(URI("https://ebics.ubs.com/ebicsweb/ebicsweb").toURL(), "EBXUBSCH", "UBS-PROD-CH")
         return bankService.createBank(bank)
     }
 

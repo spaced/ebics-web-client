@@ -14,6 +14,7 @@ import org.ebics.client.ebicsrestapi.configuration.EbicsRestConfiguration
 import org.ebics.client.model.EbicsVersion
 import org.ebics.client.order.EbicsAdminOrderType
 import org.springframework.stereotype.Component
+import java.net.URI
 import java.net.URL
 import java.util.*
 
@@ -121,7 +122,7 @@ class EbicsBankAPI(
         httpClientConfigurationName: String
     ): List<VersionSupport> {
         //Its not required to have bank persisted in DB, its just online gui check of version, therefore is bank temp created only
-        val bank = Bank(null, URL(bankURL), bankHostId, "", null, emptyList(), httpClientConfigurationName)
+        val bank = Bank(null, URI(bankURL).toURL(), bankHostId, "", null, emptyList(), httpClientConfigurationName)
 
         val serverVersions = getEbicsServerVersions(bank)
         val allVersions = serverVersions.toSet() + clientVersions.toSet()

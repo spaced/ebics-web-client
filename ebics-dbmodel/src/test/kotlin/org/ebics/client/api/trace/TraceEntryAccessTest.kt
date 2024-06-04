@@ -10,11 +10,11 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import java.net.URL
+import java.net.URI
 
 @ExtendWith(SpringExtension::class)
 class TraceEntryAccessTest {
-    private fun getMockBank() = Bank(null, URL("https://test.com"), "id", "name", null)
+    private fun getMockBank() = Bank(null, URI("https://test.com").toURL(), "id", "name", null)
     private fun getMockUser(creator: String): BankConnectionEntity {
         val partner = Partner(null, getMockBank(), "1", 1)
         return BankConnectionEntity(null, EbicsVersion.H005, "1", "1", "cn=jan", EbicsUserStatusEnum.CREATED, false, false, partner, null, creator, false)

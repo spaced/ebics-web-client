@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import java.net.URL
+import java.net.URI
 
 @ExtendWith(SpringExtension::class)
 @DataJpaTest
@@ -21,7 +21,7 @@ class PartnerRepositoryTest(
 ) {
     @Test
     fun testAddAndGetPartner() {
-        val bankData = BankData(URL("https://ebics.ubs.com/ebicsweb/ebicsweb"), "EBXUBSCH", "UBS-PROD-CH")
+        val bankData = BankData(URI("https://ebics.ubs.com/ebicsweb/ebicsweb").toURL(), "EBXUBSCH", "UBS-PROD-CH")
         val bankId = bankService.createBank(bankData)
         val bank = bankService.getBankById(bankId)
         val partner = Partner(null, bank, "CH100001", 0)
@@ -33,7 +33,7 @@ class PartnerRepositoryTest(
 
     @Test
     fun testAddAndDeletePartner() {
-        val bankData = BankData(URL("https://ebics.ubs.com/ebicsweb/ebicsweb"), "EBXUBSCH", "UBS-PROD-CH")
+        val bankData = BankData(URI("https://ebics.ubs.com/ebicsweb/ebicsweb").toURL(), "EBXUBSCH", "UBS-PROD-CH")
         val bankId = bankService.createBank(bankData)
         val bank = bankService.getBankById(bankId)
         val partner = Partner(null, bank, "CH100001", 0)
@@ -44,7 +44,7 @@ class PartnerRepositoryTest(
 
     @Test
     fun testCreateOrGetPartner_doesntReturnNull() {
-        val bankData = BankData(URL("https://ebics.ubs.com/ebicsweb/ebicsweb"), "EBXUBSCH", "UBS-PROD-CH")
+        val bankData = BankData(URI("https://ebics.ubs.com/ebicsweb/ebicsweb").toURL(), "EBXUBSCH", "UBS-PROD-CH")
         val bankId = bankService.createBank(bankData)
         val partnerId = partnerService.createOrGetPartner("CH10001", bankId)
         Assertions.assertNotNull(partnerId)
@@ -52,7 +52,7 @@ class PartnerRepositoryTest(
 
     @Test
     fun testCreateOrGetPartnerTwice_returnSameId() {
-        val bankData = BankData(URL("https://ebics.ubs.com/ebicsweb/ebicsweb"), "EBXUBSCH", "UBS-PROD-CH")
+        val bankData = BankData(URI("https://ebics.ubs.com/ebicsweb/ebicsweb").toURL(), "EBXUBSCH", "UBS-PROD-CH")
         val bankId = bankService.createBank(bankData)
         val partnerId = partnerService.createOrGetPartner("CH10001", bankId)
         Assertions.assertNotNull(partnerId)
@@ -62,7 +62,7 @@ class PartnerRepositoryTest(
 
     @Test
     fun testCreateOrGetPartnerTwiceDifferent_returnDifferentId() {
-        val bankData = BankData(URL("https://ebics.ubs.com/ebicsweb/ebicsweb"), "EBXUBSCH", "UBS-PROD-CH")
+        val bankData = BankData(URI("https://ebics.ubs.com/ebicsweb/ebicsweb").toURL(), "EBXUBSCH", "UBS-PROD-CH")
         val bankId = bankService.createBank(bankData)
         val partnerId = partnerService.createOrGetPartner("CH10001", bankId)
         Assertions.assertNotNull(partnerId)

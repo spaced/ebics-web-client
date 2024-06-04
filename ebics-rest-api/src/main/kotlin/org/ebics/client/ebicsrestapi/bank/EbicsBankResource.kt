@@ -12,7 +12,7 @@ import org.ebics.client.ebicsrestapi.utils.restfilter.JsonFilterProviderType
 import org.ebics.client.model.EbicsVersion
 import org.springframework.http.converter.json.MappingJacksonValue
 import org.springframework.web.bind.annotation.*
-import java.net.URL
+import java.net.URI
 
 @RestController
 @RequestMapping("banks")
@@ -50,7 +50,7 @@ class EbicsBankResource(private val bankService: BankService, private val ebicsB
         @RequestParam httpClientConfigurationName: String,
         @RequestParam(defaultValue = "OptionalOnline") mode: EbicsAccessMode
     ): List<VersionSupport> =
-        ebicsBankAPI.getSupportedVersions(bankId, URL(bankURL), hostId, httpClientConfigurationName, mode)
+        ebicsBankAPI.getSupportedVersions(bankId, URI(bankURL).toURL(), hostId, httpClientConfigurationName, mode)
 
     @PutMapping("{bankId}/supportedVersions/{ebicsVersion}")
     fun updateSupportedVersion(
