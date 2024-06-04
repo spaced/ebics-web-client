@@ -5,16 +5,16 @@ import org.ebics.client.api.bankconnection.BankConnectionEntity
 import javax.persistence.*
 
 @Entity
-@Table(uniqueConstraints = [UniqueConstraint(name = "uniqueKeyToBankConnection", columnNames = ["key", "bankConnection_id"])])
+@Table(uniqueConstraints = [UniqueConstraint(name = "uniqueKeyToBankConnection", columnNames = ["`k`", "bankConnection_id"])])
 data class BankConnectionPropertyEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
 
-    @Column(length = 100)
+    @Column(name = "k", length=100)
     val key: String,
 
-    @Column(length = 500)
+    @Column(name ="v",length = 500)
     val value: String,
 
     @JsonIgnore

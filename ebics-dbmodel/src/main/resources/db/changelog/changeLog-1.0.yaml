@@ -1043,3 +1043,22 @@ databaseChangeLog:
         columnName: displaySharedTemplates
         tableName: UserSettings
 
+- changeSet:
+      id: 1669653192517-1
+      author: adi
+      changes:
+          - dropUniqueConstraint:
+                constraintName: uniqueKeyToBankConnection
+                tableName: BankConnectionPropertyEntity
+          - renameColumn:
+                oldColumnName: key
+                newColumnName: k
+                tableName: BankConnectionPropertyEntity
+          - renameColumn:
+                oldColumnName: value
+                newColumnName: v
+                tableName: BankConnectionPropertyEntity
+          - addUniqueConstraint:
+                constraintName: uniqueKeyToBankConnection
+                tableName: BankConnectionPropertyEntity
+                columnNames: k, bankConnection_id
