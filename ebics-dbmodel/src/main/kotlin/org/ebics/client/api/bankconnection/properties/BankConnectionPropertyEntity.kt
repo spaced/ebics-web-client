@@ -2,7 +2,7 @@ package org.ebics.client.api.bankconnection.properties
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.ebics.client.api.bankconnection.BankConnectionEntity
-import javax.persistence.*
+import jakarta.persistence.*
 
 @Entity
 @Table(uniqueConstraints = [UniqueConstraint(name = "uniqueKeyToBankConnection", columnNames = ["`k`", "bankConnection_id"])])

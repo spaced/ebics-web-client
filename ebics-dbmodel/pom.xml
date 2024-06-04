@@ -12,10 +12,6 @@
     <artifactId>ebics-dbmodel</artifactId>
     <name>EBICS DB model</name>
 
-    <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-    </properties>
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -60,13 +56,13 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.3.1</version>
+            <version>42.7.3</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
-            <version>4.3.5</version>
+            <version>4.28.0</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -76,6 +72,7 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
+            <version>6.3.0</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -152,7 +149,7 @@
             <plugin>
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-maven-plugin</artifactId>
-                <version>4.3.5</version>
+                <version>4.28.0</version>
                 <configuration>
                     <propertyFile>src/main/resources/liquibase.properties</propertyFile>
                     <propertyFileWillOverride>true</propertyFileWillOverride>
@@ -162,7 +159,7 @@
                     <dependency>
                         <groupId>org.liquibase.ext</groupId>
                         <artifactId>liquibase-hibernate5</artifactId>
-                        <version>4.3.3</version>
+                        <version>4.27.0</version>
                     </dependency>
                     <dependency>
                         <groupId>org.springframework.boot</groupId>

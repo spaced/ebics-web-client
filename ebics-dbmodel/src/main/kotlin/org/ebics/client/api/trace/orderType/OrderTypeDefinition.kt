@@ -5,8 +5,8 @@ import org.ebics.client.order.EbicsAdminOrderType
 import org.ebics.client.order.IOrderTypeDefinition
 import org.ebics.client.order.IOrderTypeDefinition25
 import org.ebics.client.order.IOrderTypeDefinition30
-import javax.persistence.Embeddable
-import javax.persistence.Embedded
+import jakarta.persistence.Embeddable
+import jakarta.persistence.Embedded
 
 @Embeddable
 data class OrderTypeDefinition(

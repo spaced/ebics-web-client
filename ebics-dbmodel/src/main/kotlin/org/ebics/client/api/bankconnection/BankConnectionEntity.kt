@@ -9,7 +9,7 @@ import org.ebics.client.api.partner.Partner
 import org.ebics.client.api.trace.TraceEntry
 import org.ebics.client.model.EbicsVersion
 import org.ebics.client.model.user.EbicsUserStatusEnum
-import javax.persistence.*
+import jakarta.persistence.*
 
 @Entity
 @JsonFilter("bankConnectionPropertiesFilter")

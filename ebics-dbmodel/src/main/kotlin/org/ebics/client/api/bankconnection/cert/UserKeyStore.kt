@@ -6,7 +6,7 @@ import org.ebics.client.certificate.UserCertificateManager
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 
-import javax.persistence.*
+import jakarta.persistence.*
 
 /**
  * This entity represents the encrypted private and public keys of user,

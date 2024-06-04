@@ -12,7 +12,7 @@ import org.ebics.client.exception.HttpServerException
 import org.ebics.client.http.client.request.HttpClientRequest
 import org.ebics.client.io.ByteArrayContentFactory
 import org.slf4j.LoggerFactory
-import javax.annotation.PreDestroy
+import jakarta.annotation.PreDestroy
 
 open class SimpleHttpClient(
     private val httpClient: CloseableHttpClient,
