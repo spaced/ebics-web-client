@@ -1254,27 +1254,23 @@ public class EbicsXmlFactory {
    * 		type == newType is returned. Otherwise null is returned as you can no longer manipulate the object.
    */
   public static XmlObject qualifySubstitutionGroup(XmlObject xobj, QName newInstance, SchemaType newType) {
-    XmlObject	substitute = null;
-
     if (newType != null) {
-      substitute = xobj.substitute(newInstance, newType);
+      XmlObject substitute = xobj.substitute(newInstance, newType);
       if (substitute != null && substitute.schemaType() == newType
-	  && substitute.getDomNode().getLocalName().equals(newInstance.getLocalPart()))
-      {
-	return substitute;
+	  && substitute.getDomNode().getLocalName().equals(newInstance.getLocalPart())) {
+	    return substitute;
       }
     }
 
-    XmlCursor cursor = xobj.newCursor();
-    cursor.setName(newInstance);
-    QName qName = new QName("http://www.w3.org/2001/XMLSchema-instance", "type");
-    cursor.removeAttribute(qName);
-    cursor.toNextToken();
-    if (cursor.isNamespace()) {
-      cursor.removeXml();
+    try (XmlCursor cursor = xobj.newCursor()) {
+      cursor.setName(newInstance);
+      QName qName = new QName("http://www.w3.org/2001/XMLSchema-instance", "type");
+      cursor.removeAttribute(qName);
+      cursor.toNextToken();
+      if (cursor.isNamespace()) {
+        cursor.removeXml();
+      }
     }
-
-    cursor.dispose();
 
     return null;
   }
