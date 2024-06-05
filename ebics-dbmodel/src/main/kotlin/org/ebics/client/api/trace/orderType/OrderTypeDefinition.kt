@@ -8,9 +8,11 @@ import org.ebics.client.order.IOrderTypeDefinition30
 import jakarta.persistence.Embeddable
 import jakarta.persistence.Embedded
 
+
 @Embeddable
 data class OrderTypeDefinition(
     //For H002-H005
+
     override val adminOrderType: EbicsAdminOrderType,
 
     //For H005 order types
