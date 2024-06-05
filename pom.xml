@@ -10,8 +10,8 @@
     <properties>
         <revision>1.7.2</revision>
         <java.version>17</java.version>
-        <kotlin.version>1.8.22</kotlin.version>
-        <kotlin.version.short>1.8</kotlin.version.short>
+        <kotlin.version>1.9.24</kotlin.version>
+        <kotlin.version.short>1.9</kotlin.version.short>
         <spring.version>3.3.0</spring.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring.mockk.version>4.0.2</spring.mockk.version>
