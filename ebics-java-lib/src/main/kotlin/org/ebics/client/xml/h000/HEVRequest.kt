@@ -29,7 +29,7 @@ import org.ebics.schema.h000.EbicsHEVRequestDocument
  * @author Jan Toegel
  */
 
-class HEVRequest(val ebicsHostID: String) : DefaultEbicsRootElement() {
+class HEVRequest(val ebicsHostID: String) : DefaultEbicsRootElement<EbicsHEVRequestDocument>() {
     @Throws(EbicsException::class)
     override fun build() {
         with (EbicsHEVRequestDocument.Factory.newInstance()) {

@@ -33,7 +33,7 @@ import org.ebics.schema.h005.EbicsResponseDocument.EbicsResponse;
  * @author Hachani
  *
  */
-public class InitializationResponseElement extends DefaultResponseElement {
+public class InitializationResponseElement extends DefaultResponseElement<EbicsResponseDocument> {
 
   /**
    * Constructs a new <code>InitializationResponseElement</code> element.
@@ -49,8 +49,8 @@ public class InitializationResponseElement extends DefaultResponseElement {
 
   @Override
   public void build() throws EbicsException {
-    parse(factory);
-    response = ((EbicsResponseDocument)document).getEbicsResponse();
+    parse(EbicsResponseDocument.Factory);
+    response = document.getEbicsResponse();
     String code = response.getHeader().getMutable().getReturnCode();
     String text = response.getHeader().getMutable().getReportText();
     returnCode = EbicsReturnCode.toReturnCode(code, text);

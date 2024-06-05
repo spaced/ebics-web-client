@@ -21,6 +21,7 @@ package org.ebics.client.xml.h004;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.impl.schema.DocumentFactory;
 import org.ebics.client.exception.EbicsException;
 import org.ebics.client.exception.h004.EbicsReturnCode;
 import org.ebics.client.interfaces.ContentFactory;
@@ -35,7 +36,7 @@ import java.io.IOException;
  * @author Hachani
  *
  */
-public abstract class DefaultResponseElement extends DefaultEbicsRootElement {
+public abstract class DefaultResponseElement<T extends XmlObject> extends DefaultEbicsRootElement<T> {
 
   /**
    * Constructs a new ebics response element.
@@ -50,12 +51,10 @@ public abstract class DefaultResponseElement extends DefaultEbicsRootElement {
    * @param factory the content factory
    * @throws EbicsException parse error
    */
-  protected void parse(ContentFactory factory) throws EbicsException {
+  protected void parse(DocumentFactory<T> documentFactory) throws EbicsException {
     try {
-      document = XmlObject.Factory.parse(factory.getContent());
-    } catch (XmlException e) {
-      throw new EbicsException(e.getMessage());
-    } catch (IOException e) {
+      document = documentFactory.parse(factory.getContent());
+    } catch (XmlException | IOException e) {
       throw new EbicsException(e.getMessage());
     }
   }

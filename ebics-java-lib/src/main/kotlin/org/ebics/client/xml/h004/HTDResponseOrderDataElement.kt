@@ -39,12 +39,12 @@ import org.ebics.schema.h004.HTDResponseOrderDataDocument
  * content factory.
  * @param factory the content factory.
  */
-class HTDResponseOrderDataElement(factory: ContentFactory) : DefaultResponseElement(factory) {
+class HTDResponseOrderDataElement(factory: ContentFactory) : DefaultResponseElement<HTDResponseOrderDataDocument>(factory) {
 
     @Throws(EbicsException::class)
     override fun build() {
-        parse(factory)
-        response = (document as HTDResponseOrderDataDocument).htdResponseOrderData
+        parse(HTDResponseOrderDataDocument.Factory)
+        response = document.htdResponseOrderData
     }
 
     /**

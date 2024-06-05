@@ -34,7 +34,7 @@ import org.ebics.schema.h005.EbicsKeyManagementResponseDocument.EbicsKeyManageme
  * @author hachani
  *
  */
-public class KeyManagementResponseElement extends DefaultResponseElement {
+public class KeyManagementResponseElement extends DefaultResponseElement<EbicsKeyManagementResponseDocument> {
 
   /**
    * Creates a new <code>KeyManagementResponseElement</code>
@@ -66,8 +66,8 @@ public class KeyManagementResponseElement extends DefaultResponseElement {
     String			code;
     String			text;
 
-    parse(factory);
-    response = ((EbicsKeyManagementResponseDocument)document).getEbicsKeyManagementResponse();
+    parse(EbicsKeyManagementResponseDocument.Factory);
+    response = document.getEbicsKeyManagementResponse();
     code = response.getHeader().getMutable().getReturnCode();
     text = response.getHeader().getMutable().getReportText();
     returnCode = EbicsReturnCode.toReturnCode(code, text);

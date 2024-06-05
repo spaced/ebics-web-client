@@ -32,7 +32,7 @@ import org.ebics.schema.h004.EbicsResponseDocument.EbicsResponse;
  * @author Hachani
  *
  */
-public class ReceiptResponseElement extends DefaultResponseElement {
+public class ReceiptResponseElement extends DefaultResponseElement<EbicsResponseDocument> {
 
   /**
    * Constructs a new <code>ReceiptResponseElement</code> object
@@ -49,8 +49,8 @@ public class ReceiptResponseElement extends DefaultResponseElement {
     String			text;
     EbicsResponse		response;
 
-    parse(factory);
-    response = ((EbicsResponseDocument)document).getEbicsResponse();
+    parse(EbicsResponseDocument.Factory);
+    response = document.getEbicsResponse();
     code = response.getHeader().getMutable().getReturnCode();
     text = response.getHeader().getMutable().getReportText();
     returnCode = EbicsReturnCode.toReturnCode(code, text);

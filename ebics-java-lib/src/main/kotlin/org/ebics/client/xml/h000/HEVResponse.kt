@@ -27,12 +27,12 @@ import org.ebics.schema.h000.EbicsHEVResponseDocument
 import org.ebics.schema.h000.HEVResponseDataType
 
 
-class HEVResponse(factory: ContentFactory) : DefaultResponseElement(factory) {
+class HEVResponse(factory: ContentFactory) : DefaultResponseElement<EbicsHEVResponseDocument>(factory) {
 
     @Throws(EbicsException::class)
     override fun build() {
-        parse(factory)
-        response = (document as EbicsHEVResponseDocument).ebicsHEVResponse
+        parse(EbicsHEVResponseDocument.Factory)
+        response = document.ebicsHEVResponse
         returnCode = EbicsReturnCode.toReturnCode(response.systemReturnCode.returnCode)
     }
 
