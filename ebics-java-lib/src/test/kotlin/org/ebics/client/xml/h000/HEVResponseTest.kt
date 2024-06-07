@@ -11,7 +11,7 @@ class HEVResponseTest {
 
 
     @Test
-    fun testBuildAndValidate() {
+    fun testSupportedVersions() {
         val xml = """
             <?xml version="1.0" encoding="UTF-8"?>
             <ebicsHEVResponse xsi:schemaLocation="http://www.ebics.org/H000 ebics_hev.xsd" xmlns="http://www.ebics.org/H000" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -32,7 +32,7 @@ class HEVResponseTest {
     }
 
     @Test
-    fun testBuildAndValidateWithErrors() {
+    fun testValidateThrowsException() {
         val xml = """
             <?xml version="1.0" encoding="UTF-8"?>
             <ebicsHEVResponse xsi:schemaLocation="http://www.ebics.org/H000 ebics_hev.xsd" xmlns="http://www.ebics.org/H000" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
