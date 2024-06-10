@@ -47,7 +47,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 
-public abstract class DefaultEbicsRootElement implements EbicsRootElement {
+public abstract class DefaultEbicsRootElement<T extends XmlObject> implements EbicsRootElement {
+
 
   /**
    * Constructs a new default <code>EbicsRootElement</code>
@@ -135,7 +136,7 @@ public abstract class DefaultEbicsRootElement implements EbicsRootElement {
   public static String generateName(EbicsAdminOrderType type) {
     return type.toString() + new BigInteger(130, new SecureRandom()).toString(32);
   }
-  
+
   /**
    * Generates a random file name with a prefix.
    * @param prefix the prefix to use.
@@ -241,7 +242,7 @@ public abstract class DefaultEbicsRootElement implements EbicsRootElement {
   // DATA MEMBERS
   // --------------------------------------------------------------------
 
-  protected XmlObject			document;
+  protected T			document;
   protected EbicsSession 		session;
   private static Map<String, String> 	suggestedPrefixes;
   private static final long 		serialVersionUID = -3928957097145095177L;

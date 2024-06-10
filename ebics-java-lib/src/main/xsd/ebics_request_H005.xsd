@@ -49,7 +49,7 @@
 							<annotation>
 								<documentation xml:lang="de"/>
 							</annotation>
-							<element ref="ds:X509Data" minOccurs="0" maxOccurs="0">
+							<element ref="ds:X509Data" minOccurs="0">
 								<annotation>
 									<documentation xml:lang="de">X.509-Daten des Teilnehmers.</documentation>
 									<documentation xml:lang="en">X.509 data of the user.</documentation>
@@ -237,7 +237,7 @@
 										</simpleContent>
 									</complexType>
 								</element>
-								<element name="Signature" minOccurs="0" maxOccurs="0">
+								<element name="Signature" minOccurs="0">
 									<annotation>
 										<documentation xml:lang="de">Hashwert des Signaturschlüssels.</documentation>
 										<documentation xml:lang="en">Digest value of the public signature key.</documentation>

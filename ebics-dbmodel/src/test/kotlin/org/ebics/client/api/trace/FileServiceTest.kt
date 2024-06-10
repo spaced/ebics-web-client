@@ -17,7 +17,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import java.net.URL
+import java.net.URI
 
 @ExtendWith(SpringExtension::class)
 @DataJpaTest
@@ -28,7 +28,7 @@ class FileServiceTest(
     @Autowired private val bankService: BankService,
 ) {
     private fun getMockUser(): BankConnectionEntity {
-        val bank = BankData(URL("https://ebics.ubs.com/ebicsweb/ebicsweb"), "EBXUBSCH", "UBS-PROD-CH")
+        val bank = BankData(URI("https://ebics.ubs.com/ebicsweb/ebicsweb").toURL(), "EBXUBSCH", "UBS-PROD-CH")
         val bankId = bankService.createBank(bank)
         val userInfo = BankConnection(EbicsVersion.H004, "CHT10001", "Jan", "CH100001", bankId, false, false)
         val userId = userService.createBankConnection(userInfo)

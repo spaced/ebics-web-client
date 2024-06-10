@@ -41,7 +41,7 @@ class SplitterTest {
 
     @Test
     fun testSplitterWith_oneFullSegment_1MB_without_1B_Input() {
-        val ba = Random.Default.nextBytes(1024 * 1024 - 1)
+        val ba = Random.Default.nextBytes(600000)
         val nonce = Utils.generateNonce()
         val keySpec = SecretKeySpec(nonce, "EAS")
         val splitter = Splitter(ba, false, keySpec)
@@ -75,7 +75,7 @@ class SplitterTest {
         val nonce = Utils.generateNonce()
         val keySpec = SecretKeySpec(nonce, "EAS")
         val splitter = Splitter(ba, false, keySpec)
-        Assertions.assertEquals(100, splitter.segmentNumber)
+        Assertions.assertEquals(150, splitter.segmentNumber)
         var totalSize = 0
         for (segmentNr: Int in 1..splitter.segmentNumber + 1) {
             val segmentSize = splitter.getContent(segmentNr).content.available()

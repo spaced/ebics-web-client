@@ -3,7 +3,7 @@ package org.ebics.client.api.partner
 import com.fasterxml.jackson.annotation.JsonFilter
 import org.ebics.client.api.EbicsPartner
 import org.ebics.client.api.bank.Bank
-import javax.persistence.*
+import jakarta.persistence.*
 
 @Entity
 @Table(uniqueConstraints = [UniqueConstraint(columnNames = ["partnerId", "bank_id"])])

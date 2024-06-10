@@ -7,7 +7,7 @@ import org.ebics.client.api.trace.orderType.OrderTypeDefinition
 import org.ebics.client.api.bankconnection.BankConnectionEntity
 import org.ebics.client.model.EbicsVersion
 import java.time.ZonedDateTime
-import javax.persistence.*
+import jakarta.persistence.*
 
 @Entity
 data class TraceEntry(

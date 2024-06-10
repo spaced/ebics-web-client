@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import java.net.URL
+import java.net.URI
 
 @ExtendWith(SpringExtension::class)
 @DataJpaTest
@@ -19,7 +19,7 @@ class BankRepositoryTest (@Autowired private val bankRepo: BankRepository) {
     @Test
     fun testAddGetDelete() {
         val count = bankRepo.count()
-        val bank = Bank(null, URL("https://ebics.ubs.com/ebicsweb/ebicsweb"), "EBXUBSCH", "UBS-PROD-CH", null)
+        val bank = Bank(null, URI("https://ebics.ubs.com/ebicsweb/ebicsweb").toURL(), "EBXUBSCH", "UBS-PROD-CH", null)
         bankRepo.saveAndFlush(bank)
         Assertions.assertNotNull(bank.id)
         val loadedBank = bankRepo.getById(bank.id!!, "bank")

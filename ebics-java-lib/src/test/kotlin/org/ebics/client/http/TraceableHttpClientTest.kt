@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.fail
-import java.net.URL
+import java.net.URI
 
 @ExtendWith(MockKExtension::class)
 class TraceableHttpClientTest {
@@ -35,7 +35,7 @@ class TraceableHttpClientTest {
         val requestContent = ByteArrayContentFactory("test-request".toByteArray())
         val response = client.sendAndTrace(
             HttpClientRequest(
-                URL("http://not.existing.url.com.xx"), requestContent),
+                URI("http://not.existing.url.com.xx").toURL(), requestContent),
             traceSession
         )
         verify(exactly = 1) { traceManager.trace(requestContent, traceSession, true) }
@@ -57,7 +57,7 @@ class TraceableHttpClientTest {
         try {
             val response = client.sendAndTrace(
                 HttpClientRequest(
-                    URL("http://not.existing.url.com.xx"), requestContent
+                    URI("http://not.existing.url.com.xx").toURL(), requestContent
                 ),
                 traceSession
             )
@@ -83,7 +83,7 @@ class TraceableHttpClientTest {
         try {
             val response = client.sendAndTrace(
                 HttpClientRequest(
-                    URL("http://not.existing.url.com.xx"), requestContent
+                    URI("http://not.existing.url.com.xx").toURL(), requestContent
                 ),
                 traceSession
             )

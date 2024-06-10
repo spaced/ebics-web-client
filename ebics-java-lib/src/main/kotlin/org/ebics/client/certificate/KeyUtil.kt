@@ -146,8 +146,7 @@ object KeyUtil {
 
     @Throws(IOException::class, NoSuchAlgorithmException::class, InvalidKeySpecException::class)
     fun loadKey(fis: InputStream): Key {
-        val encodedPublicKey = ByteArray(10000)
-        fis.read(encodedPublicKey)
+        val encodedPublicKey = fis.readAllBytes()
         fis.close()
         val keyFactory: KeyFactory = KeyFactory.getInstance("RSA")
         val publicKeySpec = X509EncodedKeySpec(encodedPublicKey)

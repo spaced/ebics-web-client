@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ContextConfiguration
 import java.io.IOException
-import java.net.URL
+import java.net.URI
 
 @SpringBootTest
 @ExtendWith(MockKExtension::class)
@@ -26,7 +26,7 @@ class EbicsBankAPITest(
     @Test
     fun offlineTestEmpty() {
         val versions =
-            bankAPI.getSupportedVersions(1, URL("http://test.url"), "bankhostid", "default", EbicsAccessMode.Offline)
+            bankAPI.getSupportedVersions(1, URI("http://test.url").toURL(), "bankhostid", "default", EbicsAccessMode.Offline)
         Assertions.assertTrue(versions.isEmpty())
     }
 
@@ -39,7 +39,7 @@ class EbicsBankAPITest(
         )
         val versions = bankAPI.getSupportedVersions(
             1,
-            URL("http://test.url"),
+            URI("http://test.url").toURL(),
             "bankhostid",
             "default",
             EbicsAccessMode.ForcedOnline
@@ -65,7 +65,7 @@ class EbicsBankAPITest(
         every { bankOperations.sendHEV(any(), any()) } returns listOf(EbicsVersion.H002)
         val versions = bankAPI.getSupportedVersions(
             1,
-            URL("http://test.url"),
+            URI("http://test.url").toURL(),
             "bankhostid",
             "default",
             EbicsAccessMode.ForcedOnline
@@ -80,7 +80,7 @@ class EbicsBankAPITest(
         every { bankOperations.sendHEV(any(), any()) } throws IOException("error reading HEV")
         val versions = bankAPI.getSupportedVersions(
             2,
-            URL("http://test.url"),
+            URI("http://test.url").toURL(),
             "bankhostid",
             "default",
             EbicsAccessMode.OptionalOnline

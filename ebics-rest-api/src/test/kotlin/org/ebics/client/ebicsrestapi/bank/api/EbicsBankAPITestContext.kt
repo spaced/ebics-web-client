@@ -14,7 +14,7 @@ import org.ebics.client.model.EbicsVersion
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Lazy
-import java.net.URL
+import java.net.URI
 
 @Configuration
 @Lazy
@@ -30,11 +30,11 @@ class EbicsBankAPITestContext {
         every {
             bankService.getBankById(1)
         } returns
-                Bank(1, URL("https://test.com"), "id1", "name", null)
+                Bank(1, URI("http://test.com").toURL(), "id1", "name", null)
 
         val fakeBank = Bank(
             2,
-            URL("https://test2.com"),
+            URI("https://test2.com").toURL(),
             "id2",
             "name",
             null
@@ -44,7 +44,7 @@ class EbicsBankAPITestContext {
         } returns
                 Bank(
                     2,
-                    URL("https://test2.com"),
+                    URI("https://test2.com").toURL(),
                     "id2",
                     "name",
                     null,

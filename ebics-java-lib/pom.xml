@@ -37,23 +37,28 @@
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib-jdk8</artifactId>
+            <artifactId>kotlin-stdlib</artifactId>
             <version>${kotlin.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.apache.xmlbeans</groupId>
             <artifactId>xmlbeans</artifactId>
-            <version>3.1.0</version>
+            <version>5.2.1</version>
         </dependency>
         <dependency>
             <groupId>commons-codec</groupId>
@@ -63,23 +68,29 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.5.13</version>
+            <version>4.5.14</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.jdom</groupId>
-            <artifactId>jdom</artifactId>
-            <version>2.0.2</version>
+            <artifactId>jdom2</artifactId>
+            <version>2.0.6.1</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk15on -->
         <dependency>
             <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk15on</artifactId>
-            <version>1.67</version>
+            <artifactId>bcprov-jdk18on</artifactId>
+            <version>1.78.1</version>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
-            <artifactId>bcpkix-jdk15on</artifactId>
-            <version>1.67</version>
+            <artifactId>bcpkix-jdk18on</artifactId>
+            <version>1.78.1</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -94,7 +105,7 @@
         <dependency>
             <groupId>xalan</groupId>
             <artifactId>xalan</artifactId>
-            <version>2.7.2</version>
+            <version>2.7.3</version>
         </dependency>
         <dependency>
             <groupId>xml-security</groupId>
@@ -108,7 +119,7 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.7.1</version>
+            <version>5.10.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -121,20 +132,22 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>xmlbeans-maven-plugin</artifactId>
-                <version>2.3.3</version>
+                <groupId>org.apache.xmlbeans</groupId>
+                <artifactId>xmlbeans</artifactId>
+                <version>5.2.1</version>
                 <executions>
                     <execution>
                         <goals>
-                            <goal>xmlbeans</goal>
+                            <goal>compile</goal>
                         </goals>
                     </execution>
                 </executions>
                 <inherited>true</inherited>
                 <configuration>
-                    <schemaDirectory>src/main/xsd</schemaDirectory>
-                    <defaultXmlConfigDir>src/main/xsd/config</defaultXmlConfigDir>
+                    <sourceDir>${basedir}/src/main/xsd</sourceDir>
+                    <xmlConfigs>${basedir}/src/main/xsd/config/config.xsdconfig</xmlConfigs>
+                    <repackage>org.ebics.metadata</repackage>
+                    <name>client</name>
                 </configuration>
             </plugin>
             <plugin>

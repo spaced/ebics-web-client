@@ -32,7 +32,7 @@ import org.ebics.schema.h004.HPBResponseOrderDataType;
  * @author hachani
  *
  */
-public class HPBResponseOrderDataElement extends DefaultResponseElement {
+public class HPBResponseOrderDataElement extends DefaultResponseElement<HPBResponseOrderDataDocument> {
 
   /**
    * Creates a new <code>HPBResponseOrderDataElement</code> from a given
@@ -77,8 +77,8 @@ public class HPBResponseOrderDataElement extends DefaultResponseElement {
 
   @Override
   public void build() throws EbicsException {
-    parse(factory);
-    response = ((HPBResponseOrderDataDocument)document).getHPBResponseOrderData();
+    parse(HPBResponseOrderDataDocument.Factory);
+    response = document.getHPBResponseOrderData();
   }
 
   // --------------------------------------------------------------------

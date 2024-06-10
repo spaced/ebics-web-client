@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import java.net.URL
+import java.net.URI
 
 @ExtendWith(SpringExtension::class)
 @DataJpaTest
@@ -28,7 +28,7 @@ class UserKeyStoreRepositoryTest (
 {
     @Test
     fun testCreateStoreAndLoad() {
-        val bank = Bank(null, URL("https://ebics.ubs.com/ebicsweb/ebicsweb"), "EBXUBSCH", "UBS-PROD-CH", null)
+        val bank = Bank(null, URI("https://ebics.ubs.com/ebicsweb/ebicsweb").toURL(), "EBXUBSCH", "UBS-PROD-CH", null)
         bankRepo.save(bank)
         val partner = Partner(null, bank, "CH100001", 0)
         partnerRepo.save(partner)

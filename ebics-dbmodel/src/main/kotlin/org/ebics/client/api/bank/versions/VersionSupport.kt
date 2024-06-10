@@ -3,7 +3,7 @@ package org.ebics.client.api.bank.versions
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.ebics.client.api.bank.Bank
 import org.ebics.client.model.EbicsVersion
-import javax.persistence.*
+import jakarta.persistence.*
 
 @Entity(name = "EbicsVersionSupport")
 @IdClass(VersionSupportId::class)

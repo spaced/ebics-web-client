@@ -1,6 +1,6 @@
 package org.ebics.client.api.bankconnection.settings
 
-import javax.persistence.*
+import jakarta.persistence.*
 
 data class UserSettingsData(
     val uploadOnDrop: Boolean,

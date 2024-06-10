@@ -303,7 +303,7 @@
 			<documentation xml:lang="en">Data type for digital signature data transferred using EBICS.</documentation>
 		</annotation>
 		<sequence>
-			<element name="OrderSignature" minOccurs="0" maxOccurs="0">
+			<element name="OrderSignature" minOccurs="0">
 				<annotation>
 					<documentation xml:lang="de">bankfachliche Elektronische Unterschrift.</documentation>
 					<documentation xml:lang="en">Digital signature (either autorising an order or applied for transportation).</documentation>
@@ -436,7 +436,7 @@
 						</complexContent>
 					</complexType>
 				</element>
-				<element name="SignatureData" minOccurs="0" maxOccurs="0">
+				<element name="SignatureData" minOccurs="0">
 					<annotation>
 						<documentation xml:lang="de">enthält Signaturdaten (EUs).</documentation>
 					</annotation>
@@ -695,7 +695,7 @@
 					<documentation xml:lang="de">öffentlicher Verschlüsselungsschlüssel.</documentation>
 				</annotation>
 			</element>
-			<element ref="esig:SignaturePubKeyInfo" minOccurs="0" maxOccurs="0">
+			<element ref="esig:SignaturePubKeyInfo" minOccurs="0">
 				<annotation>
 					<documentation xml:lang="de">öffentlicher EU-Signaturschlüssel.</documentation>
 				</annotation>
@@ -929,7 +929,7 @@
 					<documentation xml:lang="en">Can the order details be downloaded as XML document HVTResponseOrderData?  (HVT with completeOrderData=false)</documentation>
 				</annotation>
 			</element>
-			<element name="BankSignature" type="ebics:SignatureType" minOccurs="0" maxOccurs="0">
+			<element name="BankSignature" type="ebics:SignatureType" minOccurs="0">
 				<annotation>
 					<documentation xml:lang="de">bankfachliche Elektronische Unterschrift des Kreditinstituts über Hashwert und Displaydatei.</documentation>
 					<documentation xml:lang="en">Digital Signature issued by the bank, covering the hash value and the accompanying ticket.</documentation>

@@ -183,12 +183,12 @@
 							<documentation xml:lang="de">Hostname des Banksystems.</documentation>
 						</annotation>
 					</element>
-					<element name="Nonce" type="ebics:NonceType" minOccurs="0" maxOccurs="0">
+					<element name="Nonce" type="ebics:NonceType" minOccurs="0">
 						<annotation>
 							<documentation xml:lang="de">Zufallswert; damit wird die Initialisierungsnachricht des Clients einzigartig; nicht anzugeben für ebicsUnsecuredRequest.</documentation>
 						</annotation>
 					</element>
-					<element name="Timestamp" type="ebics:TimestampType" minOccurs="0" maxOccurs="0">
+					<element name="Timestamp" type="ebics:TimestampType" minOccurs="0">
 						<annotation>
 							<documentation xml:lang="de">aktueller Zeitstempel zur Begrenzung der serverseitigen Nonce-Speicherung; nicht anzugeben für ebicsUnsecuredRequest.</documentation>
 						</annotation>
@@ -289,7 +289,7 @@
 							<annotation>
 								<documentation xml:lang="de"/>
 							</annotation>
-							<element ref="ds:X509Data" minOccurs="0" maxOccurs="0">
+							<element ref="ds:X509Data" minOccurs="0">
 								<annotation>
 									<documentation xml:lang="de">X.509-Daten des Teilnehmers.</documentation>
 								</annotation>
@@ -474,12 +474,12 @@
 							<documentation xml:lang="de">Hostname des Banksystems.</documentation>
 						</annotation>
 					</element>
-					<element name="Nonce" type="ebics:NonceType" minOccurs="0" maxOccurs="0">
+					<element name="Nonce" type="ebics:NonceType" minOccurs="0">
 						<annotation>
 							<documentation xml:lang="de">Zufallswert; damit wird die Initialisierungsnachricht des Clients einzigartig; nicht anzugeben bei ebicsUnsignedRequest.</documentation>
 						</annotation>
 					</element>
-					<element name="Timestamp" type="ebics:TimestampType" minOccurs="0" maxOccurs="0">
+					<element name="Timestamp" type="ebics:TimestampType" minOccurs="0">
 						<annotation>
 							<documentation xml:lang="de">aktueller Zeitstempel zur Begrenzung der serverseitigen Nonce-Speicherung; nicht anzugeben bei ebicsUnsignedRequest.</documentation>
 						</annotation>

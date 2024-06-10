@@ -10,7 +10,7 @@ import org.ebics.client.api.partner.Partner
 import org.ebics.client.certificate.BankCertificateManager
 import org.ebics.client.certificate.UserCertificateManager
 import org.ebics.client.model.EbicsVersion
-import java.net.URL
+import java.net.URI
 import java.security.Security
 
 class MockObjectHelper {
@@ -21,7 +21,7 @@ class MockObjectHelper {
         }
 
         fun createMockBank(bankId: Long? = null, bankName: String): Bank {
-            return Bank(bankId, URL("https://ebics.ubs.com/ebicsweb/ebicsweb"), "EBXUBSCH", bankName, null)
+            return Bank(bankId, URI("https://ebics.ubs.com/ebicsweb/ebicsweb").toURL(), "EBXUBSCH", bankName, null)
         }
 
         fun createMockBankConnection(userId: Long, bankCerts: Boolean = true): BankConnectionEntity {

@@ -6,7 +6,7 @@ import org.ebics.client.certificate.BankCertificateManager
 import org.ebics.client.utils.addSpaces
 import org.ebics.client.utils.toHexString
 import java.security.interfaces.RSAPublicKey
-import javax.persistence.*
+import jakarta.persistence.*
 
 @Entity
 class BankKeyStore(

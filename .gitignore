@@ -9,3 +9,10 @@ gradle-app.setting
 
 # Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
 !gradle-wrapper.jar
+
+#ignore idea files and folders
+.idea/
+*.iml
+
+#flatten maven
+.flattened-pom.xml

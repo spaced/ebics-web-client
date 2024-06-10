@@ -11,7 +11,7 @@
                       class="ch.qos.logback.core.ConsoleAppender">
                 <layout class="ch.qos.logback.classic.PatternLayout">
                     <Pattern>
-                        %black(%d{ISO8601}) %highlight(%-5level) [%blue(%t)] %yellow(%C{1.}): %msg%n%throwable
+                        %black(%d{ISO8601}) %highlight(%-5level) [%blue(%t)] %yellow(%C{1}): %msg%n%throwable
                     </Pattern>
                 </layout>
             </appender>
@@ -26,7 +26,7 @@
                 <appender-ref ref="Console"/>
             </logger>
 
-            <logger name="org.springframework.security" level="info" additivity="false">
+            <logger name="org.springframework.security" level="debug" additivity="false">
                 <appender-ref ref="Console"/>
             </logger>
 

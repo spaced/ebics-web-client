@@ -61,8 +61,8 @@ class TraceService(
                     orderType = orderType as OrderTypeDefinition,
                     traceType = TraceType.EbicsEnvelope,
                     traceCategory = TraceCategory.fromException(exception),
-                    errorStackTrace = exception.stackTraceToString(),
-                    errorMessage = exception.message,
+                    errorStackTrace = exception.stackTraceToString().take(250),
+                    errorMessage = exception.message?.take(250),
                     errorCode = (exception as? IErrorCodeText)?.errorCode,
                     errorCodeText = (exception as? IErrorCodeText)?.errorCodeText,
                 )
@@ -81,8 +81,8 @@ class TraceService(
                 traceRepository.updateTraceCategoryAndErrorDetailsById(
                     newTraceCategory, errorCode = (exception as? IErrorCodeText)?.errorCode,
                     errorCodeText = (exception as? IErrorCodeText)?.errorCodeText,
-                    errorMessage = exception.message,
-                    errorStackTrace = exception.stackTraceToString(), lastTraceId
+                    errorMessage = exception.message?.take(250),
+                    errorStackTrace = exception.stackTraceToString().take(250), lastTraceId
                 )
             } else {
                 traceRepository.updateTraceCategoryById(newTraceCategory, lastTraceId)

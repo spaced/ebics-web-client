@@ -1,7 +1,7 @@
 package org.ebics.client.api.trace.orderType
 
 import org.ebics.client.order.IEbicsMessage
-import javax.persistence.Embeddable
+import jakarta.persistence.Embeddable
 
 @Embeddable
 data class EbicsMessage (

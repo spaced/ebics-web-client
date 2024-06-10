@@ -5,7 +5,7 @@ import org.ebics.client.api.EbicsBank
 import org.ebics.client.api.bank.cert.BankKeyStore
 import org.ebics.client.api.bank.versions.VersionSupport
 import java.net.URL
-import javax.persistence.*
+import jakarta.persistence.*
 
 @Entity
 @Table(uniqueConstraints = [UniqueConstraint(columnNames = ["bankURL","hostId"])])

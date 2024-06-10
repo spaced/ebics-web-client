@@ -242,7 +242,7 @@ interface UserCertificateManager {
         val output = ByteArrayOutputStream()
         for (i in buf.indices) {
             when (buf[i]) {
-                '\r'.toByte(), '\n'.toByte(), 0x1A.toByte() -> {
+                0x0a.toByte(), 0x0d.toByte(), 0x1A.toByte() -> {
                 }
                 else -> output.write(buf[i].toInt())
             }

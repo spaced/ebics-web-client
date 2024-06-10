@@ -18,8 +18,8 @@ import org.ebics.client.io.ByteArrayContentFactory
 import org.ebics.client.utils.requireNotNullAndNotBlank
 import org.slf4j.LoggerFactory
 import java.io.File
-import javax.annotation.PostConstruct
-import javax.annotation.PreDestroy
+import jakarta.annotation.PostConstruct
+import jakarta.annotation.PreDestroy
 
 
 abstract class AbstractPooledHttpClientFactory<T: HttpClient>(

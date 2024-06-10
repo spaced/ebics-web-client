@@ -3,7 +3,7 @@ package org.ebics.client.api.uploadtemplates
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.ebics.client.api.security.AuthenticationContext
 import org.ebics.client.api.uploadtemplates.permission.FileTemplateAccessRightController
-import javax.persistence.*
+import jakarta.persistence.*
 
 @Entity
 data class FileTemplate(
