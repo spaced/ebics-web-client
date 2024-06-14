@@ -2,14 +2,41 @@
 
 EBICS Web Client is a web UI which is used for exchanging of payments files via EBICS connection with the bank(s) supporting [EBICS protocol](https://www.ebics.de). 
 
-### Demo application
-Check the following [demo](https://ebics-web-client.herokuapp.com/) to get idea about functionality, here is the latest version of app deployed.
 
-![Demo](demo.gif)
+## Installing/running using Docker
 
-### Wiki pages
-- [Installation manual](https://github.com/honza-toegel/ebics-java-client/wiki/Installation-Manual)
-- [Getting started](https://github.com/honza-toegel/ebics-java-client/wiki/Getting-Started)
+Love containers? Don't want to install anything? No problem, use our Docker image.
+
+```shell
+docker pull ghcr.io/spaced/ebics-web-client:master
+```
+run with
+```shell
+docker run -p 8080:8080 --rm ghcr.io/spaced/ebics-web-client:master
+```
+or run with configuration
+```shell
+docker run -p 8080:8080 -v ./conf:/app/conf -e EWC_CONFIG_HOME=/app/conf ghcr.io/spaced/ebics-web-client:master
+```
+
+## Installing/running using maven
+build
+```shell
+mvn install
+```
+run with
+```shell
+java -jar ebics-rest-api/target/ebics-rest-api-x.y.z.war
+```
+
+---
+
+## Configuration
+[Configuration and Logging](ebics-rest-api/README.md)
+
+### HTTPS
+Use HTTPS with trusted certificates, don't use HTTP for production setups. Based on the way of running (standalone spring boot or tomcat container) you need to adjust config.properties [spring boot HTTPS config](https://docs.spring.io/spring-boot/how-to/webserver.html) or Apache Tomcat HTTPS
+
 
 ### Architecture & Functionality
 ![Architecture](ebics-web-client-architecture.drawio.png)
