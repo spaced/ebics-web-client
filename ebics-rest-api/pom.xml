@@ -15,6 +15,7 @@
 	<properties>
 		<spring.restdocs.version>3.0.1</spring.restdocs.version>
 		<asciidoctor-maven-plugin-version>2.2.6</asciidoctor-maven-plugin-version>
+		<logstash-logback-encoder.version>7.4</logstash-logback-encoder.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -79,12 +80,6 @@
 			<scope>provided</scope>
 		</dependency-->
 		<dependency>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-war-plugin</artifactId>
-			<version>3.3.1</version>
-			<type>maven-plugin</type>
-		</dependency>
-		<dependency>
 			<groupId>org.jetbrains.kotlin</groupId>
 			<artifactId>kotlin-maven-allopen</artifactId>
 			<version>${kotlin.version}</version>
@@ -118,6 +113,11 @@
 			<artifactId>spring-restdocs-mockmvc</artifactId>
 			<version>${spring.restdocs.version}</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.logstash.logback</groupId>
+			<artifactId>logstash-logback-encoder</artifactId>
+			<version>${logstash-logback-encoder.version}</version>
 		</dependency>
 	</dependencies>
 
