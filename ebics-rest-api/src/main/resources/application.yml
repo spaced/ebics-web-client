@@ -37,6 +37,8 @@ spring:
         filter: member={0}
       user:
         filter: (uid={0})
+      mapping:
+        readers: admin
 logging:
   pattern:
     console: "%black(%d{ISO8601}) %highlight(%-5level) [%blue(%t)] %yellow(%C{1}): %msg%n%throwable"
