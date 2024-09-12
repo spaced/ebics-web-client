@@ -8,8 +8,6 @@ import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.invoke
-import org.springframework.security.core.userdetails.User
-import org.springframework.security.provisioning.InMemoryUserDetailsManager
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 
@@ -19,19 +17,10 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 @Order(SecurityProperties.BASIC_AUTH_ORDER)
 class SecurityConfiguration() {
 
-    @Bean
-    fun configure(): InMemoryUserDetailsManager {
-        return InMemoryUserDetailsManager(
-            User.withUsername("guest").password("{noop}pass").roles("GUEST").build(),
-            User.withUsername("user").password("{noop}pass").roles("USER", "GUEST").build(),
-            User.withUsername("admin").password("{noop}pass").roles("ADMIN", "USER", "GUEST").build()
-        )
-    }
 
     @Bean
     fun filterChainBasic(http: HttpSecurity): SecurityFilterChain {
         http {
-            httpBasic {  }
             authorizeRequests {
                 authorize(HttpMethod.GET, "/bankconnections",hasAnyRole("ADMIN", "USER", "GUEST"))
                 authorize(AntPathRequestMatcher( "/bankconnections/{\\d+}/H00{\\d+}/**",HttpMethod.POST.name()),hasAnyRole("USER", "GUEST"))
@@ -48,11 +37,10 @@ class SecurityConfiguration() {
                 authorize(HttpMethod.GET, "/user/settings",hasAnyRole("ADMIN", "USER", "GUEST"))
                 authorize(HttpMethod.PUT, "/user/settings",hasAnyRole("ADMIN", "USER", "GUEST"))
             }
-            cors {  }
+            cors { }
             csrf { disable() }
-            formLogin { disable() }
+            formLogin { }
         }
         return http.build()
-        //http.httpBasic().and().authorizeRequests().antMatchers("/users", "/").permitAll().anyRequest().authenticated()
     }
 }

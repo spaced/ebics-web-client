@@ -11,6 +11,32 @@ The config.properties & logback.xml is expected on path
 $EWC_CONFIG_HOME/config.properties (or config.yaml)
 $EWC_CONFIG_HOME/logback.xml
 
+## LDAP integration
+
+### local development
+```shell
+docker run --rm -p 1389:1389    --env LDAP_ADMIN_USERNAME=admin \
+  --env LDAP_ADMIN_PASSWORD=adminpassword \
+  --env LDAP_USERS=customuser \
+  --env LDAP_PASSWORDS=custompassword bitnami/openldap:latest
+```
+with config:
+```yaml
+  spring:
+      ldap:
+        base: dc=example,dc=org
+        urls: ["ldap://localhost:1389"]
+        username: cn=admin,dc=example,dc=org
+        password: adminpassword
+        search:
+          group:
+            base: ou=users
+            filter: member={0}
+          user:
+            filter: (uid={0})
+```
+
+
 ## HTTPS Certificate
 
 In order to support HTTPS the appropriate certificate sign by verified cert authority must be configured.
