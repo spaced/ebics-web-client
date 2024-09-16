@@ -39,7 +39,8 @@ class SecurityConfiguration() {
             }
             cors { }
             csrf { disable() }
-            formLogin { }
+            formLogin { defaultSuccessUrl("/user", false) }
+            logout { }
         }
         return http.build()
     }
