@@ -31,17 +31,17 @@ function errorResponseToApiError(error: unknown): ApiError {
   if (isAxiosError<EbicsApiError>(error)) {
     if (error.response) {
       const ebicsApiError = error.response?.data;
-      if (error.config.responseType == 'arraybuffer') {
+      if (error.config?.responseType == 'arraybuffer') {
         //In this case we requesed arraybuffer (not JSON object) so the data must be first extracted
         return arrayBufferToObject<EbicsApiError>(error.response?.data as unknown as ArrayBuffer) as EbicsApiError
       } else {
         //We already have proper object EbicsApiError
         return ebicsApiError;
       }
-    } else { 
+    } else {
       //There is no real response data, but it is still axios error
       return {timestamp: new Date().toISOString(), message: JSON.stringify(error.message)} as ApiError
-    } 
+    }
   } else {
     //Non axios error
     return {timestamp: new Date().toISOString(), message: JSON.stringify(error)} as ApiError
@@ -64,9 +64,9 @@ export function getFormatedErrorMessage(apiError: ApiError | EbicsApiError | Ebi
   }
 }
 
-export function getFormatedErrorCategory(apiError: ApiError | EbicsApiError): string {  
+export function getFormatedErrorCategory(apiError: ApiError | EbicsApiError): string {
   if (isEbicsApiError(apiError)) {
-    return `HTTP ${apiError.httpStatusCode} ${apiError.httpStatusResonPhrase}` 
+    return `HTTP ${apiError.httpStatusCode} ${apiError.httpStatusResonPhrase}`
   } else {
     //Its not from REST API, it comes from the frontend itself, for example backend is available
     return 'Frontend error';
@@ -127,8 +127,8 @@ export default function useBaseAPI() {
 
   /**
    * Indicates if the Error should be threated as OK
-   * @param apiError 
-   * @returns 
+   * @param apiError
+   * @returns
    */
   const isTheApiErrorActuallyOk = (apiError: ApiError): boolean => {
     return (apiError.message.includes('EBICS_NO_DOWNLOAD_DATA_AVAILABLE'));
@@ -136,12 +136,12 @@ export default function useBaseAPI() {
 
   /**
    * Return new msg for error which was assesed as OK by isTheApiErrorActuallyOk
-   * @param apiError 
-   * @param msg 
-   * @returns 
+   * @param apiError
+   * @param msg
+   * @returns
    */
   const remapMsgForOkErrors = (apiError: ApiError, msg: string): string => {
-    if (apiError.message.includes('EBICS_NO_DOWNLOAD_DATA_AVAILABLE')) 
+    if (apiError.message.includes('EBICS_NO_DOWNLOAD_DATA_AVAILABLE'))
       return 'No download data available on the EBICS server (EBICS_NO_DOWNLOAD_DATA_AVAILABLE)';
     else
       return msg;
