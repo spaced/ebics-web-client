@@ -23,7 +23,7 @@ function getAuthSSOBasicTypeFromEnv():boolean {
 
 const authenticationType = ref<AuthenticationType>(getAuthTypeFromEnv());
 const refreshUserContextByMounth = true;
-const ssoDevOverBasic = ref(getAuthSSOBasicTypeFromEnv()); 
+const ssoDevOverBasic = ref(getAuthSSOBasicTypeFromEnv());
 
 //Reactive http basic credentials object available in browser session
 //Initally no default password & username to force login, can be changed for dev purposes
@@ -95,27 +95,27 @@ export default function useUserContextAPI() {
       console.log(
         'Basic HTTP credentials:' + JSON.stringify(api.defaults.auth)
       );
-      //We have credential, we do login API call to get principal and roles from backend
-      try {
-        const response = await api.get<UserContext>('user');
-        q.notify({
-          color: 'positive',
-          position: 'bottom-right',
-          message: 'Authentication successfull',
-          icon: 'report_problem',
-        });
-        console.log(JSON.stringify(response.data));
-        userContext.value = response.data;
-        userContext.value.time = new Date().toISOString();
-      } catch (error) {
-        userContext.value = undefined;
-        q.notify({
-          color: 'negative',
-          position: 'bottom-right',
-          message: `Authentication failed: ${JSON.stringify(error)}`,
-          icon: 'report_problem',
-        });
-        throw error;
+        //We have credential, we do login API call to get principal and roles from backend
+        try {
+          const response = await api.get<UserContext>('user');
+          q.notify({
+            color: 'positive',
+            position: 'bottom-right',
+            message: 'Authentication successful',
+            icon: 'report_problem',
+          });
+          console.log(JSON.stringify(response.data));
+          userContext.value = response.data;
+          userContext.value.time = new Date().toISOString();
+        } catch (error) {
+          userContext.value = undefined;
+          q.notify({
+            color: 'negative',
+            position: 'bottom-right',
+            message: `Authentication failed: ${JSON.stringify(error)}`,
+            icon: 'report_problem',
+          });
+          throw error;
       }
     }
   };
