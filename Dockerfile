@@ -16,6 +16,7 @@ COPY --from=build /app/ebics-rest-api/target/ebics*.war /app/
 WORKDIR /app
 #remove version form jar files in container and note the used version
 EXPOSE 8080
+EXPOSE 8443
 RUN FN=`(ls ebics-rest-api-*[0-9].war | head -1)`;  echo $FN;  mv $FN ebics-rest-api.war;  touch $FN.version
 ENTRYPOINT ["java","-jar","ebics-rest-api.war"]
 
