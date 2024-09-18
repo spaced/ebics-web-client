@@ -56,7 +56,7 @@ module.exports = configure(function (ctx) {
     // Full list of options: https://v2.quasar.dev/quasar-cli/quasar-conf-js#Property%3A-build
     build: {
       env: ctx.dev ? {
-        API_URL: undefined,
+        API_URL: "http://localhost:8081",
         AUTH_TYPE: 'HTTP_BASIC',
         AUTH_TYPE_SSO_OVER_BASIC: undefined
       } : {
@@ -103,7 +103,7 @@ module.exports = configure(function (ctx) {
       port: 8081,
       open: true, // opens browser window automatically
       proxy: {
-          context: ['/login', '/user'],
+          context: ['/login', '/user','/bankconnections','/banks'],
           target: 'http://localhost:8080',
           changeOrigin: true
         }
