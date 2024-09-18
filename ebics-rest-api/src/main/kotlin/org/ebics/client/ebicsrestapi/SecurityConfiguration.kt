@@ -3,23 +3,36 @@ package org.ebics.client.ebicsrestapi
 import org.springframework.boot.autoconfigure.security.SecurityProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
 import org.springframework.core.annotation.Order
+import org.springframework.core.env.Environment
 import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.invoke
+import org.springframework.security.core.userdetails.User
+import org.springframework.security.provisioning.InMemoryUserDetailsManager
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 
 
 @Configuration
 @EnableWebSecurity
-@Order(SecurityProperties.BASIC_AUTH_ORDER)
 class SecurityConfiguration() {
+
+    @Bean
+    @Profile("dev")
+    fun configure(): InMemoryUserDetailsManager {
+        return InMemoryUserDetailsManager(
+            User.withUsername("guest").password("{noop}pass").roles("GUEST").build(),
+            User.withUsername("user").password("{noop}pass").roles("USER", "GUEST").build(),
+            User.withUsername("admin").password("{noop}pass").roles("ADMIN", "USER", "GUEST").build()
+        )
+    }
 
 
     @Bean
-    fun filterChainBasic(http: HttpSecurity): SecurityFilterChain {
+    fun filterChainBasic(http: HttpSecurity, env: Environment): SecurityFilterChain {
         http {
             authorizeRequests {
                 authorize(HttpMethod.GET, "/bankconnections",hasAnyRole("ADMIN", "USER", "GUEST"))
@@ -41,6 +54,13 @@ class SecurityConfiguration() {
             csrf { disable() }
             formLogin { defaultSuccessUrl("/user", false) }
             logout { }
+        }
+        if (env.activeProfiles.contains("dev")) {
+            http {
+                formLogin { disable() }
+                logout { disable() }
+                httpBasic { }
+            }
         }
         return http.build()
     }

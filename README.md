@@ -12,7 +12,7 @@ docker pull ghcr.io/spaced/ebics-web-client:master
 ```
 run with
 ```shell
-docker run -p 8080:8080 --rm ghcr.io/spaced/ebics-web-client:master
+docker run -p 8080:8080 --rm -e SPRING_PROFILES_ACTIVE=dev ghcr.io/spaced/ebics-web-client:master
 ```
 or run with configuration
 ```shell
@@ -37,6 +37,16 @@ java -jar ebics-rest-api/target/ebics-rest-api-x.y.z.war
 ### HTTPS
 Use HTTPS with trusted certificates, don't use HTTP for production setups. Based on the way of running (standalone spring boot or tomcat container) you need to adjust config.properties [spring boot HTTPS config](https://docs.spring.io/spring-boot/how-to/webserver.html) or Apache Tomcat HTTPS
 
+
+### LDAP
+```
+spring.ldap.base=dc=example,dc=org
+spring.ldap.urls[0]=ldap://localhost:1389
+spring.ldap.username=cn=admin,dc=example,dc=org
+spring.ldap.password=adminpassword
+spring.ldap.search.group.base=ou=users
+spring.ldap.search.mapping.adGroupName=admin
+```
 
 ### Architecture & Functionality
 ![Architecture](ebics-web-client-architecture.drawio.png)

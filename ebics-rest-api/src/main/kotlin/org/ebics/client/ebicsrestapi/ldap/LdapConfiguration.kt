@@ -4,6 +4,7 @@ package org.ebics.client.ebicsrestapi.ldap
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
 import org.springframework.ldap.core.support.BaseLdapPathContextSource
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.ldap.LdapBindAuthenticationManagerFactory
@@ -17,6 +18,7 @@ typealias AuthorityRecord = Map<String, List<String>>
 typealias AuthorityMapper = (AuthorityRecord) -> GrantedAuthority?
 
 @Configuration
+@Profile("!dev")
 @EnableConfigurationProperties(LdapSearchProperties::class)
 class LdapConfiguration {
     @Bean
@@ -42,7 +44,6 @@ class LdapConfiguration {
         val factory = LdapBindAuthenticationManagerFactory(contextSource)
         factory.setUserSearchFilter(searchProperties.user.filter)
         factory.setUserSearchBase(searchProperties.user.base)
-        //factory.setUserDnPatterns("uid={0},ou=users")
         factory.setLdapAuthoritiesPopulator(authorities)
         return factory.createAuthenticationManager()
     }
