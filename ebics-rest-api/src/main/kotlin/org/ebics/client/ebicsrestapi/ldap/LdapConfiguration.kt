@@ -1,6 +1,5 @@
 package org.ebics.client.ebicsrestapi.ldap
 
-
 import org.springframework.boot.autoconfigure.ldap.LdapProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
@@ -24,10 +23,8 @@ typealias AuthorityMapper = (AuthorityRecord) -> GrantedAuthority?
 class LdapConfiguration {
 
     @Bean
-    fun authorities(
-        contextSource: BaseLdapPathContextSource,
-        searchProperties: LdapSearchProperties
-    ): LdapAuthoritiesPopulator {
+    @Profile("openldap")
+    fun authorities(contextSource: BaseLdapPathContextSource, searchProperties: LdapSearchProperties): LdapAuthoritiesPopulator {
         val authorities = DefaultLdapAuthoritiesPopulator(contextSource, searchProperties.group.base)
         authorities.setGroupSearchFilter(searchProperties.group.filter)
         val mapper: AuthorityMapper = { record ->
@@ -42,12 +39,13 @@ class LdapConfiguration {
     }
 
     @Bean
+    fun activeDirectoryAuthorities(searchProperties: LdapSearchProperties): LdapAuthoritiesPopulator {
+        return ActiveDirectoryRoleMapperPopulator(searchProperties.mapping)
+    }
+
+    @Bean
     @Profile("openldap")
-    fun authenticationManager(
-        contextSource: BaseLdapPathContextSource,
-        authorities: LdapAuthoritiesPopulator,
-        searchProperties: LdapSearchProperties
-    ): AuthenticationManager {
+    fun authenticationManager(contextSource: BaseLdapPathContextSource, authorities: LdapAuthoritiesPopulator, searchProperties: LdapSearchProperties): AuthenticationManager {
         val factory = LdapBindAuthenticationManagerFactory(contextSource)
         factory.setUserSearchFilter(searchProperties.user.filter)
         factory.setUserSearchBase(searchProperties.user.base)
@@ -56,16 +54,10 @@ class LdapConfiguration {
     }
 
     @Bean
-    fun authenticationProvider(
-        ldapProperties: LdapProperties,
-        searchProperties: LdapSearchProperties
-    ): ActiveDirectoryLdapAuthenticationProvider {
-        return ActiveDirectoryLdapAuthenticationProvider(
-            searchProperties.domain,
-            ldapProperties.urls.get(0),
-            ldapProperties.base
-        )
-
+    fun authenticationProvider(ldapProperties: LdapProperties, searchProperties: LdapSearchProperties, authorities: LdapAuthoritiesPopulator): ActiveDirectoryLdapAuthenticationProvider {
+        val adProvider = ActiveDirectoryLdapAuthenticationProvider(searchProperties.domain, ldapProperties.urls[0], ldapProperties.base)
+        adProvider.setAuthoritiesPopulator(authorities)
+        return adProvider
     }
 
 }
