@@ -25,6 +25,7 @@ with config:
   spring:
       ldap:
         base: dc=example,dc=org
+        domain: example.com # for active directory
         urls: ["ldap://localhost:1389"]
         username: cn=admin,dc=example,dc=org
         password: adminpassword
