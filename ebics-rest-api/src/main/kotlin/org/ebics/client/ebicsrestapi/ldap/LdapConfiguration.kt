@@ -23,7 +23,7 @@ typealias AuthorityMapper = (AuthorityRecord) -> GrantedAuthority?
 class LdapConfiguration {
 
     @Bean
-    @Profile("openldap")
+    @Profile("ldap-search")
     fun authorities(contextSource: BaseLdapPathContextSource, searchProperties: LdapSearchProperties): LdapAuthoritiesPopulator {
         val authorities = DefaultLdapAuthoritiesPopulator(contextSource, searchProperties.group.base)
         authorities.setGroupSearchFilter(searchProperties.group.filter)
@@ -44,7 +44,6 @@ class LdapConfiguration {
     }
 
     @Bean
-    @Profile("openldap")
     fun authenticationManager(contextSource: BaseLdapPathContextSource, authorities: LdapAuthoritiesPopulator, searchProperties: LdapSearchProperties): AuthenticationManager {
         val factory = LdapBindAuthenticationManagerFactory(contextSource)
         factory.setUserSearchFilter(searchProperties.user.filter)
@@ -54,6 +53,7 @@ class LdapConfiguration {
     }
 
     @Bean
+    @Profile("ldap-ad")
     fun authenticationProvider(ldapProperties: LdapProperties, searchProperties: LdapSearchProperties, authorities: LdapAuthoritiesPopulator): ActiveDirectoryLdapAuthenticationProvider {
         val adProvider = ActiveDirectoryLdapAuthenticationProvider(searchProperties.domain, ldapProperties.urls[0], ldapProperties.base)
         adProvider.setAuthoritiesPopulator(authorities)
