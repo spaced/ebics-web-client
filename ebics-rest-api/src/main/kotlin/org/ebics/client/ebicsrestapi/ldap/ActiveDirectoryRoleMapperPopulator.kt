@@ -13,7 +13,7 @@ import org.springframework.security.ldap.userdetails.LdapAuthoritiesPopulator
  * Translates ad memberOf attribute to role based on ldap search property [LdapSearchProperties.mapping]
  * inspired by [DefaultActiveDirectoryAuthoritiesPopulator]
  */
-class ActiveDirectoryRoleMapperPopulator(val mapping: Map<String,String>?) : LdapAuthoritiesPopulator {
+class ActiveDirectoryRoleMapperPopulator(val mapping: Map<String,Array<String>>?) : LdapAuthoritiesPopulator {
     private val logger = LoggerFactory.getLogger(ActiveDirectoryRoleMapperPopulator::class.java)
     override fun getGrantedAuthorities(
         userData: DirContextOperations?,
@@ -28,8 +28,8 @@ class ActiveDirectoryRoleMapperPopulator(val mapping: Map<String,String>?) : Lda
 
         return buildList {
             for (group in groups) {
-                val mappedRole = mapping?.get(DistinguishedName(group).removeLast().value)
-                if (mappedRole != null) add(SimpleGrantedAuthority("ROLE_${mappedRole.uppercase()}"))
+                val mappedRoles = mapping?.get(DistinguishedName(group).removeLast().value)
+                if (mappedRoles != null) mappedRoles.forEach{ r:String -> add(SimpleGrantedAuthority("ROLE_${r.uppercase()}"))}
             }
         }
     }

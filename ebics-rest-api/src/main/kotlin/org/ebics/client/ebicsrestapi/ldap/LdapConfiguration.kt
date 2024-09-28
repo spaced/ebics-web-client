@@ -23,15 +23,15 @@ typealias AuthorityMapper = (AuthorityRecord) -> GrantedAuthority?
 class LdapConfiguration {
 
     @Bean
-    @Profile("ldap-search")
+    @Profile("ldap-auth-group-search")
     fun authorities(contextSource: BaseLdapPathContextSource, searchProperties: LdapSearchProperties): LdapAuthoritiesPopulator {
         val authorities = DefaultLdapAuthoritiesPopulator(contextSource, searchProperties.group.base)
         authorities.setGroupSearchFilter(searchProperties.group.filter)
         val mapper: AuthorityMapper = { record ->
             val roles = record["cn"]
             val role = roles?.first()
-            val mappedRole = searchProperties.mapping?.get(role) ?: role
-            mappedRole?.let { SimpleGrantedAuthority("ROLE_${mappedRole.uppercase()}") }
+            val mappedRole = searchProperties.mapping?.get(role)
+            mappedRole?.first()?.let { r -> SimpleGrantedAuthority("ROLE_${r.uppercase()}") }
         }
 
         authorities.setAuthorityMapper(mapper)
@@ -39,11 +39,13 @@ class LdapConfiguration {
     }
 
     @Bean
+    @Profile("default", "ldap-auth-ad-memberof")
     fun activeDirectoryAuthorities(searchProperties: LdapSearchProperties): LdapAuthoritiesPopulator {
         return ActiveDirectoryRoleMapperPopulator(searchProperties.mapping)
     }
 
     @Bean
+    @Profile("default", "ldap-bind-default")
     fun authenticationManager(contextSource: BaseLdapPathContextSource, authorities: LdapAuthoritiesPopulator, searchProperties: LdapSearchProperties): AuthenticationManager {
         val factory = LdapBindAuthenticationManagerFactory(contextSource)
         factory.setUserSearchFilter(searchProperties.user.filter)
@@ -53,7 +55,7 @@ class LdapConfiguration {
     }
 
     @Bean
-    @Profile("ldap-ad")
+    @Profile("ldap-bind-ad")
     fun authenticationProvider(ldapProperties: LdapProperties, searchProperties: LdapSearchProperties, authorities: LdapAuthoritiesPopulator): ActiveDirectoryLdapAuthenticationProvider {
         val adProvider = ActiveDirectoryLdapAuthenticationProvider(searchProperties.domain, ldapProperties.urls[0], ldapProperties.base)
         adProvider.setAuthoritiesPopulator(authorities)
