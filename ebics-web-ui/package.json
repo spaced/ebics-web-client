@@ -22,7 +22,9 @@
     "axios": "^1.7.7",
     "core-js": "^3.6.5",
     "quasar": "^2.1.0",
+    "vue": "^3.0.0",
     "vue-i18n": "^9.0.0",
+    "vue-router": "^4.0.0",
     "vue-uuid": "^2.0.2",
     "vue3-ace-editor": "^2.0.2"
   },
@@ -52,8 +54,7 @@
     "last 5 Opera versions"
   ],
   "engines": {
-    "node": ">= 12.22.1",
-    "npm": ">= 6.13.4",
-    "yarn": ">= 1.21.1"
-  }
+    "node": ">= 22.9.0"
+  },
+  "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"
 }
