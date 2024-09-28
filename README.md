@@ -1,7 +1,9 @@
 # EBICS Web Client
 
-EBICS Web Client is a web UI which is used for exchanging of payments files via EBICS connection with the bank(s) supporting [EBICS protocol](https://www.ebics.de). 
-
+EBICS Web Client is a web application which is used for exchanging of payments files via EBICS connection with the bank(s) supporting [EBICS protocol](https://www.ebics.de). 
+Support of following EBICS versions:
+- EBICS 2.5 (H004)
+- EBICS 3.0 (H005)
 
 ## Installing/running using Docker
 
@@ -12,7 +14,7 @@ docker pull ghcr.io/spaced/ebics-web-client:master
 ```
 run with
 ```shell
-docker run -p 8080:8080 --rm ghcr.io/spaced/ebics-web-client:master
+docker run -p 8080:8080 --rm -e SPRING_PROFILES_ACTIVE=dev ghcr.io/spaced/ebics-web-client:master
 ```
 or run with configuration
 ```shell

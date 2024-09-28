@@ -8,6 +8,7 @@ export interface UserContext {
 
 export enum AuthenticationType {
   SSO = 'Single sign on',
+  SERVER = 'server',
   HTTP_BASIC = 'HTTP Basic (username + password)'
 }
 

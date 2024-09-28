@@ -7,7 +7,7 @@
             filled
             v-model="basicCredentials.username"
             label="User name"
-            hint="User name used for login with HTTP simple authorization"
+            hint="User name used for login"
             lazy-rules
             :rules="[
               (val) =>
@@ -21,7 +21,7 @@
             v-model="basicCredentials.password"
             type="password"
             label="User password"
-            hint="User password used for login with HTTP simple authorization"
+            hint="User password used for login"
             lazy-rules
             :rules="[
               (val) =>
@@ -47,7 +47,7 @@ export default defineComponent({
   methods: {
     async onLogin() {
       try {
-        await this.refreshUserContextData()
+        await this.login()
         await this.$router.push({path: '/userctx'})
       } catch(error) {
         console.log(JSON.stringify(error))
@@ -55,8 +55,8 @@ export default defineComponent({
     },
   },
   setup() {
-    const { basicCredentials, refreshUserContextData } = useUserContextAPI();
-    return { basicCredentials, refreshUserContextData };
+    const { basicCredentials, login } = useUserContextAPI();
+    return { basicCredentials, login };
   },
 });
 </script>

@@ -1,0 +1,15 @@
+---
+spring:
+  ldap:
+    base: dc=example,dc=org
+    urls: ["ldap://localhost:1389"]
+    username: cn=admin,dc=example,dc=org
+    password: adminpassword
+    search:
+      group:
+        base: ou=users
+        filter: member={0}
+      user:
+        filter: (uid={0})
+      mapping:
+        readers: admin

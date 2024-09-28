@@ -3,7 +3,9 @@ package org.ebics.client.ebicsrestapi
 import org.springframework.boot.autoconfigure.security.SecurityProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
 import org.springframework.core.annotation.Order
+import org.springframework.core.env.Environment
 import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
@@ -16,10 +18,10 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 
 @Configuration
 @EnableWebSecurity
-@Order(SecurityProperties.BASIC_AUTH_ORDER)
 class SecurityConfiguration() {
 
     @Bean
+    @Profile("dev")
     fun configure(): InMemoryUserDetailsManager {
         return InMemoryUserDetailsManager(
             User.withUsername("guest").password("{noop}pass").roles("GUEST").build(),
@@ -28,10 +30,10 @@ class SecurityConfiguration() {
         )
     }
 
+
     @Bean
-    fun filterChainBasic(http: HttpSecurity): SecurityFilterChain {
+    fun filterChainBasic(http: HttpSecurity, env: Environment): SecurityFilterChain {
         http {
-            httpBasic {  }
             authorizeRequests {
                 authorize(HttpMethod.GET, "/bankconnections",hasAnyRole("ADMIN", "USER", "GUEST"))
                 authorize(AntPathRequestMatcher( "/bankconnections/{\\d+}/H00{\\d+}/**",HttpMethod.POST.name()),hasAnyRole("USER", "GUEST"))
@@ -48,11 +50,18 @@ class SecurityConfiguration() {
                 authorize(HttpMethod.GET, "/user/settings",hasAnyRole("ADMIN", "USER", "GUEST"))
                 authorize(HttpMethod.PUT, "/user/settings",hasAnyRole("ADMIN", "USER", "GUEST"))
             }
-            cors {  }
+            cors { }
             csrf { disable() }
-            formLogin { disable() }
+            formLogin { defaultSuccessUrl("/user", false) }
+            logout { }
+        }
+        if (env.activeProfiles.contains("dev")) {
+            http {
+                formLogin { disable() }
+                logout { disable() }
+                httpBasic { }
+            }
         }
         return http.build()
-        //http.httpBasic().and().authorizeRequests().antMatchers("/users", "/").permitAll().anyRequest().authenticated()
     }
 }

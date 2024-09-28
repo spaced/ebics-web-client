@@ -12,6 +12,8 @@ function getAuthTypeFromEnv():AuthenticationType {
       return AuthenticationType.SSO;
     case 'HTTP_BASIC':
       return AuthenticationType.HTTP_BASIC;
+    case 'SERVER':
+      return AuthenticationType.SERVER;
     default:
       return AuthenticationType.SSO;
   }
@@ -23,7 +25,7 @@ function getAuthSSOBasicTypeFromEnv():boolean {
 
 const authenticationType = ref<AuthenticationType>(getAuthTypeFromEnv());
 const refreshUserContextByMounth = true;
-const ssoDevOverBasic = ref(getAuthSSOBasicTypeFromEnv()); 
+const ssoDevOverBasic = ref(getAuthSSOBasicTypeFromEnv());
 
 //Reactive http basic credentials object available in browser session
 //Initally no default password & username to force login, can be changed for dev purposes
@@ -46,32 +48,66 @@ export default function useUserContextAPI() {
   const router = useRouter();
 
   const resetUserContextData = async () => {
-    if (authenticationType.value == AuthenticationType.HTTP_BASIC) {
-      basicCredentials.value = { username: '', password: '' };
-      userContext.value = undefined;
-      await router.push({ path: 'login' });
-      q.notify({
-        color: 'positive',
-        position: 'bottom-right',
-        message: 'Authentication context reseted',
-        icon: 'report_problem',
-      });
-    } else if (authenticationType.value == AuthenticationType.SSO) {
-      await refreshUserContextData();
+    switch (authenticationType.value) {
+      case AuthenticationType.SSO:
+        await refreshUserContextData();
+        break;
+      case AuthenticationType.SERVER:
+        await api.get('logout');
+      default:
+        basicCredentials.value = {username: '', password: ''};
+        userContext.value = undefined;
+        await router.push({path: 'login'});
+        q.notify({
+          color: 'positive',
+          position: 'bottom-right',
+          message: 'Logged out',
+          icon: 'report_problem',
+        });
     }
   };
 
-  const hasCredentials = (): boolean => {
-    if (authenticationType.value == AuthenticationType.HTTP_BASIC)
-      return (
-        basicCredentials.value.username !== '' &&
-        basicCredentials.value.password !== ''
-      );
-    else if (authenticationType.value == AuthenticationType.SSO) {
-      return true;
-    }
-    return false;
-  };
+  const hasCredentials = (): boolean =>
+    basicCredentials.value.username !== '' &&
+    basicCredentials.value.password !== '';
+
+  const onSuccessUserContext = (uc: UserContext) => {
+    userContext.value = uc;
+    userContext.value.time = new Date().toISOString();
+    q.notify({
+      color: 'positive',
+      position: 'bottom-right',
+      message: 'Authentication successful',
+      icon: 'report_problem',
+    });
+  }
+
+  const onFailedUserContext = (error: unknown) => {
+    userContext.value = undefined;
+    q.notify({
+      color: 'negative',
+      position: 'bottom-right',
+      message: `Authentication failed: ${JSON.stringify(error)}`,
+      icon: 'report_problem',
+    });
+  }
+
+  const login = async (): Promise<void> => {
+    if (authenticationType.value == AuthenticationType.SERVER) {
+      try {
+        const formData = new FormData();
+        formData.set('username', basicCredentials.value.username);
+        formData.set('password', basicCredentials.value.password);
+        const response = await api.post<UserContext>('login', formData, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}});
+        if (response.status == 200) {
+          onSuccessUserContext(response.data);
+        }
+      } catch (error) {
+        onFailedUserContext(error)
+      }
+    } else await refreshUserContextData()
+  }
+
 
   const refreshUserContextData = async (): Promise<void> => {
     if (
@@ -92,29 +128,14 @@ export default function useUserContextAPI() {
         api.defaults.auth = { username: 'admin', password: 'pass' };
       }
 
-      console.log(
-        'Basic HTTP credentials:' + JSON.stringify(api.defaults.auth)
-      );
-      //We have credential, we do login API call to get principal and roles from backend
+      //We have credential, we do user API call to get principal and roles from backend
       try {
         const response = await api.get<UserContext>('user');
-        q.notify({
-          color: 'positive',
-          position: 'bottom-right',
-          message: 'Authentication successfull',
-          icon: 'report_problem',
-        });
-        console.log(JSON.stringify(response.data));
-        userContext.value = response.data;
-        userContext.value.time = new Date().toISOString();
+        onSuccessUserContext(response.data);
       } catch (error) {
-        userContext.value = undefined;
-        q.notify({
-          color: 'negative',
-          position: 'bottom-right',
-          message: `Authentication failed: ${JSON.stringify(error)}`,
-          icon: 'report_problem',
-        });
+        if (authenticationType.value == AuthenticationType.SERVER) {
+          await router.push({ path: 'login' });
+        } else onFailedUserContext(error);
         throw error;
       }
     }
@@ -165,5 +186,6 @@ export default function useUserContextAPI() {
     hasRoleAdmin,
     resetUserContextData,
     refreshUserContextData,
+    login
   };
 }

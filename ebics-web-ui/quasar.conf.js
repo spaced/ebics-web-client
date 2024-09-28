@@ -56,15 +56,15 @@ module.exports = configure(function (ctx) {
     // Full list of options: https://v2.quasar.dev/quasar-cli/quasar-conf-js#Property%3A-build
     build: {
       env: ctx.dev ? {
-        API_URL: 'http://localhost:8080/EbicsWebClient',
+        API_URL: "http://localhost:8081",
         AUTH_TYPE: 'HTTP_BASIC',
         AUTH_TYPE_SSO_OVER_BASIC: undefined
       } : {
         //Use relative path for PRODUCTION  - means FE SPA & BE REST are using same URL
         API_URL: undefined,
-        AUTH_TYPE: 'SSO',
+        AUTH_TYPE: 'SERVER',
         //Simulates SSO in with statically given HTTP basic credentials (only by AuthenticationType.SSO for dev purposes)
-        AUTH_TYPE_SSO_OVER_BASIC: 'yes'
+        AUTH_TYPE_SSO_OVER_BASIC: undefined
       },
       vueRouterMode: 'hash', // available values: 'hash', 'history'
 
@@ -72,7 +72,7 @@ module.exports = configure(function (ctx) {
       //minify: true,
       uglifyOptions: {
         format: {
-          ascii_only: true // This fixing  wrong transpiled unicode chars in regex from sace.js 
+          ascii_only: true // This fixing  wrong transpiled unicode chars in regex from sace.js
         }
       },
 
@@ -101,7 +101,12 @@ module.exports = configure(function (ctx) {
     devServer: {
       https: false,
       port: 8081,
-      open: true // opens browser window automatically
+      open: true, // opens browser window automatically
+      proxy: {
+          context: ['/login', '/user','/bankconnections','/banks'],
+          target: 'http://localhost:8080',
+          changeOrigin: true
+        }
     },
 
     // https://v2.quasar.dev/quasar-cli/quasar-conf-js#Property%3A-framework

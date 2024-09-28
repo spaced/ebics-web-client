@@ -28,7 +28,7 @@ class EbicsRestConfiguration(
 
 ) : EbicsConfiguration {
 
-    final override val locale: Locale = Locale(localeLanguage)
+    final override val locale: Locale = Locale.of(localeLanguage)
 
     init {
         //Setting default locale as well in order to set locale for Messages singleton object
