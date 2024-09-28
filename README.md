@@ -1,7 +1,9 @@
 # EBICS Web Client
 
-EBICS Web Client is a web UI which is used for exchanging of payments files via EBICS connection with the bank(s) supporting [EBICS protocol](https://www.ebics.de). 
-
+EBICS Web Client is a web application which is used for exchanging of payments files via EBICS connection with the bank(s) supporting [EBICS protocol](https://www.ebics.de). 
+Support of following EBICS versions:
+- EBICS 2.5 (H004)
+- EBICS 3.0 (H005)
 
 ## Installing/running using Docker
 
@@ -37,16 +39,6 @@ java -jar ebics-rest-api/target/ebics-rest-api-x.y.z.war
 ### HTTPS
 Use HTTPS with trusted certificates, don't use HTTP for production setups. Based on the way of running (standalone spring boot or tomcat container) you need to adjust config.properties [spring boot HTTPS config](https://docs.spring.io/spring-boot/how-to/webserver.html) or Apache Tomcat HTTPS
 
-
-### LDAP
-```
-spring.ldap.base=dc=example,dc=org
-spring.ldap.urls[0]=ldap://localhost:1389
-spring.ldap.username=cn=admin,dc=example,dc=org
-spring.ldap.password=adminpassword
-spring.ldap.search.group.base=ou=users
-spring.ldap.search.mapping.adGroupName=admin
-```
 
 ### Architecture & Functionality
 ![Architecture](ebics-web-client-architecture.drawio.png)
