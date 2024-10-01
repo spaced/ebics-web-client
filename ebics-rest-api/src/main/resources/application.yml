@@ -1,3 +1,4 @@
+---
 build:
   #Use maven build properties in spring, provide those values for application
   revision: "@revision@"
@@ -6,12 +7,15 @@ ebics:
   signatureVersion: "A005"
   authenticationVersion: "X002"
   encryptionVersion: "E002"
-  isTraceEnabled: "true"
-  isCompressionEnabled: "true"
+  trace: "true"
+  compression: "true"
   locale:
     language: "en"
 spring:
+  main:
+    banner-mode: off
   jpa:
+    open-in-view: false
     hibernate:
       #In order to stop spring boot from maintaining DB updates (done by liquibase itself)
       ddl-auto: "none"
@@ -26,7 +30,6 @@ spring:
     multipart:
       max-file-size: "100MB"
       max-request-size: "100MB"
-
 logging:
   pattern:
     console: "%black(%d{ISO8601}) %highlight(%-5level) [%blue(%t)] %yellow(%C{1}): %msg%n%throwable"
@@ -35,3 +38,4 @@ logging:
     org.ebics: DEBUG
     org.springframework.web: DEBUG
     org.springframework.security: DEBUG
+
