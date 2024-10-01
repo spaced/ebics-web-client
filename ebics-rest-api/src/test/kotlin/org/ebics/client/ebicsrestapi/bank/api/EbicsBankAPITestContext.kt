@@ -19,8 +19,6 @@ import java.net.URI
 @Configuration
 @Lazy
 class EbicsBankAPITestContext {
-    @MockkBean
-    private lateinit var configuration: EbicsRestConfiguration
 
     @Bean
     fun versionSupportService() = mockk<VersionSupportService>()
@@ -58,5 +56,5 @@ class EbicsBankAPITestContext {
     fun bankOperations() = mockk<BankOperations>()
 
     @Bean
-    fun ebicsBankApi() = EbicsBankAPI(configuration, bankService(), versionSupportService(), bankOperations())
+    fun ebicsBankApi() = EbicsBankAPI(bankService(), versionSupportService(), bankOperations())
 }

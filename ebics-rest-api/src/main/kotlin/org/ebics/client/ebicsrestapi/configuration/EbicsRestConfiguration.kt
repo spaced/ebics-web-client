@@ -2,33 +2,23 @@ package org.ebics.client.ebicsrestapi.configuration
 
 import org.ebics.client.api.EbicsConfiguration
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Configuration
 import java.util.*
 
-@Configuration
-class EbicsRestConfiguration(
-
-    @Value("\${ebics.signatureVersion:A005}")
-    override val signatureVersion: String,
-
-    @Value("\${ebics.authenticationVersion:X002}")
-    override val authenticationVersion: String,
-
-    @Value("\${ebics.encryptionVersion:E002}")
-    override val encryptionVersion: String,
-
-    @Value("\${ebics.trace:#{true}}")
-    override val isTraceEnabled: Boolean,
-
-    @Value("\${ebics.compression:#{true}}")
-    override val isCompressionEnabled: Boolean,
-
-    @Value("\${ebics.locale.language:en}")
-    private val localeLanguage:String,
+@ConfigurationProperties("ebics")
+data class EbicsRestConfiguration(
+    override val signatureVersion: String = "A005",
+    override val authenticationVersion: String = "X002",
+    override val encryptionVersion: String = "E002",
+    val trace: Boolean = true,
+    val compression: Boolean = true,
+    private val localeLanguage:String = "en",
 
 ) : EbicsConfiguration {
-
-    final override val locale: Locale = Locale.of(localeLanguage)
+    override val locale: Locale = Locale.of(localeLanguage)
+    override val isTraceEnabled = trace
+    override val isCompressionEnabled = compression
 
     init {
         //Setting default locale as well in order to set locale for Messages singleton object
