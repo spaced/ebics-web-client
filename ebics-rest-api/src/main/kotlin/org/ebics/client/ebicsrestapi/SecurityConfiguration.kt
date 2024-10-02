@@ -1,10 +1,9 @@
 package org.ebics.client.ebicsrestapi
 
-import org.springframework.boot.autoconfigure.security.SecurityProperties
+import org.ebics.client.ebicsrestapi.key.ApiKeyAuthenticationFilter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
-import org.springframework.core.annotation.Order
 import org.springframework.core.env.Environment
 import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -13,6 +12,7 @@ import org.springframework.security.config.annotation.web.invoke
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.provisioning.InMemoryUserDetailsManager
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 
 
@@ -62,6 +62,7 @@ class SecurityConfiguration() {
                 httpBasic { }
             }
         }
+        http.addFilterBefore(ApiKeyAuthenticationFilter(),UsernamePasswordAuthenticationFilter::class.java)
         return http.build()
     }
 }

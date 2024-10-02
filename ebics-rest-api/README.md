@@ -11,6 +11,17 @@ The config.properties & logback.xml is expected on path
 $EWC_CONFIG_HOME/config.properties (or config.yaml)
 $EWC_CONFIG_HOME/logback.xml
 
+## API Key configuration
+```properties
+ebics.api.clients.FirstClientApiId.key=aVeryLongRandomString
+ebics.api.clients.FirstClientApiId.role=admin
+```
+allows client using http header
+```properties
+X-App-Id=FirstClientApiId
+X-Api-Id=aVeryLongRandomString
+```
+
 ## LDAP integration
 
 ### local development
