@@ -7,9 +7,11 @@ import org.ebics.client.ebicsrestapi.bankconnection.UserIdPass
 import org.ebics.client.ebicsrestapi.configuration.EbicsRestConfiguration
 import org.ebics.client.model.EbicsProduct
 import org.ebics.client.model.EbicsSession
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.stereotype.Component
 
 @Component
+@EnableConfigurationProperties(EbicsRestConfiguration::class)
 class EbicsSessionFactory(
     private val userService: BankConnectionService,
     private val configuration: EbicsRestConfiguration,

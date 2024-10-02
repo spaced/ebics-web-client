@@ -6,6 +6,7 @@ enum class BusinessRole {
     ROLE_ADMIN,
     ROLE_USER,
     ROLE_GUEST,
+    ROLE_API,
     ROLE_UNKNOWN;
 
     companion object {
@@ -13,6 +14,7 @@ enum class BusinessRole {
             return when (roleName) {
                 "ROLE_ADMIN" -> ROLE_ADMIN
                 "ROLE_USER" -> ROLE_USER
+                "ROLE_API" -> ROLE_API
                 "ROLE_GUEST" -> ROLE_GUEST
                 else -> ROLE_UNKNOWN
             }

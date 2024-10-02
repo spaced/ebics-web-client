@@ -20,7 +20,6 @@ import java.util.*
 
 @Component("EbicsBankAPI")
 class EbicsBankAPI(
-    private val configuration: EbicsRestConfiguration,
     private val bankService: BankService,
     private val versionSupportService: VersionSupportService,
     private val bankOperations: BankOperations,

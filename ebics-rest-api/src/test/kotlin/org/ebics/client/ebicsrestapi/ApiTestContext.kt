@@ -28,8 +28,6 @@ import org.springframework.context.annotation.Lazy
 @Configuration
 @Lazy
 class ApiTestContext {
-    @MockkBean
-    lateinit var configuration: EbicsRestConfiguration
 
     @Bean
     fun bankConnectionService(): BankConnectionService = BankConnectionServiceTestImpl()
@@ -53,7 +51,7 @@ class ApiTestContext {
     fun bankOperations(): BankOperations = BankOperationsTestImpl()
 
     @Bean
-    fun ebicsBankAPI(): EbicsBankAPI = EbicsBankAPI(configuration, bankService(), versionSupportService(), bankOperations())
+    fun ebicsBankAPI(): EbicsBankAPI = EbicsBankAPI(bankService(), versionSupportService(), bankOperations())
 
     @Bean
     fun ebicsBankConnectionResource(): EbicsBankConnectionsResource = EbicsBankConnectionsResource(bankConnectionService(), healthStatusEnrichmentService())

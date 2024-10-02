@@ -1,0 +1,14 @@
+---
+management:
+  health:
+    ldap:
+      enabled: false
+
+ebics:
+  api:
+    clients:
+      testclient-admin-xy:
+        key: abc1234
+        role: admin
+      testclient-api-xy:
+        key: abc1234

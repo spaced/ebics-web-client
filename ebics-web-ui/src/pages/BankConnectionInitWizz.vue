@@ -351,7 +351,6 @@ import usePasswordAPI from 'components/password-api';
 import useDialogs from 'components/dialogs';
 import { copyToClipboard } from 'quasar';
 import {
-  BankConnection,
   UserCertificatesForImport
 } from 'components/models/ebics-bank-connection';
 
