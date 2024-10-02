@@ -11,6 +11,7 @@ ebics:
   compression: "true"
   locale:
     language: "en"
+
 spring:
   main:
     banner-mode: off

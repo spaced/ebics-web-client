@@ -35,19 +35,19 @@ class SecurityConfiguration() {
     fun filterChainBasic(http: HttpSecurity, env: Environment): SecurityFilterChain {
         http {
             authorizeRequests {
-                authorize(HttpMethod.GET, "/bankconnections",hasAnyRole("ADMIN", "USER", "GUEST"))
+                authorize(HttpMethod.GET, "/bankconnections",hasAnyRole("ADMIN", "USER", "API", "GUEST"))
                 authorize(AntPathRequestMatcher( "/bankconnections/{\\d+}/H00{\\d+}/**",HttpMethod.POST.name()),hasAnyRole("USER", "GUEST"))
-                authorize(AntPathRequestMatcher("/bankconnections/{\\d+}/H00{\\d+}/**", HttpMethod.GET.name()),hasAnyRole("USER", "GUEST"))
+                authorize(AntPathRequestMatcher("/bankconnections/{\\d+}/H00{\\d+}/**", HttpMethod.GET.name()),hasAnyRole("USER", "API", "GUEST"))
                 authorize(HttpMethod.POST, "/bankconnections",hasRole("USER"))
                 authorize(AntPathRequestMatcher("/bankconnections/{\\d+}", HttpMethod.PUT.name()),hasRole("USER"))
                 authorize(AntPathRequestMatcher("/bankconnections/{\\d+}",HttpMethod.DELETE.name()),hasAnyRole("ADMIN", "USER"))
-                authorize(HttpMethod.GET, "/banks/**",hasAnyRole("ADMIN", "USER", "GUEST"))
+                authorize(HttpMethod.GET, "/banks/**",hasAnyRole("ADMIN", "USER", "API", "GUEST"))
                 authorize(HttpMethod.POST, "/banks/**",hasRole("ADMIN"))
                 authorize(HttpMethod.PUT, "/banks/**",hasRole("ADMIN"))
                 authorize(HttpMethod.PATCH, "/banks/**",hasRole("ADMIN"))
                 authorize(HttpMethod.DELETE, "/banks/**",hasRole("ADMIN"))
-                authorize(HttpMethod.GET, "/user",hasAnyRole("ADMIN", "USER", "GUEST"))
-                authorize(HttpMethod.GET, "/user/settings",hasAnyRole("ADMIN", "USER", "GUEST"))
+                authorize(HttpMethod.GET, "/user",hasAnyRole("ADMIN", "USER", "API", "GUEST"))
+                authorize(HttpMethod.GET, "/user/settings",hasAnyRole("ADMIN", "USER", "API", "GUEST"))
                 authorize(HttpMethod.PUT, "/user/settings",hasAnyRole("ADMIN", "USER", "GUEST"))
             }
             cors { }

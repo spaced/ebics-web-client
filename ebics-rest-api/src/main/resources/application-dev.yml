@@ -7,6 +7,8 @@ management:
 ebics:
   api:
     clients:
-      testclient-xy:
+      testclient-admin-xy:
         key: abc1234
         role: admin
+      testclient-api-xy:
+        key: abc1234
