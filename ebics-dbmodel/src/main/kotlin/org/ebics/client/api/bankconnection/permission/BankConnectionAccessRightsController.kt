@@ -75,6 +75,10 @@ interface BankConnectionAccessRightsController : WriteAccessRightsController, Re
                     logger.debug("Read permission for '{}' granted through user access for '{}'", getObjectName(), authCtx.name)
                     true
                 }
+                authCtx.hasRole(BusinessRole.ROLE_API) -> {
+                    logger.debug("Read permission for '{}' granted through api role for '{}'", getObjectName(), authCtx.name)
+                    true
+                }
                 authCtx.hasRole(BusinessRole.ROLE_GUEST) && isGuestAccess() -> {
                     logger.debug("Read permission for '{}' granted through guest access for '{}'", getObjectName(), authCtx.name)
                     true
@@ -100,6 +104,10 @@ interface BankConnectionAccessRightsController : WriteAccessRightsController, Re
             return when {
                 authCtx.hasRole(BusinessRole.ROLE_USER) && getCreatorName() == name -> {
                     logger.debug("Use permission for '{}' granted through user access for '{}'", getObjectName(), authCtx.name)
+                    true
+                }
+                authCtx.hasRole(BusinessRole.ROLE_API) -> {
+                    logger.debug("Use permission for '{}' granted through api access for '{}'", getObjectName(), authCtx.name)
                     true
                 }
                 authCtx.hasRole(BusinessRole.ROLE_GUEST) && isGuestAccess() -> {
