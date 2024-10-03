@@ -6,11 +6,12 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 import org.springframework.ldap.core.support.BaseLdapPathContextSource
-import org.springframework.security.authentication.AuthenticationManager
-import org.springframework.security.config.ldap.LdapBindAuthenticationManagerFactory
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.ldap.authentication.BindAuthenticator
+import org.springframework.security.ldap.authentication.LdapAuthenticationProvider
 import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider
+import org.springframework.security.ldap.search.FilterBasedLdapUserSearch
 import org.springframework.security.ldap.userdetails.DefaultLdapAuthoritiesPopulator
 import org.springframework.security.ldap.userdetails.LdapAuthoritiesPopulator
 
@@ -44,19 +45,18 @@ class LdapConfiguration {
         return ActiveDirectoryRoleMapperPopulator(searchProperties.mapping)
     }
 
+
     @Bean
     @Profile("default", "ldap-bind-default")
-    fun authenticationManager(contextSource: BaseLdapPathContextSource, authorities: LdapAuthoritiesPopulator, searchProperties: LdapSearchProperties): AuthenticationManager {
-        val factory = LdapBindAuthenticationManagerFactory(contextSource)
-        factory.setUserSearchFilter(searchProperties.user.filter)
-        factory.setUserSearchBase(searchProperties.user.base)
-        factory.setLdapAuthoritiesPopulator(authorities)
-        return factory.createAuthenticationManager()
+    fun authenticationBindProvider(contextSource: BaseLdapPathContextSource, authorities: LdapAuthoritiesPopulator, searchProperties: LdapSearchProperties): LdapAuthenticationProvider {
+        val ba = BindAuthenticator(contextSource)
+        ba.setUserSearch(FilterBasedLdapUserSearch(searchProperties.user.base, searchProperties.user.filter, contextSource))
+        return LdapAuthenticationProvider(ba, authorities)
     }
 
     @Bean
     @Profile("ldap-bind-ad")
-    fun authenticationProvider(ldapProperties: LdapProperties, searchProperties: LdapSearchProperties, authorities: LdapAuthoritiesPopulator): ActiveDirectoryLdapAuthenticationProvider {
+    fun authenticationADProvider(ldapProperties: LdapProperties, searchProperties: LdapSearchProperties, authorities: LdapAuthoritiesPopulator): ActiveDirectoryLdapAuthenticationProvider {
         val adProvider = ActiveDirectoryLdapAuthenticationProvider(searchProperties.domain, ldapProperties.urls[0], ldapProperties.base)
         adProvider.setAuthoritiesPopulator(authorities)
         return adProvider
