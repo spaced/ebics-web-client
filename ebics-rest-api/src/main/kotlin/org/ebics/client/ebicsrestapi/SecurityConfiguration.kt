@@ -43,7 +43,7 @@ class SecurityConfiguration() {
         http {
             authorizeRequests {
                 authorize(HttpMethod.GET, "/bankconnections",hasAnyRole("ADMIN", "USER", "API", "GUEST"))
-                authorize(AntPathRequestMatcher( "/bankconnections/{\\d+}/H00{\\d+}/**",HttpMethod.POST.name()),hasAnyRole("USER", "GUEST"))
+                authorize(AntPathRequestMatcher( "/bankconnections/{\\d+}/H00{\\d+}/**",HttpMethod.POST.name()),hasAnyRole("USER", "API", "GUEST"))
                 authorize(AntPathRequestMatcher("/bankconnections/{\\d+}/H00{\\d+}/**", HttpMethod.GET.name()),hasAnyRole("USER", "API", "GUEST"))
                 authorize(HttpMethod.POST, "/bankconnections",hasRole("USER"))
                 authorize(AntPathRequestMatcher("/bankconnections/{\\d+}", HttpMethod.PUT.name()),hasRole("USER"))
