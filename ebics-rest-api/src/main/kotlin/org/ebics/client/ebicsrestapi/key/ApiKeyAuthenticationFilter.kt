@@ -17,7 +17,9 @@ class ApiKeyAuthenticationFilter() : OncePerRequestFilter() {
     }
 
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
-        authTokenFromHttpHeader(request).let { authentication -> SecurityContextHolder.getContext().authentication = authentication }
+        authTokenFromHttpHeader(request)?.let { authentication ->
+            SecurityContextHolder.getContext().authentication = authentication
+        }
         filterChain.doFilter(request, response)
     }
 }
