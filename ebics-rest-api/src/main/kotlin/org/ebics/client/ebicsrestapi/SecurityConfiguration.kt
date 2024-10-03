@@ -6,6 +6,9 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 import org.springframework.core.env.Environment
 import org.springframework.http.HttpMethod
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.AuthenticationProvider
+import org.springframework.security.authentication.ProviderManager
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.invoke
@@ -30,6 +33,10 @@ class SecurityConfiguration() {
         )
     }
 
+    @Bean
+    fun authenticationManager(myAuthenticationProviders: List<AuthenticationProvider>):AuthenticationManager {
+        return ProviderManager(myAuthenticationProviders);
+    }
 
     @Bean
     fun filterChainBasic(http: HttpSecurity, env: Environment): SecurityFilterChain {
@@ -54,6 +61,7 @@ class SecurityConfiguration() {
             csrf { disable() }
             formLogin { defaultSuccessUrl("/user", false) }
             logout { }
+
         }
         if (env.activeProfiles.contains("dev")) {
             http {
