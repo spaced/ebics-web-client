@@ -16,7 +16,7 @@ spring:
   main:
     banner-mode: off
   jpa:
-    open-in-view: false
+    open-in-view: true
     hibernate:
       #In order to stop spring boot from maintaining DB updates (done by liquibase itself)
       ddl-auto: "none"
