@@ -42,12 +42,12 @@
             </configuration>
           </execution>
           <execution>
-            <id>yarn quasar build</id>
+            <id>yarn run build</id>
             <goals>
-              <goal>yarn</goal>
+              <goal>corepack</goal>
             </goals>
             <configuration>
-              <arguments>quasar build</arguments>
+              <arguments>yarn run build</arguments>
             </configuration>
           </execution>
 

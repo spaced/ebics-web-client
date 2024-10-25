@@ -7,6 +7,9 @@ node
 target
 .flattened-pom.xml
 
+# Yarn
+/.yarn
+
 # Quasar core related directories
 .quasar
 /dist
