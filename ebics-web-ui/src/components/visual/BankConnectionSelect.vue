@@ -6,9 +6,8 @@
     :option-label="bankConnectionLabel"
     label="EBICS Bank connection"
     hint="Select EBICS bank connection"
-    lazy-rules
     :rules="[
-      (val) => bankConnectionVal || 'Please select valid EBICS bank connection',
+      (val) => val || 'Please select valid EBICS bank connection',
     ]"
   >
     <template v-slot:append>
@@ -18,7 +17,7 @@
         flat
         icon="settings"
         @click.stop="configureBankConnectionsDropdown = true;"
-      > 
+      >
       <q-tooltip>
           Click to adjust filter to display/hide erroneous or shared connections..
         </q-tooltip>
@@ -62,12 +61,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref } from 'vue';
+import { defineComponent, computed, ref} from 'vue';
+import type { PropType } from 'vue'
 import { BankConnection } from 'components/models/ebics-bank-connection';
 import { bankConnectionLabel } from 'components/bankconnections';
 import { ConnectionStatusObject, HealthStatusType } from 'components/models/allivenes-health-status';
 import UserPreferences from 'components/visual/UserPreferences.vue'
 import useUserSettingsAPI from 'components/user-settings';
+
 
 interface LabelTextAndClass {
   labelText: string,
@@ -79,11 +80,11 @@ export default defineComponent({
   components: { UserPreferences },
   props: {
     bankConnections: {
-        type: Object,
+        type: Object as PropType<Array<BankConnection>>,
         required: true,
     },
     bankConnection: {
-        type: Object,
+        type: Object as PropType<BankConnection>,
         required: false,
     },
   },
@@ -100,7 +101,7 @@ export default defineComponent({
 
     const getBankConnectionStatus = (bankConnection: BankConnection): ConnectionStatusObject => {
       return bankConnection.frontendStatus ? bankConnection.frontendStatus : bankConnection.backendStatus;
-    } 
+    }
     const getBankConnectionStatusLabel = (bankConnection: BankConnection | undefined): LabelTextAndClass => {
       if (bankConnection) {
         const connectionStatus = getBankConnectionStatus(bankConnection);
@@ -117,7 +118,7 @@ export default defineComponent({
       } else {
         return {labelText: 'Bank connection not given', labelClass: 'text-warning' };
       }
-    } 
+    }
     const { saveUserSettings } = useUserSettingsAPI();
     const configureBankConnectionsDropdown = ref(false);
     return { bankConnectionLabel, bankConnectionVal, HealthStatusType, getBankConnectionStatusLabel, configureBankConnectionsDropdown, saveUserSettings};

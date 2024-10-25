@@ -27,7 +27,7 @@
         flat
         icon="settings"
         @click.stop="configureOrdertypesDropdown = true;"
-      > 
+      >
       <q-tooltip>
           Click to adjust filter to display/hide erroneous or shared connections..
         </q-tooltip>
@@ -49,7 +49,7 @@
     <template v-slot:option="scope">
       <q-item v-bind="scope.itemProps">
         <q-item-section>
-          <q-item-label v-html="orderTypeLabel(scope.opt)" />
+          <q-item-label>{{orderTypeLabel(scope.opt)}}</q-item-label>
           <q-item-label caption>{{ scope.opt.description }}</q-item-label>
         </q-item-section>
       </q-item>
@@ -74,7 +74,7 @@ export default defineComponent({
       required: false,
     },
     orderTypes: {
-      type: Object,
+      type: Object as PropType<OrderType[]>,
       required: true,
     },
     bankConnection: {
