@@ -93,6 +93,7 @@ import { VAceEditor } from 'vue3-ace-editor';
 import 'ace-builds/src-noconflict/mode-xml';
 import 'ace-builds/src-noconflict/theme-clouds';
 import { EbicsVersion } from 'src/components/models/ebics-version';
+import { QTableColumn } from 'quasar';
 
 interface CustomFilterInput {
   traceTypeValue: Ref<TraceType[]>,
@@ -120,7 +121,7 @@ export default defineComponent({
       else return orderType.adminOrderType;
     };
 
-    const columns = [
+    const columns: QTableColumn<TraceEntry>[] = [
       {
         name: 'traceCategory',
         label: 'Category',
@@ -197,7 +198,7 @@ export default defineComponent({
       },
     ];
     const { traces } = useTracesAPI();
-    const selectedTraceList = ref<readonly TraceEntry[]>([]);
+    const selectedTraceList = ref<TraceEntry[]>([]);
     const selectedTrace = computed(() => selectedTraceList.value.at(0))
     const traceTypeValue = ref([TraceType.Content]);
     const traceTypeOptions = [

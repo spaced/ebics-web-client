@@ -12,7 +12,7 @@
       >
         <template v-slot:header="props">
           <q-tr :props="props">
-            <q-th v-for="col in props.cols.filter(col => col.name != 'canBeEdited')" :key="col.name" :props="props">
+            <q-th v-for="col in props.cols.filter((col: any ) => col.name != 'canBeEdited')" :key="col.name" :props="props">
               {{ col.label }}
             </q-th>
             <q-th auto-width></q-th>
@@ -20,7 +20,7 @@
         </template>
         <template v-slot:body="props">
           <q-tr :props="props">
-            <q-td v-for="col in props.cols.filter(col => col.name != 'canBeEdited')" :key="col.name" :props="props">
+            <q-td v-for="col in props.cols.filter((col: any ) => col.name != 'canBeEdited')" :key="col.name" :props="props">
               <div v-if="col.name != 'name'">
                 {{ col.value }}
               </div>
@@ -31,7 +31,7 @@
             </q-td>
             <q-td :style="{ width: '320px' }">
               <div v-if="props.cols[0].value" class="q-gutter-sm">
-                <q-btn 
+                <q-btn
                   size="sm"
                   color="primary"
                   label="Edit"
@@ -39,14 +39,14 @@
                   no-caps
                   @click="routeToTemplatePage('edit', Number(props.key))"
                 />
-                <q-btn 
+                <q-btn
                   size="sm"
                   label="Copy"
                   color="accent"
                   icon-right="content_copy"
                   @click="routeToTemplatePage('copy', Number(props.key));"
                 />
-                <q-btn 
+                <q-btn
                   size="sm"
                   label="Delete"
                   color="accent"
@@ -55,7 +55,7 @@
                 />
               </div>
               <div v-else class="q-gutter-sm">
-                <q-btn 
+                <q-btn
                   size="sm"
                   color="primary"
                   label="View"
@@ -63,7 +63,7 @@
                   no-caps
                   @click="routeToTemplatePage('view', Number(props.key))"
                 />
-                <q-btn 
+                <q-btn
                   size="sm"
                   label="Copy"
                   color="accent"
@@ -112,7 +112,7 @@ import useFileTemplateAPI from 'components/file-templates-api';
 import FileTemplateTags from 'components/visual/FileTemplateTags.vue';
 
 export default defineComponent({
-  name: 'Templates',
+  name: 'UploadTemplates',
   components: {FileTemplateTags},
   setup() {
     const router = useRouter();
@@ -168,7 +168,7 @@ export default defineComponent({
      */
     const routeToTemplatePage = async (action: string, templateId?: number) => {
       const routeParams = templateId === undefined ? undefined : { id: templateId };
-      
+
       switch(action) {
         case 'create':
           await router.push({
@@ -183,7 +183,7 @@ export default defineComponent({
             params: routeParams,
             query: { action: action },
           });
-          break; 
+          break;
       }
     }
     const exportTable = () => {

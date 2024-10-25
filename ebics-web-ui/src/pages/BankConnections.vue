@@ -85,6 +85,7 @@
 import { BankConnection } from 'components/models/ebics-bank-connection';
 import { defineComponent } from 'vue';
 import useBankConnectionsAPI from 'components/bankconnections'
+import { QTableColumn } from 'quasar';
 
 export default defineComponent({
   // eslint-disable-next-line vue/multi-word-component-names
@@ -130,7 +131,7 @@ export default defineComponent({
     },
   },
   setup() {
-    const columns = [
+    const columns: QTableColumn<BankConnection>[] = [
       {
         name: 'name',
         required: true,

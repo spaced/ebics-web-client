@@ -78,7 +78,7 @@ import { Bank } from 'components/models/ebics-bank';
 import useBanksAPI from 'src/components/banks';
 import { defineComponent, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useQuasar } from 'quasar';
+import { QTableColumn, useQuasar } from 'quasar';
 
 export default defineComponent({
   // eslint-disable-next-line vue/multi-word-component-names
@@ -88,13 +88,14 @@ export default defineComponent({
     const router = useRouter();
     const q = useQuasar();
     const filter = ref('');
-    const columns = [
+
+    const columns: ReadonlyArray<QTableColumn<Bank>> = [
       {
         name: 'name',
         required: true,
         label: 'Bank name',
         align: 'left',
-        field: (row: Bank) => row.name,
+        field: 'name',
         sortable: true,
       },
       {
@@ -102,7 +103,7 @@ export default defineComponent({
         required: true,
         label: 'URL',
         align: 'left',
-        field: (row: Bank) => row.bankURL,
+        field: 'bankURL',
         sortable: true,
       },
       {
@@ -110,7 +111,7 @@ export default defineComponent({
         required: true,
         label: 'EBICS Host Id',
         align: 'left',
-        field: (row: Bank) => row.hostId,
+        field: 'hostId',
         sortable: true,
       },
     ];
