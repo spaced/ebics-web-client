@@ -5,7 +5,7 @@ The web UI for EBICS Client in vue3/quasar.
 
 ## Install the dependencies
 ```bash
-npm install
+yarn install
 ```
 
 ### Start the app in development mode (hot-code reloading, error reporting, etc.)
@@ -15,7 +15,7 @@ quasar dev
 
 ### Lint the files
 ```bash
-npm run lint
+yarn run lint
 ```
 
 ### Build the app for production

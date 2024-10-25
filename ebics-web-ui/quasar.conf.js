@@ -9,7 +9,6 @@
 /* eslint-env node */
 /* eslint-disable @typescript-eslint/no-var-requires */
 const { configure } = require('quasar/wrappers');
-const { VERSION } = require('vue-i18n');
 
 module.exports = configure(function (ctx) {
   return {
@@ -56,7 +55,7 @@ module.exports = configure(function (ctx) {
     // Full list of options: https://v2.quasar.dev/quasar-cli/quasar-conf-js#Property%3A-build
     build: {
       env: ctx.dev ? {
-        API_URL: "http://localhost:8081",
+        API_URL: 'http://localhost:8081',
         AUTH_TYPE: 'HTTP_BASIC',
         AUTH_TYPE_SSO_OVER_BASIC: undefined
       } : {
@@ -66,22 +65,21 @@ module.exports = configure(function (ctx) {
         //Simulates SSO in with statically given HTTP basic credentials (only by AuthenticationType.SSO for dev purposes)
         AUTH_TYPE_SSO_OVER_BASIC: undefined
       },
-      vueRouterMode: 'hash', // available values: 'hash', 'history'
-
-      //transpile: true,
-      //minify: true,
-      uglifyOptions: {
-        format: {
-          ascii_only: true // This fixing  wrong transpiled unicode chars in regex from sace.js
-        }
+      target: {
+        browser: [ 'es2019', 'edge88', 'firefox78', 'chrome87', 'safari13.1' ],
+        node: 'node20'
       },
+
+      vueRouterMode: 'hash', // available values: 'hash', 'history'
+      // transpile: false,
+      // publicPath: '/',
 
       // Add dependencies for transpiling with Babel (Array of string/regex)
       // (from node_modules, which are by default not transpiled).
       // Applies only if "transpile" is set to true.
       // transpileDependencies: [],
 
-      // rtl: true, // https://v2.quasar.dev/options/rtl-support
+      // rtl: true, // https://quasar.dev/options/rtl-support
       // preloadChunks: true,
       // showProgress: false,
       // gzip: true,
@@ -90,17 +88,15 @@ module.exports = configure(function (ctx) {
       // Options below are automatically set depending on the env, set them if you want to override
       // extractCSS: false,
 
-      // https://v2.quasar.dev/quasar-cli/handling-webpack
+      // https://v2.quasar.dev/quasar-cli-webpack/handling-webpack
       // "chain" is a webpack-chain object https://github.com/neutrinojs/webpack-chain
-      chainWebpack (/* chain */) {
-        //
-      },
+      // chainWebpack (/* chain */) {}
+
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli/quasar-conf-js#Property%3A-devServer
     devServer: {
-      https: false,
-      port: 8081,
+      // https: true
       open: true, // opens browser window automatically
       proxy: {
           context: ['/login', '/user','/bankconnections','/banks'],
