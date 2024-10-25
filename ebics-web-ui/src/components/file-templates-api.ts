@@ -8,19 +8,17 @@ import useUserSettingsAPI from 'components/user-settings';
 export default function useFileTemplatesAPI() {
   const { apiErrorHandler } = useBaseAPI();
   const { confirmDialog } = useDialogs();
-  
+
   //Used for filtering of displayedFileTemplates
-  const { userSettings } = useUserSettingsAPI(); 
+  const { userSettings } = useUserSettingsAPI();
 
-  const fileTemplates = ref<FileTemplate[]>();
+  const fileTemplates = ref<readonly FileTemplate[]>([]);
 
-  const displayedFileTemplates = computed<FileTemplate[] | undefined>(() => 
-  {
-    return fileTemplates.value?.filter(fileTemplate => {
-      return (userSettings.value?.displayPredefinedTemplates || fileTemplate.custom) &&
-             (userSettings.value?.displaySharedTemplates || !fileTemplate.guestAccess);
-    });
-  })
+  const displayedFileTemplates = computed(() =>
+    fileTemplates.value.filter( (fileTemplate) =>
+      (userSettings.value?.displayPredefinedTemplates || fileTemplate.custom) && (userSettings.value?.displaySharedTemplates || !fileTemplate.guestAccess)
+    )
+  );
 
   const loadFileTemplates = async (): Promise<void> => {
     try {

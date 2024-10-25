@@ -99,7 +99,7 @@ module.exports = configure(function (ctx) {
       // https: true
       open: true, // opens browser window automatically
       proxy: {
-          context: ['/login', '/user','/bankconnections','/banks'],
+          context: ['/login', '/user','/bankconnections','/banks','/configuration'],
           target: 'http://localhost:8080',
           changeOrigin: true
         }

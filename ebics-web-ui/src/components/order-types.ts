@@ -31,7 +31,7 @@ const btfTypeCache: CustomMap<number, BTFType[]> = new CustomMap<
 
 export default function useOrderTypesAPI(
   selectedBankConnection: Ref<BankConnection | undefined>,
-  activeBankConnections: Ref<BankConnection[] | undefined>,
+  activeBankConnections: Ref<readonly BankConnection[]>,
   filterType: Ref<OrderTypeFilter>,
 ) {
   //BTF   types of selectedBankConnection filtered by filterType
@@ -42,7 +42,7 @@ export default function useOrderTypesAPI(
   const loading = ref<boolean>(false);
 
   //Used for the displayAdminTypes filter
-  const { userSettings } = useUserSettingsAPI(); 
+  const { userSettings } = useUserSettingsAPI();
   const { ebicsOrderTypes } = useFileTransferAPI();
   const { promptCertPassword } = usePasswordAPI();
   const { isEbicsVersionAllowedForUse } = useBanksAPI(true);
@@ -58,7 +58,7 @@ export default function useOrderTypesAPI(
     bankConnection: BankConnection,
     forceCashRefresh = false,
     useServerCache = true,
-  ) => {    
+  ) => {
     const orderTypesCache: OrderType[] | undefined = orderTypeCache.get(bankConnection.id);
 
     if (
@@ -70,7 +70,7 @@ export default function useOrderTypesAPI(
     ) {
 
       console.log(`order types H004 refresh aptempt ${bankConnection.name}`)
-      
+
       const orderTypesRefreshPromise = ebicsOrderTypes(
         bankConnection,
         EbicsVersion.H004,
@@ -98,7 +98,7 @@ export default function useOrderTypesAPI(
     forceCashRefresh = false,
     useServerCache = true,
   ) => {
-    
+
     const btfTypesCache: BTFType[] | undefined = btfTypeCache.get(bankConnection.id);
 
     if (
@@ -159,20 +159,18 @@ export default function useOrderTypesAPI(
 
   const updateOrderTypesCacheForAllActiveConnections =
     async (): Promise<void> => {
-      if (activeBankConnections.value) {
-        console.log('Loading order types')
-        loading.value = true;
-        //Collect all update ordertype promisses
-        const updateOrderTypesPromisses = activeBankConnections.value.map(
-          (bankConnection) =>
-            updateOrderTypesCacheForBankConnection(bankConnection, false, true)
-        );
+      console.log('Loading order types')
+      loading.value = true;
+      //Collect all update ordertype promisses
+      const updateOrderTypesPromisses = activeBankConnections.value.map(
+        (bankConnection) =>
+          updateOrderTypesCacheForBankConnection(bankConnection, false, true)
+      );
 
-        //Execute those promisses parallel
-        await Promise.allSettled(updateOrderTypesPromisses);
-        loading.value = false;
-        console.log('Order types loaded')
-      }
+      //Execute those promisses parallel
+      await Promise.allSettled(updateOrderTypesPromisses);
+      loading.value = false;
+      console.log('Order types loaded')
     };
 
   const refreshOutputOrdertypesForSelectedBankConnection = () => {

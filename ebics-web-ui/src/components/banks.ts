@@ -10,13 +10,13 @@ import useDialogs from 'components/dialogs';
  * @returns
  *  banks synchronized list of banks
  *  loadBanks function to trigger refreshing of banks
- *  deleteBank function to delete bank 
+ *  deleteBank function to delete bank
  */
 export default function useBanksAPI(avoidRefreshOnMounted = false) {
   const { apiErrorHandler } = useBaseAPI();
   const { confirmDialog } = useDialogs();
 
-  const banks = ref<Bank[]>();
+  const banks = ref<readonly Bank[]>([]);
 
   const loadBanks = async (): Promise<void> => {
     try {
@@ -29,7 +29,7 @@ export default function useBanksAPI(avoidRefreshOnMounted = false) {
 
   const deleteBank = async (bankId: number, bankName: string, askForConfimation = true): Promise<void> => {
     try {
-      const canDelete = askForConfimation ? await confirmDialog('Confirm deletion', `Do you want to realy delete bank : '${bankName}'`) : true
+      const canDelete = askForConfimation ? await confirmDialog('Confirm deletion', `Do you really want to delete bank : '${bankName}'`) : true
       if (canDelete) {
         await api.delete<Bank>(`banks/${bankId}`);
         await loadBanks();
@@ -39,10 +39,9 @@ export default function useBanksAPI(avoidRefreshOnMounted = false) {
     }
   };
 
-  const isEbicsVersionAllowedForUse = (bank: Bank, ebicsVersion: EbicsVersion): boolean | undefined => {
-    return !bank.ebicsVersions?.length //The ebicsVersions are empty, till first save happen...
-          || bank.ebicsVersions?.some(ver => (ver.version == ebicsVersion && ver.isAllowedForUse))
-  }
+  const isEbicsVersionAllowedForUse = (bank: Bank, ebicsVersion: EbicsVersion) =>
+     !bank.ebicsVersions?.length //The ebicsVersions are empty, till first save happen...
+          || bank.ebicsVersions?.some(ver => (ver.version == ebicsVersion && ver.isAllowedForUse));
 
   if (!avoidRefreshOnMounted)
     onMounted(loadBanks);

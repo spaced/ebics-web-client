@@ -197,12 +197,8 @@ export default defineComponent({
       },
     ];
     const { traces } = useTracesAPI();
-    const selectedTraceList = ref<TraceEntry[]>([]);
-    const selectedTrace = computed((): TraceEntry | undefined => {
-      return selectedTraceList.value?.length
-        ? (selectedTraceList.value[0] as TraceEntry)
-        : undefined;
-    });
+    const selectedTraceList = ref<readonly TraceEntry[]>([]);
+    const selectedTrace = computed(() => selectedTraceList.value.at(0))
     const traceTypeValue = ref([TraceType.Content]);
     const traceTypeOptions = [
       {
