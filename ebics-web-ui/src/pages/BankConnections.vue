@@ -87,6 +87,7 @@ import { defineComponent } from 'vue';
 import useBankConnectionsAPI from 'components/bankconnections'
 
 export default defineComponent({
+  // eslint-disable-next-line vue/multi-word-component-names
   name: 'Users',
   components: {},
   data() {

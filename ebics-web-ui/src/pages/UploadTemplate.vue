@@ -112,7 +112,7 @@ import 'ace-builds/src-noconflict/mode-xml';
 import 'ace-builds/src-noconflict/theme-clouds';
 
 export default defineComponent({
-  name: 'Template',
+  name: 'UploadTemplate',
   components: { VAceEditor },
   props: {
     id: {

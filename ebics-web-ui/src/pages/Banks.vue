@@ -81,6 +81,7 @@ import { useRouter } from 'vue-router';
 import { useQuasar } from 'quasar';
 
 export default defineComponent({
+  // eslint-disable-next-line vue/multi-word-component-names
   name: 'Banks',
   components: {},
   setup() {

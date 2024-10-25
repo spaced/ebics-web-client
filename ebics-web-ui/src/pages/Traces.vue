@@ -108,6 +108,7 @@ interface CustomFilterInputNR {
 
 export default defineComponent({
   components: { VAceEditor },
+  // eslint-disable-next-line vue/multi-word-component-names
   name: 'Traces',
   setup() {
     const { btfServiceLabel } = useOrderTypeLabelAPI();
@@ -235,14 +236,14 @@ export default defineComponent({
 
     const transferTypeFilterPredicate = (traceEntry: TraceEntry): boolean => {
       if (customFilterInput.transferTypeValue.value) {
-        if (customFilterInput.transferTypeValue.value.includes(TransferType.Upload) && 
+        if (customFilterInput.transferTypeValue.value.includes(TransferType.Upload) &&
           customFilterInput.transferTypeValue.value.includes(TransferType.Download))
           return true;
         else if (customFilterInput.transferTypeValue.value.includes(TransferType.Upload) && traceEntry.upload)
           return true;
         else if (customFilterInput.transferTypeValue.value.includes(TransferType.Download) && !traceEntry.upload)
           return true;
-        else 
+        else
           return false;
       } else {
         return true;
@@ -272,7 +273,7 @@ export default defineComponent({
         traceEntry.bank?.hostId,
         traceEntry.bank?.bankURL,
         traceEntry.bank?.name,
-        traceEntry.orderType?.adminOrderType, 
+        traceEntry.orderType?.adminOrderType,
         traceEntry.orderType?.businessOrderType,
         traceEntry.orderType?.ebicsServiceType?.serviceName,
         traceEntry.orderType?.ebicsServiceType?.serviceOption,
