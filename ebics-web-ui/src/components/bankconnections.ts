@@ -40,7 +40,7 @@ export default function useBankConnectionsAPI(
   const q = useQuasar();
   const { userSettings } = useUserSettingsAPI();
 
-  const bankConnections = ref<BankConnection[]>();
+  const bankConnections = ref<readonly BankConnection[]>([]);
   const loading = ref<boolean>(false);
 
   const loadBankConnections = async (): Promise<void> => {
@@ -57,16 +57,11 @@ export default function useBankConnectionsAPI(
     }
   };
 
-  const activeBankConnections = computed<BankConnection[] | undefined>(() => {
-    return bankConnections.value?.filter((bc) => bc.userStatus == 'READY');
-  });
+  const activeBankConnections = computed(
+    () => bankConnections.value.filter((bc) => bc.userStatus == 'READY')
+  );
 
-  const hasActiveConnections = computed<boolean>(() => {
-    return (
-      activeBankConnections.value != null &&
-      activeBankConnections.value?.length > 0
-    );
-  });
+  const hasActiveConnections = computed(() => activeBankConnections.value.length > 0);
 
   const confirmDialog = (title: string, message: string): Promise<boolean> => {
     return new Promise<boolean>((resolve, reject) => {
@@ -109,41 +104,26 @@ export default function useBankConnectionsAPI(
     }
   };
 
-  const hasActivePrivateConnections = computed((): boolean => {
-    return activeBankConnections.value?.some((bc) => !bc.guestAccess) ?? false;
-  });
+  const hasActivePrivateConnections = computed( () => activeBankConnections.value.some((bc) => !bc.guestAccess));
 
-  const hasActiveSharedConnections = computed((): boolean => {
-    return activeBankConnections.value?.some((bc) => bc.guestAccess) ?? false;
-  });
+  const hasActiveSharedConnections = computed( () => activeBankConnections.value.some((bc) => bc.guestAccess));
 
-  const isConnectionErrorneous = (bankConnection: BankConnection): boolean => {
-    return (
+  const isConnectionErrorneous = (bankConnection: BankConnection) =>
       bankConnection.backendStatus?.healthStatus == HealthStatusType.Error ||
-      bankConnection.frontendStatus?.healthStatus == HealthStatusType.Error
-    );
-  };
+      bankConnection.frontendStatus?.healthStatus == HealthStatusType.Error;
 
-  const hasErrorneousConnections = computed((): boolean => {
-    return (
-      activeBankConnections.value?.some((bc) => isConnectionErrorneous(bc)) ??
-      false
-    );
-  });
-  
+  const hasErrorneousConnections = computed( () => activeBankConnections.value.some(isConnectionErrorneous));
+
   /**
    * This method returns only the connections which should be displayed
    * The shared & errorneous connection are filtered out if relevant
    */
-  const activeDisplayedBankConnections = computed<BankConnection[] | undefined>(
-    () => {
-      return activeBankConnections.value?.filter(
+  const activeDisplayedBankConnections = computed(
+    () => activeBankConnections.value.filter(
         (bc) =>
           (!bc.guestAccess || userSettings.value.displaySharedBankConnections) &&
           (!isConnectionErrorneous(bc) || userSettings.value.displayErroneousConnections)
-      );
-    }
-  );
+      ));
 
   onMounted(loadBankConnections);
 

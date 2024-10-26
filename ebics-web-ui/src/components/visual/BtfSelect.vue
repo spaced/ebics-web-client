@@ -24,7 +24,7 @@
         flat
         icon="settings"
         @click.stop="configureOrdertypesDropdown = true;"
-      > 
+      >
       <q-tooltip>
           Click to adjust filter to display/hide erroneous or shared connections..
         </q-tooltip>
@@ -46,7 +46,7 @@
     <template v-slot:option="btfTypeOpt">
       <q-item v-bind="btfTypeOpt.itemProps">
         <q-item-section>
-          <q-item-label v-html="btfTypeLabel(btfTypeOpt.opt)" />
+          <q-item-label>{{btfTypeLabel(btfTypeOpt.opt)}}</q-item-label>
           <q-item-label caption>{{
             btfTypeOpt.opt.description
           }}</q-item-label>
@@ -73,7 +73,7 @@ export default defineComponent({
       required: false,
     },
     btfTypes: {
-      type: Object,
+      type: Object as PropType<BTFType[]>,
       required: true,
     },
     bankConnection: {

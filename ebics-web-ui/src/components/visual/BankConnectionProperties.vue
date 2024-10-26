@@ -9,7 +9,7 @@
 
       <q-card-section class="q-pt-none">
         <q-list v-if="propertiesArray" dense>
-          <q-item v-for="(property, index) in propertiesArray" :key="property">
+          <q-item v-for="(property, index) in propertiesArray" :key="property.key">
             <q-input dense label="name" v-model="property.key" />
             <q-input dense label="value" v-model="property.value" />
             <q-btn

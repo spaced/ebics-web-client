@@ -6,7 +6,7 @@ import { TraceEntry } from 'components/models/trace';
 export default function useTracesAPI() {
   const { apiErrorHandler } = useBaseAPI();
 
-  const traces = ref<TraceEntry[]>();
+  const traces = ref<readonly TraceEntry[]>([]);
 
   const loadTraces = async (): Promise<void> => {
     try {

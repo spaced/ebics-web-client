@@ -44,7 +44,7 @@
     <template v-slot:option="fileTemplatesOpt">
       <q-item v-bind="fileTemplatesOpt.itemProps">
         <q-item-section>
-          <q-item-label v-html="fileTemplateLabel(fileTemplatesOpt.opt)" />
+          <q-item-label>{{fileTemplateLabel(fileTemplatesOpt.opt)}}</q-item-label>
           <file-template-tags :tags="fileTemplatesOpt.opt.templateTags" />
         </q-item-section>
       </q-item>
@@ -91,12 +91,11 @@ export default defineComponent({
       return fileTemplate ? fileTemplate.templateName : '';
     };
 
-    const filteredFileTemplates = ref<FileTemplate[] | unknown>([]);
-    
-    const templateFilterPredicate = (template:FileTemplate, needle: string):boolean => {
-      return template.templateName.toLowerCase().includes(needle) || 
-             template.templateTags.toLowerCase().includes(needle);
-    }
+    const filteredFileTemplates = ref<FileTemplate[]>([]);
+
+    const templateFilterPredicate = (template:FileTemplate, needle: string):boolean =>
+       template.templateName.toLowerCase().includes(needle) ||
+       template.templateTags.toLowerCase().includes(needle);
 
     const filterTemplates = (
       val: string,
@@ -113,7 +112,7 @@ export default defineComponent({
           });
         }
       });
-    };    
+    };
 
     return {
       fileTemplateVal,

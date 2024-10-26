@@ -93,6 +93,7 @@ import { VAceEditor } from 'vue3-ace-editor';
 import 'ace-builds/src-noconflict/mode-xml';
 import 'ace-builds/src-noconflict/theme-clouds';
 import { EbicsVersion } from 'src/components/models/ebics-version';
+import { QTableColumn } from 'quasar';
 
 interface CustomFilterInput {
   traceTypeValue: Ref<TraceType[]>,
@@ -108,6 +109,7 @@ interface CustomFilterInputNR {
 
 export default defineComponent({
   components: { VAceEditor },
+  // eslint-disable-next-line vue/multi-word-component-names
   name: 'Traces',
   setup() {
     const { btfServiceLabel } = useOrderTypeLabelAPI();
@@ -119,7 +121,7 @@ export default defineComponent({
       else return orderType.adminOrderType;
     };
 
-    const columns = [
+    const columns: QTableColumn<TraceEntry>[] = [
       {
         name: 'traceCategory',
         label: 'Category',
@@ -197,11 +199,7 @@ export default defineComponent({
     ];
     const { traces } = useTracesAPI();
     const selectedTraceList = ref<TraceEntry[]>([]);
-    const selectedTrace = computed((): TraceEntry | undefined => {
-      return selectedTraceList.value?.length
-        ? (selectedTraceList.value[0] as TraceEntry)
-        : undefined;
-    });
+    const selectedTrace = computed(() => selectedTraceList.value.at(0))
     const traceTypeValue = ref([TraceType.Content]);
     const traceTypeOptions = [
       {
@@ -235,14 +233,14 @@ export default defineComponent({
 
     const transferTypeFilterPredicate = (traceEntry: TraceEntry): boolean => {
       if (customFilterInput.transferTypeValue.value) {
-        if (customFilterInput.transferTypeValue.value.includes(TransferType.Upload) && 
+        if (customFilterInput.transferTypeValue.value.includes(TransferType.Upload) &&
           customFilterInput.transferTypeValue.value.includes(TransferType.Download))
           return true;
         else if (customFilterInput.transferTypeValue.value.includes(TransferType.Upload) && traceEntry.upload)
           return true;
         else if (customFilterInput.transferTypeValue.value.includes(TransferType.Download) && !traceEntry.upload)
           return true;
-        else 
+        else
           return false;
       } else {
         return true;
@@ -272,7 +270,7 @@ export default defineComponent({
         traceEntry.bank?.hostId,
         traceEntry.bank?.bankURL,
         traceEntry.bank?.name,
-        traceEntry.orderType?.adminOrderType, 
+        traceEntry.orderType?.adminOrderType,
         traceEntry.orderType?.businessOrderType,
         traceEntry.orderType?.ebicsServiceType?.serviceName,
         traceEntry.orderType?.ebicsServiceType?.serviceOption,
