@@ -18,7 +18,7 @@ docker run -p 8080:8080 --rm -e SPRING_PROFILES_ACTIVE=dev ghcr.io/spaced/ebics-
 ```
 or run with configuration
 ```shell
-docker run -p 8080:8080 -v ./conf:/app/conf -e EWC_CONFIG_HOME=/app/conf ghcr.io/spaced/ebics-web-client:master
+docker run -p 8080:8080 -v ./conf:/app/conf -e SPRING_CONFIG_ADDITIONAL_LOCATION=/app/conf ghcr.io/spaced/ebics-web-client:master
 ```
 
 ## Installing/running using maven

@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true" scanPeriod="60 seconds">
-    <if condition='isDefined("EWC_CONFIG_HOME")'>
+    <springProperty name="ADDITIONAL_LOCATION" source="spring.config.additional-location"/>
+
+    <if condition='isDefined("ADDITIONAL_LOCATION")'>
         <then>
-            <!-- External log configuration is case there is EWC_CONFIG_HOME defined -->
-            <include url="file:${EWC_CONFIG_HOME}/logback.xml"/>
+            <!-- External log configuration is case there is SPRING_CONFIG_ADDITIONAL_LOCATION defined -->
+            <include url="file:${ADDITIONAL_LOCATION}/logback.xml"/>
         </then>
         <else>
-            <!-- Console log settings as default when no external configuration EWC_CONFIG_HOME available -->
+            <!-- Console log settings as default when no external configuration SPRING_CONFIG_ADDITIONAL_LOCATION available -->
             <appender name="Console"
                       class="ch.qos.logback.core.ConsoleAppender">
                 <layout class="ch.qos.logback.classic.PatternLayout">

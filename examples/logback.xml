@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<included>
+    <appender name="CONSOLE-JSON" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
+    </appender>
+    <appender name="ASYNC_CONSOLE_JSON" class="ch.qos.logback.classic.AsyncAppender">
+        <neverBlock>true</neverBlock>
+        <appender-ref ref="CONSOLE-JSON"/>
+    </appender>
+<!--    <logger name="org.springframework.security.ldap" level="trace" additivity="false">-->
+<!--        <appender-ref ref="ASYNC_CONSOLE_JSON"/>-->
+<!--    </logger>-->
+    <root level="DEBUG">
+        <appender-ref ref="ASYNC_CONSOLE_JSON"/>
+    </root>
+</included>

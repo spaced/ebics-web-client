@@ -2,14 +2,14 @@
 
 The configuration of WAR file is externalized to have easier control over deployed application in production.
 The external configuration define: 
-* spring properties using config.properties (or config.yaml)
+* spring properties using application.properties (or application.yaml)
 * logging settings 
 
 ##Configuration home directory
 
 The config.properties & logback.xml is expected on path
-$EWC_CONFIG_HOME/config.properties (or config.yaml)
-$EWC_CONFIG_HOME/logback.xml
+${SPRING_CONFIG_ADDITIONAL_LOCATION}/application.properties (or application.yaml)
+${SPRING_CONFIG_ADDITIONAL_LOCATION}/logback.xml
 
 ## API Key configuration
 ```properties
