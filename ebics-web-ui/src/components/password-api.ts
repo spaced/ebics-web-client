@@ -5,7 +5,7 @@ import useBaseAPI from 'components/base-api';
 
 /**
  * Passwords entered on actual session for the given @param user.id
- * @returns 
+ * @returns
  *  promptCertPassword getting the certificate password, if not yet entered in this session by user, then asking for it via dialog
  *  resetCertPassword resetting the actual certificate password for given user in this session (used if is wrong password used)
  */
@@ -44,7 +44,7 @@ export default function usePasswordAPI() {
   };
 
   /**
-   * Asking for user certificat password, if required
+   * Asking for user certificate password, if required
    * createPass=true in order to ask for new password
    * createPass=false in order to ask for existing password
    */

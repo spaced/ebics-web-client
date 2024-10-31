@@ -129,8 +129,7 @@
             <q-item-section>
               <q-item-label>Share this bank connection</q-item-label>
               <q-item-label caption
-                >If enabled then this connection will be available to every
-                GUEST user (do not use this for production!)</q-item-label
+                >If enabled then this connection will be available for all users</q-item-label
               >
             </q-item-section>
           </q-item>

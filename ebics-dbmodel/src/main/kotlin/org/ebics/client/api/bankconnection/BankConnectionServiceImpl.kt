@@ -46,7 +46,7 @@ class BankConnectionServiceImpl(
                 name,
                 dn = DomainNameGenerator(name, Locale.getDefault()?.country).toString(),
                 useCertificate = useCertificate,
-                usePassword = false,
+                usePassword = true,
                 partner = partner,
                 keyStore = null,
                 creator = authCtx.name,
