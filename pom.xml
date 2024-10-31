@@ -12,7 +12,7 @@
         <java.version>21</java.version>
         <kotlin.version>1.9.24</kotlin.version>
         <kotlin.version.short>1.9</kotlin.version.short>
-        <spring.version>3.3.4</spring.version>
+        <spring.version>3.3.5</spring.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring.mockk.version>4.0.2</spring.mockk.version>
         <maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
