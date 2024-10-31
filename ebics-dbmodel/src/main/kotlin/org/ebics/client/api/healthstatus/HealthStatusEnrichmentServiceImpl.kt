@@ -35,10 +35,10 @@ class HealthStatusEnrichmentServiceImpl(
     ): List<BankConnectionWithHealthStatus> {
         val bankConnectionIds = bankConnections.map { bc -> bc.id!! }.toSet()
 
-        logger.debug("Enriching bank connection ids: $bankConnectionIds with statistics started")
+        logger.debug("Enriching bank connection ids: {} with statistics started", bankConnectionIds)
         val actualTimeStamp = ZonedDateTime.now()
 
-        val actualStatisticsNotOlderThan =
+        val computedActualStatisticsNotOlderThan =
             actualStatisticsNotOlderThan ?: actualTimeStamp.minusMinutes(actualStatisticsNotOlderThanMinutes)
 
         val lastErrorOkNotOlderThan = actualTimeStamp.minusMinutes(lastErrorOkNotOlderThanMinutest)
@@ -57,12 +57,12 @@ class HealthStatusEnrichmentServiceImpl(
             )
 
         val errorCounts = traceRepository.getTraceEntryCountForTraceCategoryInGroupedByBankConnectionId(
-            actualStatisticsNotOlderThan,
+            computedActualStatisticsNotOlderThan,
             errorCategories,
             bankConnectionIds
         )
         val okCounts = traceRepository.getTraceEntryCountForTraceCategoryInGroupedByBankConnectionId(
-            actualStatisticsNotOlderThan,
+            computedActualStatisticsNotOlderThan,
             okCategories,
             bankConnectionIds
         )
@@ -80,12 +80,12 @@ class HealthStatusEnrichmentServiceImpl(
                 errorCount?.traceEntryCount ?: 0,
                 lastOkTrace,
                 lastErrorTrace,
-                actualStatisticsNotOlderThan,
+                computedActualStatisticsNotOlderThan,
                 lastErrorOkNotOlderThan,
                 actualTimeStamp
             )
         }.also {
-            logger.debug("Enriching bank connection ids: $bankConnectionIds with statistics finished")
+            logger.debug("Enriching bank connection ids: {} with statistics finished",bankConnectionIds)
         }
     }
 
