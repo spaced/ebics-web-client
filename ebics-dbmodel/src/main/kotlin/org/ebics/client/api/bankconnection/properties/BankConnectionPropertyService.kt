@@ -19,7 +19,7 @@ class BankConnectionPropertyService(
         val currentProperties = bankConnectionPropertyRepository.findAllByBankConnectionId(bankConnectionId)
         //For all newProperties contained in the currentProperties, will be UPDATE of all values made
         //For all newProperties without id must be INSERT made
-        val bankConnection = bankConnectionRepository.getById(bankConnectionId)
+        val bankConnection = bankConnectionRepository.getReferenceById(bankConnectionId)
         val insertedAndUpdatedProperties = newProperties.map { property ->
             bankConnectionPropertyRepository.save(BankConnectionPropertyEntity.from(bankConnection, property))
         }
