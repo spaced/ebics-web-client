@@ -1,6 +1,6 @@
-package org.ebics.client.ebicsrestapi.configuration
+package org.ebics.client.ebicsrestapi.auth
 
-import org.ebics.client.ebicsrestapi.key.ApiKeyAuthenticationProvider
+import org.ebics.client.ebicsrestapi.auth.key.ApiKeyAuthenticationProvider
 import org.springframework.security.authentication.ProviderManager
 import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration

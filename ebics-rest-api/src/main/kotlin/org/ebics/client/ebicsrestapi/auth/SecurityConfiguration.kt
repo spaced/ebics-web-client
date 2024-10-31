@@ -1,8 +1,9 @@
-package org.ebics.client.ebicsrestapi
+package org.ebics.client.ebicsrestapi.auth
 
-import org.ebics.client.ebicsrestapi.key.ApiKeyAuthenticationFilter
-import org.ebics.client.ebicsrestapi.key.ApiKeyAuthenticationProvider
-import org.ebics.client.ebicsrestapi.key.ApiKeyProperties
+
+import org.ebics.client.ebicsrestapi.auth.key.ApiKeyAuthenticationFilter
+import org.ebics.client.ebicsrestapi.auth.key.ApiKeyAuthenticationProvider
+import org.ebics.client.ebicsrestapi.auth.key.ApiKeyProperties
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean

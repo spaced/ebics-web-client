@@ -1,4 +1,4 @@
-package org.ebics.client.ebicsrestapi.key
+package org.ebics.client.ebicsrestapi.auth.key
 
 import org.springframework.security.authentication.AbstractAuthenticationToken
 import org.springframework.security.core.GrantedAuthority

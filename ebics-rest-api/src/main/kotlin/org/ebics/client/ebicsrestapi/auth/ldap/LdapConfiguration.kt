@@ -1,16 +1,14 @@
-package org.ebics.client.ebicsrestapi.ldap
+package org.ebics.client.ebicsrestapi.auth.ldap
 
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.ldap.LdapProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.ldap.core.support.BaseLdapPathContextSource
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
+
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
-import org.springframework.security.ldap.authentication.AbstractLdapAuthenticationProvider
 import org.springframework.security.ldap.authentication.BindAuthenticator
 import org.springframework.security.ldap.authentication.LdapAuthenticationProvider
 import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider
@@ -63,10 +61,4 @@ class LdapConfiguration {
         adProvider.setAuthoritiesPopulator(authorities)
         return adProvider
     }
-
-    @Autowired
-    fun configure(builder: AuthenticationManagerBuilder, ldapAuth: AbstractLdapAuthenticationProvider) {
-        builder.authenticationProvider(ldapAuth)
-    }
-
 }

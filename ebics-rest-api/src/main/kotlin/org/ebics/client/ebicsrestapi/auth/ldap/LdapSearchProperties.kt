@@ -1,4 +1,4 @@
-package org.ebics.client.ebicsrestapi.ldap
+package org.ebics.client.ebicsrestapi.auth.ldap
 
 
 import org.springframework.boot.context.properties.ConfigurationProperties
