@@ -30,29 +30,29 @@
 
           <q-input
             filled
-            v-model="bankConnection.userId"
-            label="EBICS User ID"
-            hint="EBICS User ID, example CHT00034"
-            :disable="userStatusInitializing"
-            lazy-rules
-            :rules="[
-              (val) =>
-                (val && val.length > 0) ||
-                'Please enter valid EBICS User ID, at least 1 character',
-            ]"
-          />
-
-          <q-input
-            filled
             v-model="bankConnection.partner.partnerId"
-            label="EBICS Partner ID"
-            hint="EBICS Partner ID, example CH100208"
+            label="EBICS Partner ID (Client ID)"
+            hint="EBICS Partner ID (Client ID), example CH100208"
             :disable="userStatusInitializing"
             lazy-rules
             :rules="[
               (val) =>
                 (val && val.length > 0) ||
                 'Please enter valid EBICS Customer ID, at least 1 character',
+            ]"
+          />
+
+          <q-input
+            filled
+            v-model="bankConnection.userId"
+            label="EBICS User ID (Participant ID)"
+            hint="EBICS User ID (Participant ID), example CHT00034"
+            :disable="userStatusInitializing"
+            lazy-rules
+            :rules="[
+              (val) =>
+                (val && val.length > 0) ||
+                'Please enter valid EBICS User ID, at least 1 character',
             ]"
           />
 
@@ -129,8 +129,7 @@
             <q-item-section>
               <q-item-label>Share this bank connection</q-item-label>
               <q-item-label caption
-                >If enabled then this connection will be available to every
-                GUEST user (do not use this for production!)</q-item-label
+                >If enabled then this connection will be available for all users</q-item-label
               >
             </q-item-section>
           </q-item>
@@ -209,7 +208,7 @@ export default defineComponent({
     const onCancel = (): void => {
       router.go(-1);
     };
-    
+
     return {
       banks,
       bankConnection,

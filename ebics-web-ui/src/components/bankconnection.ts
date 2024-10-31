@@ -9,7 +9,7 @@ import { AxiosResponse } from 'axios';
 /**
  * User composition API in order to keep user object in sync with backend REST API
  * @param bankConnectionId id of the given user in case of editing, undefined in case of the new user
- * @returns 
+ * @returns
  *  user - reactive user data
  *  userPartnerBank - computed userPartnerBank data used for creating/updating
  *  refreshUserData - function to be called in order to refresh user data from REST API
@@ -30,9 +30,9 @@ export default function useBankConnectionAPI(bankConnectionId: number | undefine
     } as Partner,
     ebicsVersion: 'H005',
     userStatus: 'CREATED',
-    guestAccess: false,
-    usePassword: false,
-    useCertificate: true,
+    guestAccess: true,
+    usePassword: true,
+    useCertificate: false,
   } as BankConnection);
 
   const bankConnectionProperties = ref<BankConnectionProperty[] | undefined>([])
@@ -99,7 +99,7 @@ export default function useBankConnectionAPI(bankConnectionId: number | undefine
         apiErrorHandler('Bank connection update failed', error);
         return false;
       }
-    }  
+    }
   };
 
   const saveBankConnectionProperties = async (): Promise<boolean> => {
