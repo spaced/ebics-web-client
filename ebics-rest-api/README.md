@@ -13,6 +13,7 @@ ${SPRING_CONFIG_ADDITIONAL_LOCATION}/logback.xml
 
 ## API Key configuration
 ```properties
+ebics.auth.api=true
 ebics.api.clients.FirstClientApiId.key=aVeryLongRandomString
 ebics.api.clients.FirstClientApiId.role=admin
 ```
@@ -32,21 +33,21 @@ docker run --rm -p 1389:1389 --env LDAP_ADMIN_USERNAME=admin \
   --env LDAP_PASSWORDS=custompassword bitnami/openldap:latest
 ```
 ### Configuration
-#### spring profiles for Authentication
-| profile | description                                                                                                                                                                                                                           |
-| --------------- |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|ldap-bind-ad| Authenticate with Active Directory. Typically, authentication is performed by using the domain username (in the form of user@domain), rather than using an LDAP distinguished name. Property `spring.ldap.search.domain` is required. |
-|ldap-bind-default| Authenticate with bind LDAP distinguished name|
-#### spring profiles for Authorization
-| profile               | description                                                                                                                                                                     |
-|-----------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| ldap-auth-ad-memberof | Maps attribute field `memberOf` with role using property mapping `spring.ldap.search.mapping.${groupName}=${roleNames}`                                         |
-| ldap-auth-group-search| Search with `spring.ldap.search.group.base` and `spring.ldap.search.group.filter` and maps to role using property mapping `spring.ldap.search.mapping.${groupName}=${roleName}` |
+#### Authentication via ldap
+| configuration             | description                                                                                                                                                                                                                           |
+|---------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| spring.ldap.search.domain | Authenticate with Active Directory. Typically, authentication is performed by using the domain username (in the form of user@domain), rather than using an LDAP distinguished name. Property `spring.ldap.search.domain` is required. |
+| spring.ldap.username      | Authenticate with bind LDAP distinguished name|
+#### Authorization via ldap
+| configuration                                   | description                                                                                                                                                                     |
+|-------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| spring.ldap.search.use-member-of-attribute=true | Maps attribute field `memberOf` with role using property mapping `spring.ldap.search.mapping.${groupName}=${roleNames}`                                         |
+| spring.ldap.search.group.base                   | Search with `spring.ldap.search.group.base` and `spring.ldap.search.group.filter` and maps to role using property mapping `spring.ldap.search.mapping.${groupName}=${roleName}` |
 
 ### examples
 openldap
 ```properties
-spring.profiles.active=ldap-bind-default,ldap-auth-group-search
+ebics.auth.ldap=true
 spring.ldap.urls=ldap://localhost:1389
 spring.ldap.base=dc=example,dc=org
 spring.ldap.username=cn=admin,dc=example,dc=org
@@ -58,20 +59,22 @@ spring.ldap.search.mapping.readers=admin
 ```
 openldap proxy to active directory
 ```properties
-spring.profiles.active=ldap-bind-default,ldap-auth-ad-memberof
+ebics.auth.ldap=true
 spring.ldap.urls=ldap://localhost:1389
 spring.ldap.base=dc=example,dc=org
 spring.ldap.username=cn=admin,dc=example,dc=org
 spring.ldap.password=adminpassword
 spring.ldap.search.user.filter=(&(objectClass=user)(sAMAccountName={0}))
+spring.ldap.search.use-member-of-attribute=true
 spring.ldap.search.mapping.readers=admin
 ```
 active directory
 ```properties
-spring.profiles.active=ldap-bind-ad,ldap-auth-ad-memberof
+ebics.auth.ldap=true
 spring.ldap.urls=ldap://localhost:1389
 spring.ldap.base=dc=example,dc=org
 spring.ldap.search.domain=example.com
+spring.ldap.search.use-member-of-attribute=true
 spring.ldap.search.mapping.readers=admin
 ```
 
