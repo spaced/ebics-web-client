@@ -7,8 +7,8 @@ ebics:
   signatureVersion: "A005"
   authenticationVersion: "X002"
   encryptionVersion: "E002"
-  trace: "true"
-  compression: "true"
+  trace: true
+  compression: true
   locale:
     language: "en"
 
