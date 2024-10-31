@@ -1,14 +1,13 @@
 package org.ebics.client.api.trace
 
 import org.ebics.client.api.EbicsSession
-import org.ebics.client.api.trace.orderType.OrderTypeDefinition
 import org.ebics.client.api.bankconnection.BankConnectionEntity
 import org.ebics.client.model.EbicsVersion
 
 interface IFileService {
     fun getLastDownloadedFile(
         orderType: ITraceOrderTypeDefinition,
-        user: BankConnectionEntity,
+        bankConnection: BankConnectionEntity,
         ebicsVersion: EbicsVersion,
         useSharedPartnerData: Boolean = true
     ): TraceEntry
@@ -24,13 +23,13 @@ interface IFileService {
     }
 
     fun addDownloadedFile(
-        user: BankConnectionEntity,
+        bankConnection: BankConnectionEntity,
         orderType: ITraceOrderTypeDefinition,
         fileContent: ByteArray,
         sessionId: String,
         orderNumber: String?,
         ebicsVersion: EbicsVersion,
-    ) = addFile(user, orderType, fileContent, sessionId, orderNumber, ebicsVersion, upload = false, request = false)
+    ) = addFile(bankConnection, orderType, fileContent, sessionId, orderNumber, ebicsVersion, upload = false, request = false)
 
     fun addUploadedFile(
         traceSession: IBankConnectionTraceSession,
@@ -66,7 +65,7 @@ interface IFileService {
     )
 
     fun addFile(
-        user: BankConnectionEntity,
+        bankConnection: BankConnectionEntity,
         orderType: ITraceOrderTypeDefinition,
         fileContent: ByteArray,
         sessionId: String,

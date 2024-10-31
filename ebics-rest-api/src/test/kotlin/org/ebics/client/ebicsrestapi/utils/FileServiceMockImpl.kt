@@ -15,19 +15,19 @@ class FileServiceMockImpl : IFileService {
 
     override fun getLastDownloadedFile(
         orderType: ITraceOrderTypeDefinition,
-        user: BankConnectionEntity,
+        bankConnection: BankConnectionEntity,
         ebicsVersion: EbicsVersion,
         useSharedPartnerData: Boolean
     ): TraceEntry {
         if (fileContent == null)
             throw NoSuchElementException("Mock: No value cached yet")
         else
-            return TraceEntry(1, "${String(fileContent!!)}-cached", null, user, null,"1",
+            return TraceEntry(1, "${String(fileContent!!)}-cached", null, bankConnection, null,"1",
             "CCCX", ebicsVersion, upload = false, request = false, creator = "jan", orderType = OrderTypeDefinition.fromOrderTypeDefinition(orderType))
     }
 
     override fun addFile(
-        user: BankConnectionEntity,
+        bankConnection: BankConnectionEntity,
         orderType: ITraceOrderTypeDefinition,
         fileContent: ByteArray,
         sessionId: String,
