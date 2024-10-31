@@ -1,6 +1,6 @@
-package org.ebics.client.ebicsrestapi.key
+package org.ebics.client.ebicsrestapi.auth.key
 
-import org.ebics.client.ebicsrestapi.key.ApiKeyProperties.ApiKey
+import org.ebics.client.ebicsrestapi.auth.key.ApiKeyProperties.ApiKey
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.Authentication

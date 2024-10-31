@@ -1,4 +1,4 @@
-package org.ebics.client.ebicsrestapi.key
+package org.ebics.client.ebicsrestapi.auth.key
 
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
@@ -7,9 +7,9 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.filter.OncePerRequestFilter
 
-class ApiKeyAuthenticationFilter() : OncePerRequestFilter() {
+class ApiKeyAuthenticationFilter : OncePerRequestFilter() {
 
-    fun authTokenFromHttpHeader(request: HttpServletRequest): Authentication? {
+    private fun authTokenFromHttpHeader(request: HttpServletRequest): Authentication? {
         val providedAppId = request.getHeader("X-App-Id")
         val providedApiKey = request.getHeader("X-Api-Key")
         if (providedAppId == null || providedApiKey == null) return null

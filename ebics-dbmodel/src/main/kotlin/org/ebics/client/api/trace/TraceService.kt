@@ -16,7 +16,7 @@ class TraceService(
     private var traceEnabled: Boolean = true
 ) : TraceManager {
 
-    override fun trace(content: ContentFactory, traceSession: IBaseTraceSession, request: Boolean) {
+    override fun trace(contentFactory: ContentFactory, traceSession: IBaseTraceSession, request: Boolean) {
         with(traceSession) {
             val bankConnection = (traceSession as? IBankConnectionTraceSession)?.bankConnection as? BankConnectionEntity
             val bank = bank as? Bank
@@ -24,8 +24,8 @@ class TraceService(
                 TraceEntry(
                     null,
                     //The non UTF-8 characters would be marked as � (U+FFFD)
-                    content.getFactoryContent().decodeToString(),
-                    content.getFactoryContent(),
+                    contentFactory.getFactoryContent().decodeToString(),
+                    contentFactory.getFactoryContent(),
                     bankConnection,
                     bank,
                     sessionId,
@@ -72,20 +72,20 @@ class TraceService(
 
     override fun updateLastTrace(
         traceSession: IBaseTraceSession,
-        newTraceCategory: TraceCategory,
+        traceCategory: TraceCategory,
         exception: EbicsException?
     ) {
         val lastTraceId = traceSession.lastTraceId
         val updatedRows = if (lastTraceId != null) {
             if (exception != null) {
                 traceRepository.updateTraceCategoryAndErrorDetailsById(
-                    newTraceCategory, errorCode = (exception as? IErrorCodeText)?.errorCode,
+                    traceCategory, errorCode = (exception as? IErrorCodeText)?.errorCode,
                     errorCodeText = (exception as? IErrorCodeText)?.errorCodeText,
                     errorMessage = exception.message?.take(250),
                     errorStackTrace = exception.stackTraceToString().take(250), lastTraceId
                 )
             } else {
-                traceRepository.updateTraceCategoryById(newTraceCategory, lastTraceId)
+                traceRepository.updateTraceCategoryById(traceCategory, lastTraceId)
             }
         } else {
             0
@@ -93,20 +93,20 @@ class TraceService(
         if (updatedRows == 0)
             logger.warn("There is no previous trace entry to be updated, " +
                     "the function call updateLastTrace expect previous call trace !. " +
-                    "The traced category: $newTraceCategory, exception $exception")
+                    "The traced category: $traceCategory, exception $exception")
     }
 
     override fun setTraceEnabled(enabled: Boolean) {
         traceEnabled = enabled
     }
 
-    override fun updateSessionOrderNumber(traceSession: IBankConnectionTraceSession, newOrderNumber: String) {
+    override fun updateSessionOrderNumber(traceSession: IBankConnectionTraceSession, orderNumber: String) {
         val currentOrderNumber = traceSession.orderNumber
         if (currentOrderNumber == null)
-            traceRepository.updateNullOrderNumber(traceSession.sessionId, newOrderNumber)
+            traceRepository.updateNullOrderNumber(traceSession.sessionId, orderNumber)
         else
-            traceRepository.updateNonNullOrderNumber(traceSession.sessionId, newOrderNumber, currentOrderNumber)
-        traceSession.orderNumber = newOrderNumber
+            traceRepository.updateNonNullOrderNumber(traceSession.sessionId, orderNumber, currentOrderNumber)
+        traceSession.orderNumber = orderNumber
     }
 
     /**

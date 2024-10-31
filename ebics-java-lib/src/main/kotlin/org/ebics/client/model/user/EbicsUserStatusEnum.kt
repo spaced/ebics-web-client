@@ -70,7 +70,6 @@ enum class EbicsUserStatusEnum {
                 require(this == INITIALIZED || this == READY) { "$action action cant be executed at user state: $this" }
             EbicsUserAction.SPR ->
                 require(this == READY) { "$action action cant be executed at user state: $this" }
-            else -> throw RuntimeException("$action action cant be executed at user state: $this")
         }
     }
 }

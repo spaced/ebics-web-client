@@ -1,4 +1,4 @@
-package org.ebics.client.ebicsrestapi.ldap
+package org.ebics.client.ebicsrestapi.auth.ldap
 
 import org.slf4j.LoggerFactory
 import org.springframework.ldap.core.DirContextOperations
@@ -13,7 +13,7 @@ import org.springframework.security.ldap.userdetails.LdapAuthoritiesPopulator
  * Translates ad memberOf attribute to role based on ldap search property [LdapSearchProperties.mapping]
  * inspired by [DefaultActiveDirectoryAuthoritiesPopulator]
  */
-class ActiveDirectoryRoleMapperPopulator(val mapping: Map<String,Array<String>>?) : LdapAuthoritiesPopulator {
+class ActiveDirectoryRoleMapperPopulator(private val mapping: Map<String,Array<String>>?) : LdapAuthoritiesPopulator {
     private val logger = LoggerFactory.getLogger(ActiveDirectoryRoleMapperPopulator::class.java)
     override fun getGrantedAuthorities(
         userData: DirContextOperations?,
@@ -29,7 +29,7 @@ class ActiveDirectoryRoleMapperPopulator(val mapping: Map<String,Array<String>>?
         return buildList {
             for (group in groups) {
                 val mappedRoles = mapping?.get(DistinguishedName(group).removeLast().value)
-                if (mappedRoles != null) mappedRoles.forEach{ r:String -> add(SimpleGrantedAuthority("ROLE_${r.uppercase()}"))}
+                mappedRoles?.forEach{ r:String -> add(SimpleGrantedAuthority("ROLE_${r.uppercase()}"))}
             }
         }
     }
