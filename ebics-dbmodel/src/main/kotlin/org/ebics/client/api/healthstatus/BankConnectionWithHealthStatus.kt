@@ -21,8 +21,6 @@ class BankConnectionWithHealthStatus(
     override var usePassword: Boolean,
     override val creator: String,
     override val guestAccess: Boolean,
-    keyStore: UserKeyStore?,
-    traces: List<TraceEntry> = emptyList(),
     val backendStatus: ConnectionStatusDetail,
     //val properties: Map<String, String>,
     val properties: List<BankConnectionPropertyEntity>,
@@ -40,8 +38,6 @@ class BankConnectionWithHealthStatus(
                 bankConnectionEntity.usePassword,
                 bankConnectionEntity.creator,
                 bankConnectionEntity.guestAccess,
-                bankConnectionEntity.keyStore,
-                bankConnectionEntity.traces,
                 connectionStatus.status,
                 bankConnectionEntity.properties,
             )
