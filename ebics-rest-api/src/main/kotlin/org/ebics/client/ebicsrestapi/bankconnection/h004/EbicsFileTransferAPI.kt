@@ -1,6 +1,5 @@
 package org.ebics.client.ebicsrestapi.bankconnection.h004
 
-import org.ebics.client.api.bankconnection.BankConnectionEntity
 import org.ebics.client.api.trace.IFileService
 import org.ebics.client.api.trace.BankConnectionTraceSession
 import org.ebics.client.api.trace.orderType.OrderTypeDefinition
