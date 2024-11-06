@@ -7,15 +7,19 @@ The external configuration define:
 
 ##Configuration home directory
 
-The config.properties & logback.xml is expected on path
+The application.properties & logback.xml is expected on path
 ${SPRING_CONFIG_ADDITIONAL_LOCATION}/application.properties (or application.yaml)
 ${SPRING_CONFIG_ADDITIONAL_LOCATION}/logback.xml
 
 ## API Key configuration
-```properties
-ebics.auth.api=true
-ebics.api.clients.FirstClientApiId.key=aVeryLongRandomString
-ebics.api.clients.FirstClientApiId.role=admin
+```yaml
+ebics:
+    api:
+        enabled: true
+        clients:
+            FirstNameApiId:
+                key: aVBeryLongRandomString
+                role: admin
 ```
 allows client using http header
 ```properties
@@ -46,36 +50,54 @@ docker run --rm -p 1389:1389 --env LDAP_ADMIN_USERNAME=admin \
 
 ### examples
 openldap
-```properties
-ebics.auth.ldap=true
-spring.ldap.urls=ldap://localhost:1389
-spring.ldap.base=dc=example,dc=org
-spring.ldap.username=cn=admin,dc=example,dc=org
-spring.ldap.password=adminpassword
-spring.ldap.search.user.filter=(uid={0})
-spring.ldap.search.group.base=ou=users
-spring.ldap.search.group.filter=member={0}
-spring.ldap.search.mapping.readers=admin
+```yaml
+spring:
+  ldap:
+    enabled: true
+    urls:
+      - 'ldap://localhost:1389'
+    base: dc=example,dc=org
+    username: cn=admin,dc=example,dc=org
+    password: adminpassword
+    search:
+      user:
+        base: ou=users
+        filter: (uid={0})
+      group:
+        base: ou=users
+        filter: member={0}
+      mapping:
+        readers: [ 'admin' ]
 ```
 openldap proxy to active directory
-```properties
-ebics.auth.ldap=true
-spring.ldap.urls=ldap://localhost:1389
-spring.ldap.base=dc=example,dc=org
-spring.ldap.username=cn=admin,dc=example,dc=org
-spring.ldap.password=adminpassword
-spring.ldap.search.user.filter=(&(objectClass=user)(sAMAccountName={0}))
-spring.ldap.search.use-member-of-attribute=true
-spring.ldap.search.mapping.readers=admin
+```yaml
+spring:
+  ldap:
+    enabled: true
+    urls:
+      - 'ldap://localhost:1389'
+    base: dc=example,dc=org
+    username: cn=admin,dc=example,dc=org
+    password: adminpassword
+    search:
+      use-member-of-attribute: true
+      user:
+        filter: (&(objectClass=user)(sAMAccountName={0}))
+      mapping:
+        readers: [ 'admin' ]
 ```
 active directory
-```properties
-ebics.auth.ldap=true
-spring.ldap.urls=ldap://localhost:1389
-spring.ldap.base=dc=example,dc=org
-spring.ldap.search.domain=example.com
-spring.ldap.search.use-member-of-attribute=true
-spring.ldap.search.mapping.readers=admin
+```yaml
+spring:
+  ldap:
+    enabled: true
+    urls: [ 'ldap://localhost:1389' ] #will pick only first url
+    base: dc=example,dc=org
+    search:
+      domain: 'example.com'
+      use-member-of-attribute: true
+      mapping:
+        readers: [ 'admin' ]
 ```
 
 ## HTTPS Certificate

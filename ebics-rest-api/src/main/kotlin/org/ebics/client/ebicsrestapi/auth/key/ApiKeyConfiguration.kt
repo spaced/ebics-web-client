@@ -6,10 +6,13 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
+import org.springframework.security.config.annotation.authentication.configuration.EnableGlobalAuthentication
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 
 @Configuration
 @EnableConfigurationProperties(ApiKeyProperties::class)
-@ConditionalOnProperty("ebics.auth.api", havingValue = "true")
+@ConditionalOnProperty("ebics.api.enabled", havingValue = "true")
+@EnableGlobalAuthentication
 class ApiKeyConfiguration {
 
     @Autowired

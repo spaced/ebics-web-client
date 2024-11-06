@@ -12,3 +12,9 @@ ebics:
         role: admin
       testclient-api-xy:
         key: abc1234
+
+spring:
+  security:
+    user:
+      name: nobody
+      password: pass
