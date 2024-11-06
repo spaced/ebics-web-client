@@ -21,7 +21,7 @@ typealias AuthorityMapper = (AuthorityRecord) -> GrantedAuthority?
 
 @Configuration
 @EnableConfigurationProperties(LdapSearchProperties::class)
-@ConditionalOnProperty("ebics.auth.ldap", havingValue = "true")
+@ConditionalOnProperty("spring.ldap.enabled", havingValue = "true")
 class LdapConfiguration {
 
     @Bean
