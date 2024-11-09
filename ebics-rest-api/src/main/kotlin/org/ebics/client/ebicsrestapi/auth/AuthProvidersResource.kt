@@ -16,11 +16,11 @@ import org.springframework.web.bind.annotation.RestController
 @CrossOrigin(origins = ["http://localhost:8081"])
 class AuthProvidersResource(private val authenticationConf: AuthenticationConfiguration) {
 
-    @GetMapping()
+    @GetMapping
     fun getAuthTypes(): List<String> {
         val am = authenticationConf.authenticationManager
         if (am !is ProviderManager) return emptyList()
-        return am.providers.map{p ->
+        return am.providers.map { p ->
             when (p) {
                 is ApiKeyAuthenticationProvider -> "key"
                 is AbstractLdapAuthenticationProvider -> "server"

@@ -12,6 +12,9 @@ ebics:
         role: admin
       testclient-api-xy:
         key: abc1234
+      testclient-api-backup:
+        key: abc1234
+        role: backup
 
 spring:
   security:
