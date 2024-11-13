@@ -57,8 +57,8 @@ open class BankCertificateManager(
         @JvmStatic
         fun createFromPubKeyExponentAndModulus(bankE002PublicKeyExponent:ByteArray, bankE002PublicKeyModulus:ByteArray,
                                                bankX002PublicKeyExponent:ByteArray, bankX002PublicKeyModulus:ByteArray):BankCertificateManager {
-            val e002Key: RSAPublicKey = getPublicKey(BigInteger(bankE002PublicKeyExponent), BigInteger(bankE002PublicKeyModulus))
-            val x002Key: RSAPublicKey = getPublicKey(BigInteger(bankX002PublicKeyExponent), BigInteger(bankX002PublicKeyModulus))
+            val e002Key: RSAPublicKey = getPublicKey(BigInteger(1, bankE002PublicKeyExponent), BigInteger(1, bankE002PublicKeyModulus))
+            val x002Key: RSAPublicKey = getPublicKey(BigInteger(1, bankX002PublicKeyExponent), BigInteger(1, bankX002PublicKeyModulus))
             return BankCertificateManager(
                 KeyUtil.getKeyHash(e002Key),
                 KeyUtil.getKeyHash(x002Key),
