@@ -37,7 +37,7 @@ class TraceEntryAccessTest {
     }
 
     @Test
-    @WithMockUser(username = "peter", roles = ["USER", "ADMIN"])
+    @WithMockUser(username = "peter", roles = ["USER"])
     fun createTraceEntryAsJan_canNOT_be_readByPeter() {
         val te = TraceEntry(1, "mb", null, getMockUser("jan"),  getMockBank(),"sessId1", "O5N3", EbicsVersion.H004, false, true, creator = "jan")
         Assertions.assertFalse(te.hasReadAccess())

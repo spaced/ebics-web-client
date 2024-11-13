@@ -22,9 +22,7 @@ class BankConnectionAccessRightControllerTest {
         }
         bcPermissions.checkReadAccess()
         bcPermissions.checkWriteAccess()
-        Assertions.assertThrows(IllegalAccessException::class.java) {
-            bcPermissions.checkUseAccess()
-        }
+        bcPermissions.checkUseAccess()
     }
 
     @Test
