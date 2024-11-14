@@ -106,6 +106,10 @@ interface BankConnectionAccessRightsController : WriteAccessRightsController, Re
     override fun hasUseAccess(authCtx: AuthenticationContext): Boolean {
         with(authCtx) {
             return when {
+                authCtx.hasRole(BusinessRole.ROLE_ADMIN) -> {
+                    logger.debug("Use permission for '{}' granted through admin role for '{}'", getObjectName(), authCtx.name)
+                    true
+                }
                 authCtx.hasRole(BusinessRole.ROLE_USER) && getCreatorName() == name -> {
                     logger.debug("Use permission for '{}' granted through user access for '{}'", getObjectName(), authCtx.name)
                     true
