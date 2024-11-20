@@ -4,7 +4,6 @@ import org.ebics.client.api.AlreadyExistException
 import org.ebics.client.api.FunctionException
 import org.ebics.client.api.NotFoundException
 import org.ebics.client.exception.EbicsException
-import org.ebics.client.exception.EbicsServerException
 import org.ebics.client.exception.HttpServerException
 import org.ebics.client.exception.IErrorCodeText
 import org.slf4j.LoggerFactory
@@ -25,9 +24,12 @@ class ExceptionAdvice {
             is NotFoundException -> HttpStatus.NOT_FOUND
             is AlreadyExistException -> HttpStatus.CONFLICT //EXISTING RESOURCE
             is FunctionException -> HttpStatus.INTERNAL_SERVER_ERROR
-            is EbicsException -> HttpStatus.INTERNAL_SERVER_ERROR
-            is EbicsServerException -> HttpStatus.INTERNAL_SERVER_ERROR
+            is org.ebics.client.exception.h004.NoDownloadDataAvailableException -> HttpStatus.SERVICE_UNAVAILABLE
+            is org.ebics.client.exception.h005.NoDownloadDataAvailableException -> HttpStatus.SERVICE_UNAVAILABLE
+            is org.ebics.client.exception.h004.EbicsServerException -> HttpStatus.INTERNAL_SERVER_ERROR
+            is org.ebics.client.exception.h005.EbicsServerException -> HttpStatus.INTERNAL_SERVER_ERROR
             is HttpServerException -> HttpStatus.INTERNAL_SERVER_ERROR
+            is EbicsException -> HttpStatus.INTERNAL_SERVER_ERROR
             is IllegalAccessException -> HttpStatus.FORBIDDEN
             is AccessDeniedException -> HttpStatus.FORBIDDEN
             else -> HttpStatus.INTERNAL_SERVER_ERROR

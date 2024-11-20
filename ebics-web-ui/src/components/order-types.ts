@@ -69,7 +69,7 @@ export default function useOrderTypesAPI(
       (orderTypesCache === undefined || orderTypesCache.length == 0 || forceCashRefresh)
     ) {
 
-      console.log(`order types H004 refresh aptempt ${bankConnection.name}`)
+      console.log(`order types H004 refresh attempt ${bankConnection.name}`)
 
       const orderTypesRefreshPromise = ebicsOrderTypes(
         bankConnection,
@@ -157,22 +157,6 @@ export default function useOrderTypesAPI(
     if (!suppressLoadingStateChange) loading.value = false;
   };
 
-  const updateOrderTypesCacheForAllActiveConnections =
-    async (): Promise<void> => {
-      console.log('Loading order types')
-      loading.value = true;
-      //Collect all update ordertype promisses
-      const updateOrderTypesPromisses = activeBankConnections.value.map(
-        (bankConnection) =>
-          updateOrderTypesCacheForBankConnection(bankConnection, false, true)
-      );
-
-      //Execute those promisses parallel
-      await Promise.allSettled(updateOrderTypesPromisses);
-      loading.value = false;
-      console.log('Order types loaded')
-    };
-
   const refreshOutputOrdertypesForSelectedBankConnection = () => {
     if (selectedBankConnection.value) {
       refreshOutputBtfTypes(selectedBankConnection.value);
@@ -243,7 +227,6 @@ export default function useOrderTypesAPI(
     () => userSettings.value.displayAdminTypes,
     refreshOutputOrdertypesForSelectedBankConnection
   );
-  watch(activeBankConnections, updateOrderTypesCacheForAllActiveConnections);
 
   const refreshOrderTypes = async(bankConnection?: BankConnection): Promise<void> => {
     if (bankConnection) await updateOrderTypesH004CacheForBankConnection(bankConnection, true, false)
