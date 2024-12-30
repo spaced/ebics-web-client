@@ -19,7 +19,12 @@ class ExceptionAdvice {
             IllegalAccessException::class, AccessDeniedException::class, Exception::class]
     )
     fun exceptionHandler(ex: Exception): ResponseEntity<ErrorMessage> {
-        logger.error("Reporting occurred exception occur", ex)
+        when (ex) {
+            is org.ebics.client.exception.h004.NoDownloadDataAvailableException -> logger.info(ex.message)
+            is org.ebics.client.exception.h005.NoDownloadDataAvailableException -> logger.info(ex.message)
+            else -> logger.error("Reporting occurred exception occur", ex)
+        }
+
         val status: HttpStatus = when (ex) {
             is NotFoundException -> HttpStatus.NOT_FOUND
             is AlreadyExistException -> HttpStatus.CONFLICT //EXISTING RESOURCE
