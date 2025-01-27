@@ -16,6 +16,7 @@ export interface BankConnectionProperty {
 }
 
 export interface UserCertificatesForImport {
+  enabled: boolean
   e002: string
   x002: string
   a005: string

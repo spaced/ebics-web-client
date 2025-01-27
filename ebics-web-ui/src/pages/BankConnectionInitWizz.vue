@@ -62,21 +62,31 @@
                 v-model="bankConnection.usePassword"
                 label="Protect your private keys with password (2FA)"
               />
-              <q-input
-                filled
-                v-model="userCertificatesForImport.x002"
-                label="x002 rsa parameters xml"
-              />
-              <q-input
-                filled
-                v-model="userCertificatesForImport.e002"
-                label="e002 rsa parameters xml"
-              />
-              <q-input
-                filled
-                v-model="userCertificatesForImport.a005"
-                label="a005 rsa parameters xml"
-              />
+              <q-expansion-item
+                v-model="userCertificatesForImport.enabled"
+                icon="perm_identity"
+                label="Import user certificates"
+              >
+                <q-card>
+                  <q-input
+                    filled
+                    v-model="userCertificatesForImport.x002"
+                    label="x002 rsa parameters xml"
+                  />
+                  <q-input
+                    filled
+                    v-model="userCertificatesForImport.e002"
+                    label="e002 rsa parameters xml"
+                  />
+                  <q-input
+                    filled
+                    v-model="userCertificatesForImport.a005"
+                    label="a005 rsa parameters xml"
+                  />
+                </q-card>
+              </q-expansion-item>
+
+
             </div>
             <q-stepper-navigation>
               <q-btn
@@ -368,6 +378,7 @@ export default defineComponent({
     const { promptCertPassword, resetCertPassword } = usePasswordAPI();
 
     const userCertificatesForImport = ref<UserCertificatesForImport>({
+      enabled: false,
       e002: '',
       a005: '',
       x002: '',
