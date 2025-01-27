@@ -84,9 +84,9 @@ export default function useBankConnectionInitializationAPI(
           dn: user.value.dn,
           usePassword: user.value.usePassword,
           password: pass,
-          encryptionE002Xml: userCertificatesForImport.value.e002,
-          authenticationX002Xml: userCertificatesForImport.value.x002,
-          signatureA005Xml: userCertificatesForImport.value.a005,
+          encryptionE002Xml: userCertificatesForImport.value.enabled && userCertificatesForImport.value.e002,
+          authenticationX002Xml: userCertificatesForImport.value.enabled && userCertificatesForImport.value.x002,
+          signatureA005Xml: userCertificatesForImport.value.enabled && userCertificatesForImport.value.a005,
         } as CertImportRequest);
       } else {
         await api.post<CertRequest>(`bankconnections/${user.value.id}/certificates`, {
