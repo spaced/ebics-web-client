@@ -32,7 +32,7 @@ export default function useBankConnectionAPI(bankConnectionId: number | undefine
     userStatus: 'CREATED',
     guestAccess: true,
     usePassword: true,
-    useCertificate: false,
+    useCertificate: true,
   } as BankConnection);
 
   const bankConnectionProperties = ref<BankConnectionProperty[] | undefined>([])
