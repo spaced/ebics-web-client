@@ -45,6 +45,8 @@ class Joiner(
         }
     }
 
+    fun size() = buffer.size()
+
     /**
      * Writes the joined part to an output stream.
      * @param output the output stream.
