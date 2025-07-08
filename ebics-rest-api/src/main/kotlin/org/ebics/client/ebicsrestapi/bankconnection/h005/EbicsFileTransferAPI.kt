@@ -62,7 +62,10 @@ class EbicsFileTransferAPI(
         val orderType = OrderTypeDefinition(EbicsAdminOrderType.BTD, downloadRequest.orderService?.let { EbicsService.fromEbicsService(downloadRequest.orderService) } )
         val traceSession = BankConnectionTraceSession(session, orderType, false)
         val outputStream = fileDownload.fetchFile(session, traceSession, order)
-        fileService.addDownloadedFile(traceSession, outputStream.toByteArray())
+
+        if (order.adminOrderType == EbicsAdminOrderType.HTD) {
+            fileService.addDownloadedFile(traceSession, outputStream.toByteArray())
+        }
         val resource = ByteArrayResource(outputStream.toByteArray())
         return ResponseEntity.ok().contentLength(resource.contentLength()).body(resource)
     }
