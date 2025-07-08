@@ -11,7 +11,10 @@ ebics:
   compression: true
   locale:
     language: "en"
-
+housekeeping:
+  trace:
+    older-than-days: 30
+    cron-expression: "0 0 1 * * *"
 spring:
   main:
     banner-mode: off
