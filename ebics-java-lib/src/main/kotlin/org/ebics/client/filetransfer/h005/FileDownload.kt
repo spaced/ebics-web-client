@@ -116,12 +116,37 @@ class FileDownload(private val httpClient: ITraceableHttpClientFactory<Traceable
             response.build()
             response.report()
         }
+        logger.debug(
+            String.format(
+                "Initialized downloading file via EBICS sessionId=%s, userId=%s, partnerId=%s, bankURL=%s, order=%s, segments=%s",
+                ebicsSession.sessionId,
+                ebicsSession.user.userId,
+                ebicsSession.user.partner.partnerId,
+                ebicsSession.user.partner.bank.bankURL,
+                downloadOrder.toString(),
+                response.segmentsNumber
+            )
+        )
         val state = TransferState(response.segmentsNumber, response.transactionId)
         state.setSegmentNumber(response.segmentNumber)
         val joiner = Joiner(ebicsSession.userCert)
         joiner.append(response.orderData)
         while (state.hasNext()) {
             val segmentNumber: Int = state.next()
+            logger.debug(
+                String.format(
+                    "Fetch segment via EBICS sessionId=%s, userId=%s, partnerId=%s, bankURL=%s, order=%s, segment=%s, lastSegment=%s, collected=%s",
+                    ebicsSession.sessionId,
+                    ebicsSession.user.userId,
+                    ebicsSession.user.partner.partnerId,
+                    ebicsSession.user.partner.bank.bankURL,
+                    downloadOrder.toString(),
+                    segmentNumber,
+                    state.isLastSegment,
+                    joiner.size(),
+                )
+            )
+
             fetchFileSegment(
                 ebicsSession,
                 orderType,
