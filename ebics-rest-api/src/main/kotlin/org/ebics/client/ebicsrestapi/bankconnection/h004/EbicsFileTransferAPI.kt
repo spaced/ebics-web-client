@@ -53,7 +53,9 @@ class EbicsFileTransferAPI(
             downloadRequest.params
         )
         val outputStream = fileDownloadService.fetchFile(session, traceSession, order)
-        fileService.addDownloadedFile(traceSession, outputStream.toByteArray())
+        if (orderType.adminOrderType == EbicsAdminOrderType.HTD) {
+            fileService.addDownloadedFile(traceSession, outputStream.toByteArray())
+        }
         val resource = ByteArrayResource(outputStream.toByteArray())
         return ResponseEntity.ok().contentLength(resource.contentLength()).body(resource)
     }
