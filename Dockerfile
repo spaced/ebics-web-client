@@ -9,7 +9,8 @@ COPY . /app/
 
 WORKDIR /app
 RUN mvn clean install -DskipTests
-FROM amazoncorretto:21-alpine-jdk
+# pinned to the build fixing CVE-2026-114938 (Java4Shell)
+FROM public.ecr.aws/amazoncorretto/amazoncorretto:21.0.13.1.2-alpine-jdk
 
 RUN mkdir /app
 COPY --from=build /app/ebics-rest-api/target/ebics*.war /app/
