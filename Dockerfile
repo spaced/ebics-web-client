@@ -2,7 +2,7 @@
 # docker run -p 8080:8080 ebics-java-client
 # docker run -p 8080:8080 -v ./conf:/app/conf -e SPRING_CONFIG_ADDITIONAL_LOCATION=/app/conf ebics-java-client
 
-FROM maven:3 as build
+FROM docker.io/maven:3.10-amazoncorretto-21 as build
 
 RUN mkdir app
 COPY . /app/
