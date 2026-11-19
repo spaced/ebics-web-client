@@ -9,8 +9,8 @@ COPY . /app/
 
 WORKDIR /app
 RUN mvn clean install -DskipTests
-# pinned to the build fixing CVE-2026-114938 (Java4Shell)
-FROM public.ecr.aws/amazoncorretto/amazoncorretto:21.0.13.1.2-alpine-jdk
+# pinned to the build fixing CVE-2026-114938 (Java4Shell), digest-verified
+FROM docker.io/library/amazoncorretto:21.0.13-alpine-jdk@sha256:600e99e39da14b6a909027a924136c423e9334cb7347a8a77d5908bdaa3011b7
 
 RUN mkdir /app
 COPY --from=build /app/ebics-rest-api/target/ebics*.war /app/
